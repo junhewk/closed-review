@@ -594,11 +594,14 @@ def test_doctor_reads_auxiliary_environment_overrides(isolated_env, monkeypatch)
     assert problems_mention(report, "AUXILIARY_VISION_* environment routes to provider")
 
 
-def test_doctor_requires_pinned_vision_when_vision_lane_credentials_exist(isolated_env) -> None:
+def test_doctor_warns_about_unpinned_vision_when_vision_lane_credentials_exist(
+    isolated_env,
+) -> None:
     profile = make_profile(isolated_env)
     (profile / ".env").write_text("export OPENROUTER_API_KEY='sk-or-test'\n")
     report = doctor_with(isolated_env)
-    assert problems_mention(report, "auxiliary.vision is not pinned")
+    assert report["ready"], report["problems"]
+    assert any("auxiliary.vision is not pinned" in w for w in report["warnings"])
     assert all("sk-or-test" not in text for text in [*report["problems"], *report["warnings"]])
     assert report["cloud_credentials"] == [
         {"source": ".env", "name": "OPENROUTER_API_KEY", "provider": "openrouter"}
@@ -606,6 +609,7 @@ def test_doctor_requires_pinned_vision_when_vision_lane_credentials_exist(isolat
 
     pinned = doctor_with(isolated_env, auxiliary={"vision": {"provider": "local"}})
     assert pinned["ready"], pinned["problems"]
+    assert not any("auxiliary.vision" in warning for warning in pinned["warnings"])
     assert any("OPENROUTER_API_KEY" in warning for warning in pinned["warnings"])
 
 

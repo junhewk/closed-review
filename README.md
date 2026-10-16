@@ -177,9 +177,11 @@ cannot start while any of them leaves the trusted gateway:
 - Routes a session can switch to: `model_aliases`, `providers`, `custom_providers`, mixture-of-agents
   presets (`moa`), and gateway model routes.
 - `memory.provider`, which must be empty: external memory services receive conversation content.
-- Vision: when credentials for OpenRouter, Nous, or DeepInfra exist, `auxiliary.vision` must be
-  pinned to the trusted gateway, because Hermes sends images there when it treats the main model
-  as text-only.
+- Vision: an `auxiliary.vision` route that names a cloud provider is refused like any auxiliary task.
+  Leaving vision unpinned is your Hermes setting and only draws a warning, but note what it means:
+  when credentials for OpenRouter, Nous, or DeepInfra exist, Hermes may send images there when it
+  treats the main model as text-only. Do not give the agent figures or page images from
+  confidential material unless `auxiliary.vision` is pinned to the trusted gateway.
 
 Every model a route names must be in the trusted list: the gateway's model plus any
 `--trusted-model` names (or `CREVIEW_TRUSTED_MODELS`). When the live check runs, the gateway must

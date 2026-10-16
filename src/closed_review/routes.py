@@ -8,7 +8,9 @@ leaves the trusted gateway, or names a model outside the allowlist, makes the pr
 Routing rules mirror Hermes's ``agent/auxiliary_client.py``: an auxiliary task on ``auto`` uses the
 main provider first, and the OpenRouter/Nous discovery chain runs only when the main provider is
 itself empty or ``auto``. Vision is the exception: it tries OpenRouter, Nous, and DeepInfra when
-Hermes treats the main model as text-only, so credentials for those make unpinned vision unsafe.
+Hermes treats the main model as text-only. Which provider handles images is the user's Hermes
+setting, so an unpinned vision route with credentials for those is a warning, not a refusal; a
+vision route that names a cloud provider is still refused like any other auxiliary task.
 """
 
 from __future__ import annotations
@@ -349,13 +351,16 @@ def check_routes(
         for route in check.routes
     )
     vision_lanes = sorted({c["provider"] for c in credentials} & VISION_LANES)
+    warnings = []
     if vision_lanes and not vision_pinned:
-        check.problems.append(
-            "auxiliary.vision is not pinned to the trusted gateway while credentials for "
-            f"{', '.join(vision_lanes)} exist; Hermes may send images there when it treats the "
-            f"main model as text-only. Set auxiliary.vision.provider: custom and base_url: {url}"
+        warnings.append(
+            "auxiliary.vision is not pinned to the trusted gateway and credentials for "
+            f"{', '.join(vision_lanes)} exist, so Hermes may send images (including figures or "
+            "page images from a manuscript) there when it treats the main model as text-only. "
+            "Do not give the agent images from confidential material, or pin auxiliary.vision to "
+            f"{url}"
         )
-    warnings = [
+    warnings += [
         f"cloud credential {c['name']} ({c['source']}) lets `/model` or a client switch this "
         "session to a cloud provider; creview cannot see such a switch"
         for c in credentials
