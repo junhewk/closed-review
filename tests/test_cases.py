@@ -1,3 +1,5 @@
+import os
+
 from conftest import assert_mode, write_xlsx
 
 from closed_review.cases import create_case
@@ -40,7 +42,8 @@ def test_store_privacy_uses_the_user_profile_on_windows(tmp_path, monkeypatch) -
     assert io.permission_problem(inside) is None
     assert "outside your Windows user profile" in io.permission_problem(outside)
 
-    monkeypatch.setattr(io, "_windows", lambda: False)
-    assert "not private: 0o777" in io.permission_problem(inside)
-    inside.chmod(0o700)
-    assert io.permission_problem(inside) is None
+    if os.name != "nt":  # chmod cannot set these bits on Windows
+        monkeypatch.setattr(io, "_windows", lambda: False)
+        assert "not private: 0o777" in io.permission_problem(inside)
+        inside.chmod(0o700)
+        assert io.permission_problem(inside) is None

@@ -121,9 +121,9 @@ def test_verify_receipt_detects_tampering_and_other_builds(
 ) -> None:
     receipt_path = finalized_receipt(isolated_env)
     sums = tmp_path / "SHA256SUMS"
-    sums.write_text(installed_identity()["sums"])
+    sums.write_text(installed_identity()["sums"], newline="\n")
     assert verify_receipt(receipt_path, sums)["tool"]["status"] == "match"
-    sums.write_text(installed_identity()["sums"].replace("0", "1", 1))
+    sums.write_text(installed_identity()["sums"].replace("0", "1", 1), newline="\n")
     assert verify_receipt(receipt_path, sums)["tool"]["status"] == "mismatch"
 
     receipt = json.loads(receipt_path.read_text())

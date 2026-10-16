@@ -59,8 +59,8 @@ def test_direct_finalize_writes_receipt_and_log(isolated_env: Path) -> None:
     setup_profile(isolated_env)
     prepared = prepare_direct_export()
     assert prepared["finalize_command"] == f"creview direct finalize {prepared['export_id']}"
-    Path(prepared["output_paths"]["authors"]).write_text("Define the population.\n")
-    Path(prepared["output_paths"]["editor"]).write_text("Major revision.\n")
+    Path(prepared["output_paths"]["authors"]).write_text("Define the population.\n", newline="\n")
+    Path(prepared["output_paths"]["editor"]).write_text("Major revision.\n", newline="\n")
 
     result = finalize_direct_export(prepared["export_id"], "reviewer")
 

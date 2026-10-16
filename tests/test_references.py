@@ -96,7 +96,8 @@ def test_extraction_breaks_are_normalized_not_reported_as_issues(isolated_env: P
         "Northern Health Council. (2025). Updated fictional position statement. "
         "Okonkwo, M. (1998). Fictional household survey. https://doi.org/10.5555/ XMPL199809205 "
         "Núñez-Ålund, C. (2020). Fictional consent interviews. "
-        "https://doi.org/10.5555/ x1291- 020 -00495- 1"
+        "https://doi.org/10.5555/ x1291- 020 -00495- 1",
+        encoding="utf-8",
     )
 
     report = check_references(manuscript)
