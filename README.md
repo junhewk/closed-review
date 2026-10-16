@@ -21,8 +21,8 @@ and Hermes Desktop are made by Nous Research, which does not maintain or endorse
   model route in the Hermes profile before a review starts, and runs external lookups only after you
   approve the exact request. Everything else the agent does follows instructions, not enforcement:
   its terminal can reach whatever the operating system allows, and only network isolation of the
-  Hermes host stops that. See [What the profile check covers](#what-the-profile-check-covers) and
-  [Skill self-improvement](#skill-self-improvement-and-the-privacy-block).
+  Hermes host stops that. See [What the profile check covers](https://github.com/junhewk/closed-review#what-the-profile-check-covers) and
+  [Skill self-improvement](https://github.com/junhewk/closed-review#skill-self-improvement-and-the-privacy-block).
 - **You need your own model server.** Any OpenAI-compatible server you control works (Ollama, LM
   Studio, llama.cpp, vLLM, or similar). There is no built-in default; `creview` refuses to run a
   review until you name it.
@@ -147,7 +147,7 @@ hermes skills list | rg journal-article-review
 `creview hermes install --profile PROFILE --apply` remains available as a fallback
 installer when an external skill directory is unsuitable. It copies the packaged skill into that
 profile; updates must be applied again with the same command, which keeps Hermes's edits (see
-[Skill self-improvement](#skill-self-improvement-and-the-privacy-block)).
+[Skill self-improvement](https://github.com/junhewk/closed-review#skill-self-improvement-and-the-privacy-block)).
 
 Hermes can instead install and track the skill through its native hub command:
 
@@ -397,7 +397,7 @@ another, so a deep review takes several times longer than the default one.
 When the reviewer explicitly asks to compile, accepted records become separate author and editor
 drafts while the private development record retains deferred and dismissed issues. Direct exports
 use `creview direct prepare-export` to create private paths for all three artifacts, then
-`creview direct finalize EXPORT_ID` to record an [export receipt](#export-receipts) beside them.
+`creview direct finalize EXPORT_ID` to record an [export receipt](https://github.com/junhewk/closed-review#export-receipts) beside them.
 
 The durable evidence ledger remains available when the user explicitly requests an audited,
 exhaustive, checkpointed, or resumable review:
@@ -448,7 +448,7 @@ out of a journal's submission system still matches while any change of wording d
 
 Receipts also record the profile check's view of the skill's privacy block and a `preflight`:
 whether `creview session start` passed in the session that exported (see
-[Skill self-improvement](#skill-self-improvement-and-the-privacy-block)).
+[Skill self-improvement](https://github.com/junhewk/closed-review#skill-self-improvement-and-the-privacy-block)).
 
 Receipts are self-reported (`"attestations": [{"type": "self"}]`). They detect accidental change to
 the exported text or the installed tool; they are not signed, so they do not prove that the tool was

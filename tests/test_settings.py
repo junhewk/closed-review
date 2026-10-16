@@ -2,6 +2,7 @@ import json
 
 import pytest
 import yaml
+from conftest import assert_mode
 from test_hermes import make_profile
 
 from closed_review import hermes
@@ -33,7 +34,7 @@ def test_stored_gateway_is_private_and_used_by_doctor(unconfigured) -> None:
     saved = set_gateway("http://127.0.0.1:8091/v1/", "qwen3.8-flash-next", ["gemma-4-31b"])
     assert saved["url"] == "http://127.0.0.1:8091/v1"
     assert saved["trusted_models"] == ["qwen3.8-flash-next", "gemma-4-31b"]
-    assert gateway_path().stat().st_mode & 0o777 == 0o600
+    assert_mode(gateway_path(), 0o600)
     make_profile(unconfigured)
     hermes.install_skill("reviewer", apply=True)
 

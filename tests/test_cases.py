@@ -1,4 +1,4 @@
-from conftest import write_xlsx
+from conftest import assert_mode, write_xlsx
 
 from closed_review.cases import create_case
 from closed_review.io import case_root, data_home
@@ -9,10 +9,10 @@ def test_case_snapshot_and_store_are_private(isolated_env) -> None:
     manuscript.write_text("# Paper\n\nPrivate content.")
     case_id = create_case(manuscript, journal="Journal")["case_id"]
     root = case_root(case_id)
-    assert data_home().stat().st_mode & 0o777 == 0o700
-    assert root.stat().st_mode & 0o777 == 0o700
+    assert_mode(data_home(), 0o700)
+    assert_mode(root, 0o700)
     original = next((root / "originals").iterdir())
-    assert original.stat().st_mode & 0o777 == 0o600
+    assert_mode(original, 0o600)
 
 
 def test_case_accepts_xlsx_supplement(isolated_env) -> None:

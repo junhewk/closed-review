@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from conftest import assert_mode
 from test_workflow import setup_profile
 
 from closed_review.cli import main
@@ -30,7 +31,7 @@ def test_session_start_returns_package_rules_and_links_hermes_session(
     assert started["rules"].startswith("# Privacy rules for journal-article-review")
     assert "Do not put manuscript text in shell arguments." in started["rules"]
     record = isolated_env / "data" / "preflights" / f"{started['session_id']}.json"
-    assert record.stat().st_mode & 0o777 == 0o600
+    assert_mode(record, 0o600)
     assert "20261015_101500_abcdef" not in record.read_text()
 
     prepared = export_with()

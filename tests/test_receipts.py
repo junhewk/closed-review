@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import pytest
+from conftest import assert_mode
 from test_workflow import setup_profile
 
 from closed_review.cli import main
@@ -67,7 +68,7 @@ def test_direct_finalize_writes_receipt_and_log(isolated_env: Path) -> None:
     receipt = json.loads(receipt_path.read_text())
     assert result["receipt_id"] == receipt["receipt_id"] == receipt_id(receipt)
     assert result["subjects"] == ["authors", "editor"]
-    assert receipt_path.stat().st_mode & 0o777 == 0o600
+    assert_mode(receipt_path, 0o600)
     assert receipt["tool"]["sums_sha256"] == hashlib.sha256(installed_sums().encode()).hexdigest()
     assert receipt["environment"] == {
         "host": "hermes",
@@ -87,7 +88,7 @@ def test_direct_finalize_writes_receipt_and_log(isolated_env: Path) -> None:
     assert "127.0.0.1" not in serialized
 
     log = isolated_env / "data" / "receipts.jsonl"
-    assert log.stat().st_mode & 0o777 == 0o600
+    assert_mode(log, 0o600)
     assert [json.loads(line)["receipt_id"] for line in log.read_text().splitlines()] == [
         receipt["receipt_id"]
     ]

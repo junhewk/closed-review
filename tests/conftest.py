@@ -9,6 +9,12 @@ import pytest
 from closed_review.routes import CREDENTIAL_ENV
 
 
+def assert_mode(path: Path, mode: int) -> None:
+    """Unix permission bits; Windows reports 0o777 or 0o666 whatever the access list says."""
+    if os.name != "nt":
+        assert path.stat().st_mode & 0o777 == mode
+
+
 @pytest.fixture
 def isolated_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     store = tmp_path / "data"

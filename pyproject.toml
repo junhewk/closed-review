@@ -9,7 +9,20 @@ description = "Confidential journal peer review on a model you control, for Herm
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-authors = [{ name = "Junhewk" }]
+authors = [{ name = "Junhewk Kim" }]
+keywords = ["peer review", "journal", "manuscript", "hermes-agent", "local llm", "confidentiality"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Text Processing",
+]
 dependencies = [
   "defusedxml>=0.7,<1",
   "filelock>=3.15,<4",
@@ -17,6 +30,12 @@ dependencies = [
   "pdfminer.six>=20240706",
   "pyyaml>=6,<7",
 ]
+
+[project.urls]
+Homepage = "https://github.com/junhewk/closed-review"
+Repository = "https://github.com/junhewk/closed-review"
+Issues = "https://github.com/junhewk/closed-review/issues"
+Releases = "https://github.com/junhewk/closed-review/releases"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]

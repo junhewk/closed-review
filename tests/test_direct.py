@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from conftest import assert_mode
+
 from closed_review.direct import prepare_direct_export
 
 
@@ -9,8 +11,8 @@ def test_prepare_direct_export_creates_private_parent(isolated_env: Path) -> Non
     output = Path(prepared["output_path"])
 
     assert directory.parent == isolated_env / "data" / "exports"
-    assert directory.stat().st_mode & 0o777 == 0o700
-    assert (isolated_env / "data").stat().st_mode & 0o777 == 0o700
+    assert_mode(directory, 0o700)
+    assert_mode((isolated_env / "data"), 0o700)
     assert output == directory / "journal-review.md"
     assert not output.exists()
     assert prepared["output_paths"] == {

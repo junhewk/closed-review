@@ -1,0 +1,119 @@
+name: Release
+
+# Push an annotated tag vVERSION on a commit whose pyproject version is VERSION. The tag message
+# becomes the release notes. Development and other pre-release versions go to TestPyPI and a GitHub
+# pre-release; final versions go to PyPI and a GitHub release. Both PyPI uploads use Trusted
+# Publishing, so no token is stored, and the `pypi` environment waits for a maintainer's approval.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - id: version
+        name: Check the tag matches the package version
+        run: |
+          uv run --no-project --with packaging python - <<'PY' >> "$GITHUB_OUTPUT"
+          import os, sys, tomllib
+          from packaging.version import Version
+          version = tomllib.load(open("pyproject.toml", "rb"))["project"]["version"]
+          if f"v{version}" != os.environ["GITHUB_REF_NAME"]:
+              sys.exit(f"tag {os.environ['GITHUB_REF_NAME']} does not match version {version}")
+          print(f"version={version}")
+          print(f"prerelease={str(Version(version).is_prerelease).lower()}")
+          PY
+      - name: Build
+        run: uv build --out-dir dist
+      - name: Record the package hashes of a clean install
+        run: |
+          uvx --isolated --from "./dist/closed_review-${{ steps.version.outputs.version }}-py3-none-any.whl" \
+            creview receipts sums > sums.json
+          python3 -c "import json; d = json.load(open('sums.json')); open('dist/creview-sums-${{ steps.version.outputs.version }}.txt', 'w', newline='').write(d['sums']); print(d['sums_sha256'])"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  testpypi:
+    needs: build
+    if: needs.build.outputs.prerelease == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/closed-review/${{ needs.build.outputs.version }}/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Keep only the packages
+        run: rm dist/*.txt
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  pypi:
+    needs: build
+    if: needs.build.outputs.prerelease == 'false'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/closed-review/${{ needs.build.outputs.version }}/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Keep only the packages
+        run: rm dist/*.txt
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    needs: [build, testpypi, pypi]
+    # Runs after whichever upload applied; the other one is skipped.
+    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') && needs.build.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # actions/checkout leaves a lightweight tag; fetch the annotated one for its message.
+          git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          if [ "$(git cat-file -t "$GITHUB_REF_NAME")" != tag ]; then
+            echo "$GITHUB_REF_NAME is not an annotated tag; its message is the release notes" >&2
+            exit 1
+          fi
+          git for-each-ref --format='%(contents)' "refs/tags/$GITHUB_REF_NAME" > notes.md
+          flags=""
+          if [ "${{ needs.build.outputs.prerelease }}" = "true" ]; then flags="--prerelease"; fi
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "closed-review ${{ needs.build.outputs.version }}" --notes-file notes.md $flags

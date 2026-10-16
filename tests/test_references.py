@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+from conftest import assert_mode
 
 from closed_review.errors import ReviewError
 from closed_review.references import (
@@ -43,8 +44,8 @@ def test_author_year_reference_check_is_local_and_persisted(isolated_env: Path) 
     assert "uncited_reference" in kinds
     assert show_reference_check(report["check_id"])["source_sha256"] == report["source_sha256"]
     report_path = isolated_env / "data" / "reference-checks" / f"{report['check_id']}.json"
-    assert report_path.stat().st_mode & 0o777 == 0o600
-    assert report_path.parent.stat().st_mode & 0o777 == 0o700
+    assert_mode(report_path, 0o600)
+    assert_mode(report_path.parent, 0o700)
 
 
 def test_numbered_reference_ranges_and_duplicate_doi(isolated_env: Path) -> None:
