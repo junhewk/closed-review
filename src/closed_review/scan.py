@@ -60,6 +60,16 @@ OVERVIEW_FIELDS = {
     ),
 }
 MAX_CONSIDERATIONS = 5
+SCREENING_FIELDS = {
+    "author_reply": (
+        "for keep: the strongest reply the authors could make from their own manuscript, citing "
+        "where it says so; search the whole manuscript, not only the cited segment"
+    ),
+    "survives": "for keep: why the concern still stands after that reply",
+    "affected_conclusion": (
+        "for a major keep: the specific conclusion or claim of the paper that would not follow"
+    ),
+}
 
 
 def _scan_root(scan_id: str) -> Path:
@@ -235,7 +245,9 @@ def next_task(scan_id: str) -> dict[str, Any]:
         "instructions": (
             f"{angle} The whole manuscript is available through the outline and the attached "
             "file; focus on this segment. Check each concern against the confirmed profiles' "
-            "false alarms before adding it. Write candidates to the proposal file, then run "
+            "false alarms and the rubric's checks before keeping a candidate: before claiming "
+            "something is missing or unexplained, search the whole manuscript for it. Write "
+            "candidates to the proposal file, then run "
             f"creview scan submit {scan_id} PROPOSAL_PATH. Do not tell the reviewer about "
             "candidates, their number, or their content during the scan."
         ),
@@ -418,6 +430,9 @@ def synthesize(scan_id: str) -> dict[str, Any]:
                     "severity": p["severity"],
                     "reason": "",
                     "potential_issue": "",
+                    "author_reply": "",
+                    "survives": "",
+                    "affected_conclusion": "",
                 }
                 for p in pool
             ],
@@ -426,15 +441,19 @@ def synthesize(scan_id: str) -> dict[str, Any]:
         "scan_id": scan_id,
         "pool": [p | {"members": [by_id[m] for m in p["member_ids"]]} for p in pool],
         "screening_path": str(screening_path),
+        "screening_fields": SCREENING_FIELDS,
         "instructions": (
-            "For each entry decide keep, merge, or drop. Entries were merged only when they quote "
-            "the same passage, so the same concern raised in different segments or with different "
-            "quotes still appears more than once: keep the clearest one and set the others to "
-            "merge with into set to its id. Drop an entry, with a reason, when it matches a "
-            "confirmed profile's false alarms or is not supported by its quotes. For a kept entry "
-            "set severity (major only when it could change the paper's validity, interpretation, "
-            "or contribution), and optionally potential_issue to one wording that covers its "
-            "members. Then run "
+            "Screen as the authors' advocate, and expect to drop many entries. For each entry "
+            "decide keep, merge, or drop. Entries were merged only when they quote the same "
+            "passage, so the same concern raised in different segments or with different quotes "
+            "still appears more than once: keep the clearest one and set the others to merge with"
+            " into set to its id. Drop an entry, with a reason, when it matches a confirmed "
+            "profile's false alarms or fails the rubric's checks before keeping a candidate, or "
+            "is not supported by its quotes. For a kept entry write author_reply and survives; if"
+            " the reply answers the concern, drop it instead. Set severity: major only when you "
+            "can name the affected_conclusion, the paper's specific conclusion that would not "
+            "follow. Optionally set potential_issue to one wording that covers its members. Then "
+            "run "
             f"creview scan screen {scan_id} SCREENING_PATH. Do not show this pool to the reviewer."
         ),
     }
@@ -470,11 +489,26 @@ def screen(scan_id: str, screening_path: Path) -> dict[str, Any]:
             severity = str(given[pool_id].get("severity") or entry["severity"]).lower()
             if severity not in SEVERITIES:
                 raise ReviewError(f"{pool_id} severity must be major or minor")
+            checks = {
+                name: str(given[pool_id].get(name) or "").strip()[:1500]
+                for name in SCREENING_FIELDS
+            }
+            if decision == "keep":
+                required = ["author_reply", "survives"]
+                if severity == "major":
+                    required.append("affected_conclusion")
+                missing_checks = [name for name in required if not checks[name]]
+                if missing_checks:
+                    raise ReviewError(
+                        f"{pool_id} is kept without {', '.join(missing_checks)}: "
+                        + "; ".join(SCREENING_FIELDS[name] for name in missing_checks)
+                    )
             entry.update(
                 decision=decision,
                 reason=reason or None,
                 severity=severity,
                 wording=str(given[pool_id].get("potential_issue") or "").strip() or None,
+                **{name: value or None for name, value in checks.items()},
             )
         order = {s["id"]: n for n, s in enumerate(scan["plan"]["segments"])}
         for source_id, target_id in merges:
@@ -611,13 +645,18 @@ def next_candidate(scan_id: str) -> dict[str, Any]:
             ],
             "evidence": evidence,
             "solution_candidates": solutions,
+            "author_reply": entry.get("author_reply"),
+            "survives": entry.get("survives"),
+            "affected_conclusion": entry.get("affected_conclusion"),
         },
         "context": _summaries(scan, entry["segment_ids"]),
         "more_available": len(kept) > 1,
         "instructions": (
             "Present this as the current candidate record, following the development contract. "
             "Open it with its context: in one or two sentences, what the authors do in the cited "
-            "segments, drawn from the context summaries. Do not mention how many candidates remain."
+            "segments, drawn from the context summaries. In why it matters, give the authors' "
+            "likely reply (author_reply) and why the concern survives it, so the reviewer can "
+            "judge it quickly. Do not mention how many candidates remain."
         ),
     }
 

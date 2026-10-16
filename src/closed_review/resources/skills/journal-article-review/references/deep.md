@@ -38,7 +38,8 @@ creview scan submit SCAN PROPOSAL_PATH
 ```
 
 Each task gives one segment, its blocks, the outline of all segments, and the pass number. Read the
-segment closely; read other segments when a claim depends on them. Write candidates to the
+segment closely; read other segments when a claim depends on them, and before claiming that
+something is missing or unexplained, search the whole manuscript for it. Write candidates to the
 proposal file with `potential_issue`, `why_it_matters`, `severity` (major or minor),
 `profile_area`, `evidence` (each `{source_id, locator, quote}`, the quote copied verbatim from that
 locator), and `solution_candidates`. An empty list is a valid result. On a segment's first pass,
@@ -66,9 +67,14 @@ screening file, decide for every entry:
 
 - `merge`, with `into` set to another entry's id, when it is the same concern as that entry. Keep
   the clearest entry and merge the rest into it; their evidence is combined.
-- `drop`, with a reason, when it matches a profile's false alarms or its quotes do not support it.
-- `keep` otherwise. Set the severity: `major` only when it could change the paper's validity,
-  interpretation, or contribution. If useful, give one `potential_issue` wording that covers the
+- `drop`, with a reason, when it matches a profile's false alarms, fails the rubric's checks before
+  keeping a candidate, or its quotes do not support it. Screen as the authors' advocate; expect to
+  drop many entries.
+- `keep` otherwise, with `author_reply` (the strongest reply the authors could give from their own
+  manuscript, citing where; search the whole manuscript) and `survives` (why the concern still
+  stands). If the reply answers the concern, drop it instead. Set the severity: `major` only when
+  you can name `affected_conclusion`, the paper's specific conclusion that would not follow.
+  creview refuses a kept entry without these fields. If useful, give one `potential_issue` wording that covers the
   entry's members. The pool is private working context: never show it, list it, or count it to the reviewer.
 
 `screen` returns the segment summaries and an overview file. Write the article overview described

@@ -58,4 +58,34 @@ options. It becomes a review comment only after the reviewer develops and accept
 
 Major candidates could affect the contribution, validity, evidence, interpretation, ethics, or
 ability to evaluate the work. Minor candidates are local corrections that do not determine the
-central judgment.
+central judgment. Call a candidate major only when you can name the specific conclusion of the paper
+that would not follow; expect few.
+
+### Checks before keeping a candidate
+
+Argue the authors' side first. Write the strongest reply the authors could give from their own
+manuscript; if it answers the concern, drop the concern. In particular:
+
+- **Search before claiming absence.** "Not explained", "not justified", or "no evidence" holds only
+  if the answer is nowhere in the manuscript: other sections, tables, notes, and the stated criteria
+  count. A rationale that follows from criteria the paper states is a rationale.
+- **A stated scope or limitation answers the concern.** When the paper says what it compares,
+  excludes, or leaves to later work, do not ask for the excluded thing. Raise it only if you can say
+  concretely why the statement is insufficient for a conclusion the paper draws, and then as minor.
+- **Stay within the paper's scope.** Do not ask a principles-level or conceptual proposal for
+  implementation detail, operational rules, or data that belong to later policy work or another
+  study, unless a stated conclusion depends on them.
+- **Shared background needs no proof.** Contextual facts about the setting that readers in the
+  field take as given do not need evidence, unless the conclusion turns on a contested empirical
+  claim.
+- **Only the authors' defects are candidates.** That you cannot check a cited source is a
+  verification task for the reviewer, not a request to the authors. Do not ask for more precise
+  quotation of sources the paper already cites with locations.
+- **Know the method before faulting it.** Describe the method as its own literature does before
+  criticizing its use; a criticism that rests on a misdescription of the method is not a candidate.
+- **Do not supply the context you lack.** If the concern depends on how a legal system, health
+  system, or professional practice works and neither the paper nor the reviewer has established
+  that, do not build a candidate on an alternative reading. Ask the reviewer one short question, or
+  drop it.
+- **A concern that concedes its own weak point is usually not one.** If writing the candidate
+  requires "although the authors state…", check whether that statement already answers it.

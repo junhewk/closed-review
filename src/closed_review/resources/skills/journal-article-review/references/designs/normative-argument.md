@@ -113,6 +113,16 @@ alone and check only that its conclusions stay descriptive.
 - Faulting the choice of one theory over another, unless the conclusion depends on it undefended.
 - Asking the authors to stay neutral on a contested question; taking a position is the genre.
 - Asking for more literature review where the argument is already situated adequately.
+- Calling reflective equilibrium circular because the considered judgments and the principles agree.
+  In narrow and wide reflective equilibrium, considered judgments, principles, and background
+  theories are adjusted against one another; none is a fixed input or output, and coherence among
+  them is the aim (Rawls 1971; Daniels 1979). Ask instead whether the paper shows any adjustment and
+  which judgments or principles it revised.
+- Asking a proposal stated as principles for operational rules, review procedures, or
+  implementation detail that it leaves to later policy work.
+- Asking for evidence of contextual background that readers in the field take as given (for
+  example how a national insurance system governs practice), when the conclusion does not turn on
+  it.
 - With the authors' own data: insisting on one correct integration method (there is no consensus);
   faulting descriptive ethics for not reaching normative conclusions it never claims; treating the
   is-ought gap as fatal in itself rather than asking how the paper bridges it.

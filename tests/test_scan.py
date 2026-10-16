@@ -146,7 +146,12 @@ def test_deep_scan_end_to_end(session) -> None:
     assert len(merged["pool"][0]["members"]) == 3
     screening = Path(merged["screening_path"])
     entries = json.loads(screening.read_text())
-    entries[0]["decision"] = "keep"
+    entries[0] |= {"decision": "keep", "author_reply": "The ward manager only passed on letters."}
+    entries[0]["survives"] = "Who declined is still not reported."
+    screening.write_text(json.dumps(entries))
+    with pytest.raises(ReviewError, match="without affected_conclusion"):
+        scan.screen(scan_id, screening)
+    entries[0]["affected_conclusion"] = "That consent is experienced as a formality."
     screening.write_text(json.dumps(entries))
     screened = scan.screen(scan_id, screening)
     assert {s["title"] for s in screened["segment_summaries"]} == set(tiers)
@@ -168,6 +173,7 @@ def test_deep_scan_end_to_end(session) -> None:
     assert first["overview"] == overview
     assert first["candidate"]["severity"] == "major"
     assert first["candidate"]["segments"][0]["title"] == "Methods"
+    assert first["candidate"]["author_reply"] == "The ward manager only passed on letters."
     assert first["context"] == [
         {
             "id": first["candidate"]["segments"][0]["id"],
@@ -260,7 +266,13 @@ def test_screening_merges_the_same_concern_raised_elsewhere(session) -> None:
     pool = scan.synthesize(scan_id)["pool"]
     assert len(pool) == 2
     entries = [
-        {"id": pool[0]["id"], "decision": "keep", "severity": "minor"},
+        {
+            "id": pool[0]["id"],
+            "decision": "keep",
+            "severity": "minor",
+            "author_reply": "Recruitment is described.",
+            "survives": "Its effect on the findings is not discussed.",
+        },
         {"id": pool[1]["id"], "decision": "merge", "into": pool[0]["id"]},
     ]
     path = session.parent / "screening.json"

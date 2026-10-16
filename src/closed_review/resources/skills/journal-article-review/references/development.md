@@ -32,7 +32,8 @@ For each candidate show:
    of the manuscript, so the reviewer can follow it without scrolling back.
 1. **Potential issue** — a falsifiable, proportionate concern rather than a verdict.
 2. **Manuscript evidence** — a stable location and short exact quotation where available.
-3. **Why it matters** — the consequence for contribution, validity, interpretation, ethics, or use.
+3. **Why it matters** — the consequence for contribution, validity, interpretation, ethics, or use,
+   and, briefly, the authors' likely reply and why the concern survives it.
 4. **Literature context** — only when relevant, with one of these labels:
    - `supplied_source`: checked in material the user supplied.
    - `manuscript_reported`: represented by the manuscript but not independently checked.

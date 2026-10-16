@@ -68,6 +68,13 @@ claims are about the law as it is and which about the law as it should be.
 - Faulting the paper for arguing for reform; normative legal scholarship is legitimate.
 - Treating a reading the reviewer disputes as an error, when it is a defensible interpretation the
   paper should acknowledge as contested.
+- Offering an alternative reading of what a rule's silence means (for example, that an unlisted
+  item may still be covered) when how that jurisdiction reads silence is not established by the
+  paper or the reviewer. The paper's reading may reflect local practice the model does not know; ask
+  the reviewer instead.
+- Faulting a comparison of professional guidelines with binding rules for comparing documents of
+  different legal force, when the paper states that it compares clinical scope rather than
+  reimbursement or legal effect.
 
 ## Monitoring areas
 
