@@ -13,8 +13,6 @@ jobs:
   test:
     name: test (${{ matrix.os }}, Python ${{ matrix.python }})
     runs-on: ${{ matrix.os }}
-    # Windows runs for information until the tests stop asserting Unix permission bits there.
-    continue-on-error: ${{ matrix.os == 'windows-latest' }}
     strategy:
       fail-fast: false
       matrix:
