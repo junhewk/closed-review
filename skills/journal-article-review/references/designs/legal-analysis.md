@@ -60,6 +60,22 @@ claims are about the law as it is and which about the law as it should be.
 - Signals: legality treated as ethical justification, or ethical criticism treated as a legal
   conclusion; in an ethics or medical journal, legal reasoning a non-lawyer cannot follow.
 
+## Major flaws
+
+Major when the quoted evidence shows them (see the index).
+
+- **misread-provision**: a provision or decision is reported as saying what its own quoted text does
+  not say, or one reading is presented as the only one where the paper itself reports another.
+- **authority-misweighted**: holding and obiter not distinguished, or the weight of decisions
+  misstated for that legal system, such as a decision treated as settling a point a higher court has
+  decided otherwise.
+- **soft-law-as-law**: administrative guidance or soft-law instruments treated as binding legal
+  obligations.
+- **comparator-misdescribed**: foreign law misdescribed, or described from secondary or outdated
+  sources, where the comparison depends on it.
+- **reform-without-argument**: a reform proposal without the normative argument for it, or
+  inconsistent with the paper's own analysis.
+
 ## Common false alarms
 
 - Asking for an empirical methods section in a doctrinal paper.

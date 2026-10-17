@@ -2,7 +2,7 @@
 id: scoping-review
 applies_to: scoping reviews; evidence, concept, or literature maps that chart what exists without synthesizing effects
 not_for: questions about effectiveness, accuracy, or the strength of evidence (systematic-review)
-reporting_guidance: PRISMA-ScR (Tricco et al., 2018); JBI Manual for Evidence Synthesis, scoping review chapter; Arksey and O'Malley (2005); Levac, Colquhoun and O'Brien (2010); Munn et al. (2018) on choosing between scoping and systematic reviews
+reporting_guidance: PRISMA-ScR (Tricco et al., 2018); JBI Manual for Evidence Synthesis, scoping review chapter (Peters et al., 2024); Arksey and O'Malley (2005); Levac, Colquhoun and O'Brien (2010); Munn et al. (2018) on choosing between scoping and systematic reviews
 version: 1
 ---
 
@@ -58,6 +58,19 @@ Either mismatch is itself a possible candidate.
 - Look in: discussion and conclusions.
 - Signals: recommendations for practice or policy presented as if the review graded evidence.
   Implications for research and for how a field defines its terms are appropriate.
+
+## Major flaws
+
+Major when the quoted evidence shows them (see the index).
+
+- **wrong-review-type**: aims about whether something works, how well, or which option is better,
+  answered with a scoping review.
+- **unbounded-concept**: the central concept is undefined or defined differently across the paper,
+  so the map has no clear boundary.
+- **effect-claims**: statements about what the evidence shows for effects, or practice or policy
+  recommendations presented as if the review graded evidence.
+- **single-review**: single screening or single charting without justification, or described
+  elsewhere in the paper as independent duplicate review.
 
 ## Common false alarms
 

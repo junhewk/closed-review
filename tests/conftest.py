@@ -15,6 +15,23 @@ def assert_mode(path: Path, mode: int) -> None:
         assert path.stat().st_mode & 0o777 == mode
 
 
+def reviewer_says(hermes_home: Path, session_id: str, text: str) -> None:
+    """Append a reviewer message to a minimal Hermes `state.db`, as Hermes records it."""
+    import sqlite3
+    import time
+
+    hermes_home.mkdir(parents=True, exist_ok=True)
+    with sqlite3.connect(hermes_home / "state.db") as db:
+        db.execute(
+            "CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+            "session_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT, timestamp REAL NOT NULL)"
+        )
+        db.execute(
+            "INSERT INTO messages (session_id, role, content, timestamp) VALUES (?, 'user', ?, ?)",
+            (session_id, text, time.time()),
+        )
+
+
 @pytest.fixture
 def isolated_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     store = tmp_path / "data"

@@ -2,14 +2,14 @@ import json
 from pathlib import Path
 
 import pytest
-from conftest import assert_mode
+from conftest import assert_mode, reviewer_says
 from test_workflow import setup_profile
 
 from closed_review.cli import main
 from closed_review.direct import finalize_direct_export, prepare_direct_export
 from closed_review.errors import ReviewError
 from closed_review.receipts import installed_identity, verify_receipt
-from closed_review.session import start_session
+from closed_review.session import confirm_profiles, start_session
 
 
 def export_with(session: str | None = None) -> dict:
@@ -34,6 +34,16 @@ def test_session_start_returns_package_rules_and_links_hermes_session(
     assert_mode(record, 0o600)
     assert "20261015_101500_abcdef" not in record.read_text()
 
+    # An export needs the reviewer's own confirmation of the design profiles, sent after the
+    # preflight; words they never wrote are refused.
+    with pytest.raises(ReviewError, match="never confirmed the design profiles"):
+        prepare_direct_export()
+    reviewer_says(isolated_env / "hermes", "20261015_101500_abcdef", "Yes, qualitative only.")
+    with pytest.raises(ReviewError, match="not in any of those messages"):
+        confirm_profiles(["qualitative"], "Prompt unanswered; proceeding with qualitative.")
+    assert confirm_profiles(["qualitative"], "Yes, qualitative only.")["profiles"] == [
+        "qualitative"
+    ]
     prepared = export_with()
     finalized = finalize_direct_export(prepared["export_id"], "reviewer")
 
@@ -51,6 +61,7 @@ def test_session_without_hermes_id_uses_explicit_session(isolated_env: Path) -> 
     started = start_session("reviewer", live=False)
     assert started["session_source"] == "explicit"
     assert started["export_command"].endswith(f"--session {started['session_id']}")
+    confirm_profiles([], "The general rubric alone is fine.", started["session_id"])
 
     linked = export_with(started["session_id"])
     unlinked = export_with()
@@ -141,6 +152,24 @@ def test_cli_session_and_receipt_commands(
     setup_profile(isolated_env)
     assert main(["session", "start", "--profile", "reviewer", "--skip-live"]) == 0
     session_id = json.loads(capsys.readouterr().out)["session_id"]
+    paper = isolated_env / "paper.md"
+    paper.write_text("# A paper\n\n# Methods\n\nWe interviewed nurses.\n")
+    # Segments are planned only once the reviewer has confirmed the profiles.
+    assert main(["segments", "propose", str(paper), "--session", session_id]) != 0
+    assert "wait for their reply" in capsys.readouterr().err
+    confirmed = [
+        "segments",
+        "propose",
+        str(paper),
+        "--profile",
+        "qualitative",
+        "--confirmation",
+        "Yes, qualitative only.",
+        "--session",
+        session_id,
+    ]
+    assert main(confirmed) == 0
+    assert json.loads(capsys.readouterr().out)["profiles"] == ["qualitative"]
     assert main(["direct", "prepare-export", "--session", session_id]) == 0
     prepared = json.loads(capsys.readouterr().out)
     Path(prepared["output_paths"]["editor"]).write_text("Minor revision.\n")

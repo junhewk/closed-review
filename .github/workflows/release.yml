@@ -1,7 +1,8 @@
 name: Release
 
 # Push an annotated tag vVERSION on a commit whose pyproject version is VERSION. The tag message
-# becomes the release notes. Development and other pre-release versions go to TestPyPI and a GitHub
+# becomes the release notes; create it with `git tag -a --cleanup=verbatim`, or git drops Markdown
+# headings as comment lines. Development and other pre-release versions go to TestPyPI and a GitHub
 # pre-release; final versions go to PyPI and a GitHub release. Both PyPI uploads use Trusted
 # Publishing, so no token is stored, and the `pypi` environment waits for a maintainer's approval.
 

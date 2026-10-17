@@ -16,6 +16,22 @@ criticism.
   when applicable?
 - Are references used accurately and are journal-specific requirements satisfied?
 
+## Major flaws in any design
+
+These are major in any design, with or without a profile, when the manuscript shows them. Flaws
+that depend on the design (causal claims from associations, claims beyond what a sample, data, or
+argument supports) are in each profile's own list.
+
+- **self-contradiction**: the paper states two incompatible things about how the study was done or
+  what it found (for example a procedure in the methods and a different safeguard in the
+  limitations), and a result or conclusion depends on which is true. Two values of a stated detail
+  (a date, a count, a label, a citation) that no conclusion rests on are not this flaw; they are a
+  correction.
+- **misread-source**: a source the argument relies on (a provision, decision, study, or guideline)
+  is reported as saying what its own quoted text does not say.
+- **research-ethics**: participants' data, samples, or records were collected or used without the
+  approval, consent, or waiver the study needs, or before approval was given.
+
 ## Article-type emphasis
 
 When the reviewer confirms a design profile from [designs/index.md](designs/index.md), use it in

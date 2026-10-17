@@ -72,6 +72,21 @@ never use (for example "phenomenological" with only generic coding) is itself a 
   conditions; consent unclear for observation or for reuse of quotations; distress protocols absent
   for sensitive topics.
 
+## Major flaws
+
+Major when the quoted evidence shows them (see the index).
+
+- **incoherent-approach**: the stated approach does not shape sampling, data generation, or
+  analysis, or analysis labels are mixed without reason.
+- **unexamined-power**: interviewers with power over participants, and the relationship left
+  unexamined.
+- **unsupported-themes**: quotes that do not show what the theme claims, or themes that are topic
+  summaries.
+- **claims-beyond-design**: frequency, causal, or population-level claims, or practice
+  recommendations that go beyond the data.
+- **identifiable-participants**: quotes or participant tables that could identify people, or consent
+  unclear for the use made of the data.
+
 ## Common false alarms
 
 - Asking for a larger or representative sample, or a power calculation.

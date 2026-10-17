@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "closed-review"
-version = "0.9.0.dev4"
+version = "0.9.0.dev5"
 description = "Confidential journal peer review on a model you control, for Hermes Agent"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -47,7 +47,7 @@ creview = "closed_review.cli:main"
 packages = ["src/closed_review"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "skills", "tests", "README.md", "LICENSE", "pyproject.toml", "uv.lock"]
+include = ["src", "skills", "tests", "docs", "README.md", "LICENSE", "pyproject.toml", "uv.lock"]
 
 [tool.pytest.ini_options]
 addopts = "-q"

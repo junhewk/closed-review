@@ -10,7 +10,7 @@ from .errors import ReviewError
 from .hermes import inspect_profile
 from .io import atomic_write_json, data_home, ensure_private_dir, read_json
 from .receipts import RECEIPT_NAME, SUBJECT_ROLES, write_receipt
-from .session import preflight_summary, session_key
+from .session import preflight_summary, profiles_confirmed, session_key
 
 EXPORT_ID_RE = re.compile(r"^direct-\d{8}T\d{6}Z-[0-9a-f]{8}$")
 EXPORT_META = "export.json"
@@ -19,6 +19,12 @@ EXPORT_META = "export.json"
 def prepare_direct_export(session: str | None = None) -> dict[str, Any]:
     """Create a private directory for one direct-review Markdown export."""
     key, source = session_key(session)
+    if preflight_summary(key, source)["status"] == "passed" and not profiles_confirmed(key):
+        raise ReviewError(
+            "the reviewer never confirmed the design profiles in this session: propose them, wait "
+            "for the reviewer's reply, and record it with creview segments propose MANUSCRIPT "
+            '--profile NAME --confirmation "THEIR WORDS" (or --no-profile)'
+        )
     exports = ensure_private_dir(ensure_private_dir(data_home()) / "exports")
     export_id = f"direct-{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}-{secrets.token_hex(4)}"
     directory = ensure_private_dir(exports / export_id)

@@ -26,24 +26,29 @@ creview package, not from this skill.
 
 Read [references/development.md](references/development.md) and use its issue-record contract.
 
-After reading the manuscript and before the first candidate, give the reviewer the article
-overview described in [references/development.md](references/development.md): what the article
-asks, does, and concludes; what its analysis uses (design, data or sources, methods, and models or
-frameworks); and a few open considerations about the article as a whole. In a deep review, the
-overview comes after the scan instead, just before its first candidate.
+After reading the manuscript and before the first candidate, give the reviewer the initial
+summary described in [references/development.md](references/development.md): a faithful account of
+what the article asks, does, and concludes; what its analysis uses (design, data or sources,
+methods, and models or frameworks); and the article's own special considerations, quoted. It is not
+a preliminary review. In a deep review, it is written before the scan's passes and presented just
+before the first candidate.
 
 Then choose design profiles as described in
 [references/designs/index.md](references/designs/index.md): propose the profiles that fit, with a
 one-line reason each, wait for the reviewer to confirm or correct them, then read only the confirmed
 profiles. They guide where to look and which concerns are false alarms; they are not review items.
+For an attached file, record their answer when you plan the segments (below): creview refuses to
+plan, and later to export, until the reviewer's own words confirming the profiles are recorded, so
+if they have not answered, ask and wait.
 
-Then plan the review by logical segments, in every mode. Run `creview segments propose MANUSCRIPT`
-for an attached file (in an audited case, use the case commands in the workflow reference). It
-drafts segments from the headings; when the manuscript was pasted rather than attached, draft them
-yourself from its headings. Refine them so each holds one theme (overlap is allowed where a
-theme spans parts), tag each with the confirmed profiles' monitoring areas, and set its tier:
-`light`, `medium`, or `high` scrutiny. Show the reviewer the segment titles, themes, and tiers in
-one short list; this plan names where you will look, never what you expect to find.
+Then plan the review by logical segments, in every mode. Run `creview segments propose MANUSCRIPT
+--profile NAME --confirmation "THEIR WORDS"` (or `--no-profile`) for an attached file, quoting the
+reviewer's reply (in an audited case, use the case commands in the workflow reference). It drafts
+segments from the headings; when the manuscript was pasted rather than attached, draft them yourself
+from its headings. Refine them so each holds one theme (overlap is allowed where a theme spans
+parts), tag each with the confirmed profiles' monitoring areas, and set its tier: `light`, `medium`,
+or `high` scrutiny. Show the reviewer the segment titles, themes, and tiers in one short list; this
+plan names where you will look, never what you expect to find.
 
 Read the supplied manuscript as a whole, but reveal candidates adaptively:
 
@@ -53,8 +58,11 @@ Read the supplied manuscript as a whole, but reveal candidates adaptively:
   guide what to inspect next, but it is private working context—not a precomputed review queue.
 - Open each candidate with its context (what the authors do in that part), then give its
   manuscript anchor, why it matters, tiered literature context when relevant, and proportionate
-  solution candidates.
-- Ask for the reviewer's view before treating it as an accepted comment.
+  solution candidates. When the point rests on literature you know only from memory or from the
+  manuscript, offer an approved lookup with its exact query (see the development contract).
+- Ask for the reviewer's view before treating it as an accepted comment. If the answer does not
+  arrive (for example, a clarify call comes back unanswered), end the turn with the question;
+  do not decide for the reviewer or move on to the next candidate or step.
 - After every substantive reply, show the revised issue record and compact counts for records already
   surfaced to the reviewer: accepted, developing, candidate, deferred, and dismissed. Never include
   undisclosed possibilities in those counts. Report whole-manuscript progress separately by
@@ -96,6 +104,19 @@ fallback. After writing the files, run the returned `finalize_command` once; it 
 `receipt.json` beside them. Tell the user the receipt exists. It is self-reported: it records the
 creview build, model settings, and hashes of the exported text, but it does not prove that no other
 AI tool was used. Never edit the receipt; if the files change, run `finalize_command` again.
+
+## Literature lookups
+
+Web and browser tools are never used. The only outbound search is an individually approved
+Crossref or OpenAlex query run by creview: `creview lookup request --provider crossref|openalex
+--query "..."` (add the CASE id first in an audited review), show the reviewer the exact query and
+URL, wait for their approval, then `creview lookup run REQUEST_ID --approval-statement "..."` with
+their words. With the initial summary, tell the reviewer once that you can propose such lookups
+and that they can ask for one at any time. Then propose one whenever literature would settle or
+sharpen a point; the reviewer decides.
+
+A lookup returns bibliographic records only. creview cannot fetch a web page, an abstract, or a full
+text, so never offer to; when what a source says matters, ask the reviewer to supply the source.
 
 ## Mechanical reference check
 

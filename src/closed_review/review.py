@@ -671,9 +671,8 @@ def next_item(case_id: str) -> dict[str, Any]:
             "checklist_updates": [],
             "findings": [],
         }
+        # Not written here: Hermes's write_file refuses to overwrite a file the agent has not read.
         proposal_path = root / "proposals" / f"{item['id']}.json"
-        if not proposal_path.exists():
-            atomic_write_json(proposal_path, proposal)
 
         if item["kind"] in {"source", "segment"}:
             content = _unit_content(case_id, item)
@@ -694,10 +693,11 @@ def next_item(case_id: str) -> dict[str, Any]:
             "batch": batch,
             "task": task,
             "proposal_path": str(proposal_path),
+            "proposal_template": proposal,
             "instructions": (
-                "Review this item, edit only the proposal fields, then run "
-                "creview finding submit CASE PROPOSAL_PATH. When the returned active_batch is "
-                "null, stop this invocation and report the checkpoint."
+                "Review this item, fill in only the fields of proposal_template, write it to "
+                "proposal_path, then run creview finding submit CASE PROPOSAL_PATH. When the "
+                "returned active_batch is null, stop this invocation and report the checkpoint."
             ),
         }
 

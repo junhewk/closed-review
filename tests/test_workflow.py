@@ -111,7 +111,8 @@ def test_complete_review_and_export(isolated_env) -> None:
             start_batch(case_id)
         issued = next_item(case_id)
         proposal_path = Path(issued["proposal_path"])
-        proposal = json.loads(proposal_path.read_text())
+        assert not proposal_path.exists()  # Hermes refuses to overwrite files it has not read
+        proposal = issued["proposal_template"]
         proposal["task_status"] = "reviewed"
         if issued["task"]["kind"] in {"source", "segment"} and not added:
             segment = issued["task"]["content"][1]
@@ -198,7 +199,7 @@ def test_finding_quote_must_be_verbatim(isolated_env) -> None:
     start_batch(case_id)
     issued = next_item(case_id)
     proposal_path = Path(issued["proposal_path"])
-    proposal = json.loads(proposal_path.read_text())
+    proposal = issued["proposal_template"]
     proposal["task_status"] = "reviewed"
     segment = issued["task"]["content"][1]
     proposal["findings"] = [
@@ -230,7 +231,7 @@ def test_candidate_requires_reviewer_development_before_compilation(isolated_env
     start_batch(case_id)
     issued = next_item(case_id)
     proposal_path = Path(issued["proposal_path"])
-    proposal = json.loads(proposal_path.read_text())
+    proposal = issued["proposal_template"]
     proposal["task_status"] = "reviewed"
     segment = issued["task"]["content"][1]
     proposal["findings"] = [
@@ -319,7 +320,7 @@ def test_review_requires_and_completes_bounded_phase_batch(isolated_env) -> None
     assert len(batch["batch"]["task_ids"]) == 1
     issued = next_item(case_id)
     proposal_path = Path(issued["proposal_path"])
-    proposal = json.loads(proposal_path.read_text())
+    proposal = issued["proposal_template"]
     proposal["task_status"] = "reviewed"
     proposal_path.write_text(json.dumps(proposal))
     submitted = submit_findings(case_id, proposal_path)
@@ -378,7 +379,7 @@ def test_hermes_session_boundary_blocks_intake_and_consecutive_batches(
     start_batch(case_id)
     issued = next_item(case_id)
     proposal_path = Path(issued["proposal_path"])
-    proposal = json.loads(proposal_path.read_text())
+    proposal = issued["proposal_template"]
     proposal["task_status"] = "reviewed"
     proposal_path.write_text(json.dumps(proposal))
     submit_findings(case_id, proposal_path)

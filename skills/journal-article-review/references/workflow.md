@@ -33,7 +33,9 @@ creview review next CASE
 creview finding submit CASE PROPOSAL_PATH
 ```
 
-Coverage and rubric tasks are internal discovery prompts, not final review items. A submitted
+`review next` returns a `proposal_template` and a `proposal_path` it has not created: write the
+filled-in template there as a new file. Coverage and rubric tasks are internal discovery prompts,
+not final review items. A submitted
 finding begins as `candidate`. Ground it in a verbatim source quote and include the potential issue,
 why it matters, audience, verification status, literature evidence tiers when relevant, and
 solution candidates.

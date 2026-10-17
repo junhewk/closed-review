@@ -71,11 +71,10 @@ distinction visible in every candidate.
 
 ## When the argument uses the authors' own data
 
-Load the empirical profile for the data (`qualitative`, or the general rubric's quantitative section
-for surveys and other quantitative designs). The empirical profile judges the data; the sections
-above judge the argument; this section judges how the two are joined. A paper that only describes
-what people think and draws no normative conclusion is descriptive ethics: use the empirical profile
-alone and check only that its conclusions stay descriptive.
+Load the empirical profile for the data (`qualitative` or `quantitative`). The empirical profile
+judges the data; the sections above judge the argument; this section judges how the two are joined.
+A paper that only describes what people think and draws no normative conclusion is descriptive
+ethics: use the empirical profile alone and check only that its conclusions stay descriptive.
 
 ### Aim
 - Signals: aims stated descriptively while conclusions are normative, or the reverse; unclear whether
@@ -104,6 +103,22 @@ alone and check only that its conclusions stay descriptive.
 ### Team and reflexivity
 - Signals: the researchers' normative commitments shaping questions, sampling, or interpretation
   without acknowledgment; expertise on only one side of the empirical-normative divide.
+
+## Major flaws
+
+Major when the quoted evidence shows them (see the index).
+
+- **missing-premise**: the main conclusion does not follow without a premise the paper never states.
+- **equivocation**: a central term shifts meaning between premises that the argument joins.
+- **weak-objection**: the strongest objection to the thesis is missing, or answered only in a weaker
+  form than the one that bears on the conclusion.
+- **empirical-premise**: the normative conclusion rests on an empirical premise stronger than its
+  evidence or sources.
+- **unargued-recommendation**: recommendations or obligations need premises about feasibility,
+  institutions, consequences, or the weighing of competing reasons that the paper never defends.
+- **undefended-theory**: the conclusion depends on a choice of theory that is never defended.
+- **data-to-norm**: with the authors' own data: a normative conclusion drawn from the data needs
+  premises the paper never states, such as a majority view treated as the right answer.
 
 ## Common false alarms
 
