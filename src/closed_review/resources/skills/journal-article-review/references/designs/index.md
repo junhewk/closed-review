@@ -13,7 +13,7 @@ The general rubric is [../review-rubric.md](../review-rubric.md). It has three p
 - **Article-type emphasis** gives one short paragraph each for quantitative, qualitative,
   mixed-methods, systematic or scoping review, and theoretical or humanities work. A confirmed
   profile replaces the matching paragraph. The others remain in use for designs that have no profile,
-  most often quantitative studies.
+  most often mixed-methods work.
 - **Candidate quality** sets the standard every candidate must meet, with or without a profile.
 
 "The general rubric alone" means the shared questions and the one article-type paragraph that fits,
@@ -32,6 +32,7 @@ profile for the design actually performed and note the mismatch.
 | Profile | Use for |
 |---|---|
 | [qualitative](qualitative.md) | Interview, focus group, observation, or document studies analyzed qualitatively |
+| [quantitative](quantitative.md) | Surveys, vignette studies, observational studies of records or practice, trials of ethics interventions, and prediction-model studies |
 | [systematic-review](systematic-review.md) | Systematic reviews and meta-analyses, qualitative evidence syntheses, reviews of reasons or normative literature |
 | [scoping-review](scoping-review.md) | Scoping reviews and evidence or concept maps |
 | [normative-argument](normative-argument.md) | Philosophical, bioethical, or conceptual arguments, including the normative part of empirical bioethics |
@@ -41,8 +42,8 @@ Profiles combine. Load each profile whose kind of work the manuscript contains:
 
 - Empirical bioethics with interview or other qualitative data: `qualitative` and
   `normative-argument`. Its section on the authors' own data covers how the two are joined.
-- Empirical bioethics with a survey or other quantitative data: `normative-argument`, with the
-  general rubric's quantitative paragraph for the data.
+- Empirical bioethics with a survey or other quantitative data: `quantitative` and
+  `normative-argument`.
 - Descriptive ethics (what people think, with no normative conclusion): the empirical profile or
   paragraph alone.
 - Law-reform proposal: `legal-analysis` and `normative-argument`.
@@ -53,6 +54,10 @@ Profiles combine. Load each profile whose kind of work the manuscript contains:
 - Tag each logical segment with the monitoring areas it covers, and report progress by segment
   as neutral coverage (`monitored`, `remaining to inspect`). Never turn areas or segments into a
   count of findings or announce what may be wrong where you have not looked yet.
+- "Major flaws" lists the signals that are major in that design, beside the general rubric's
+  "Major flaws in any design". They bear on whether the main conclusions stand. An entry is an
+  instance only when its quoted evidence shows the flaw: the list is a checklist for judging
+  severity, not a source of candidates.
 - Check the "Common false alarms" section before surfacing a candidate. If the concern matches one,
   drop it or reframe it as the profile describes.
 - Guidelines and methods sources named in a profile are pointers for the reviewer. In a candidate,

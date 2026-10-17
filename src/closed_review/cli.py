@@ -55,16 +55,17 @@ from .scan import (
     next_candidate,
     next_task,
     purge_scan,
+    record_response,
     scan_status,
-    screen,
     set_overview,
     set_plan,
     start_scan,
     submit_task,
+    sweep,
     synthesize,
 )
 from .segments import draft_plan
-from .session import start_session
+from .session import confirm_profiles, start_session
 from .settings import set_gateway, trusted_gateway
 
 
@@ -200,18 +201,22 @@ def build_parser() -> argparse.ArgumentParser:
 
     lookup = commands.add_parser("lookup", help="Manage individually approved scholarly queries")
     lookup_commands = lookup.add_subparsers(dest="lookup_command", required=True)
+    # CASE is given in an audited review; otherwise lookups belong to the checked Hermes session.
     lookup_request = lookup_commands.add_parser("request")
-    lookup_request.add_argument("case_id")
+    lookup_request.add_argument("case_id", nargs="?")
     lookup_request.add_argument("--provider", choices=["crossref", "openalex"], required=True)
     lookup_request.add_argument("--query", required=True)
+    lookup_request.add_argument("--session")
     lookup_run = lookup_commands.add_parser("run")
-    lookup_run.add_argument("case_id")
+    lookup_run.add_argument("case_id", nargs="?")
     lookup_run.add_argument("request_id")
     lookup_run.add_argument("--approval-statement")
     lookup_run.add_argument("--approval-file", type=Path)
+    lookup_run.add_argument("--session")
     lookup_show = lookup_commands.add_parser("show")
-    lookup_show.add_argument("case_id")
+    lookup_show.add_argument("case_id", nargs="?")
     lookup_show.add_argument("request_id")
+    lookup_show.add_argument("--session")
 
     references = commands.add_parser(
         "references", help="Run an explicitly requested mechanical reference check"
@@ -242,6 +247,13 @@ def build_parser() -> argparse.ArgumentParser:
     segments_propose.add_argument("manuscript", nargs="?", type=Path)
     segments_propose.add_argument("--supplement", action="append", default=[])
     segments_propose.add_argument("--case")
+    segments_propose.add_argument(
+        "--profile", action="append", default=[], help="a design profile the reviewer confirmed"
+    )
+    segments_propose.add_argument("--no-profile", action="store_true")
+    segments_propose.add_argument("--confirmation", help="the reviewer's words confirming them")
+    segments_propose.add_argument("--confirmation-file", type=Path)
+    segments_propose.add_argument("--session")
     segments_set = segment_commands.add_parser("set", help="store a refined plan for a case")
     segments_set.add_argument("--case", required=True)
     segments_set.add_argument("plan", type=Path)
@@ -252,20 +264,42 @@ def build_parser() -> argparse.ArgumentParser:
     scan_start.add_argument("manuscript", type=Path)
     scan_start.add_argument("--supplement", action="append", default=[])
     scan_start.add_argument("--session")
+    scan_start.add_argument(
+        "--profile", action="append", default=[], help="a design profile the reviewer confirmed"
+    )
+    scan_start.add_argument(
+        "--no-profile", action="store_true", help="the reviewer confirmed that no profile fits"
+    )
+    scan_start.add_argument("--confirmation", help="the reviewer's words confirming the profiles")
+    scan_start.add_argument("--confirmation-file", type=Path)
     scan_plan = scan_commands.add_parser("plan")
     scan_plan.add_argument("scan_id")
     scan_plan.add_argument("plan", type=Path)
-    for name in ("next", "synthesize", "candidate", "status"):
+    scan_plan.add_argument("--confirmation", help="the reviewer's words confirming the tiers")
+    scan_plan.add_argument("--confirmation-file", type=Path)
+    for name in ("next", "synthesize", "status"):
         scan_commands.add_parser(name).add_argument("scan_id")
+    scan_candidate = scan_commands.add_parser("candidate")
+    scan_candidate.add_argument("scan_id")
+    scan_candidate.add_argument(
+        "--reserve", action="store_true", help="only when the reviewer asks for further minors"
+    )
     scan_submit = scan_commands.add_parser("submit")
     scan_submit.add_argument("scan_id")
     scan_submit.add_argument("proposal", type=Path)
-    scan_screen = scan_commands.add_parser("screen")
-    scan_screen.add_argument("scan_id")
-    scan_screen.add_argument("screening", type=Path)
+    scan_sweep = scan_commands.add_parser("sweep")
+    scan_sweep.add_argument("scan_id")
+    scan_sweep.add_argument("sweep", type=Path)
     scan_overview = scan_commands.add_parser("overview")
     scan_overview.add_argument("scan_id")
     scan_overview.add_argument("overview", type=Path)
+    scan_record = scan_commands.add_parser("record")
+    scan_record.add_argument("scan_id")
+    scan_record.add_argument("pool_id")
+    scan_record.add_argument("disposition")
+    scan_record.add_argument(
+        "--words", required=True, help="the reviewer's reply, quoted from their message"
+    )
     scan_purge = scan_commands.add_parser("purge")
     scan_purge.add_argument("scan_id")
     scan_purge.add_argument("--confirm", required=True)
@@ -404,18 +438,20 @@ def dispatch(args: argparse.Namespace) -> Any:
         require_review_access(args.case_id)
         return export_review(args.case_id, args.out)
     if args.command == "lookup":
-        require_review_access(args.case_id)
+        if args.case_id:
+            require_review_access(args.case_id)
         if args.lookup_command == "request":
-            return create_lookup(args.case_id, args.provider, args.query)
+            return create_lookup(args.case_id, args.provider, args.query, session=args.session)
         if args.lookup_command == "run":
             return run_lookup(
                 args.case_id,
                 args.request_id,
                 approval_statement=args.approval_statement,
                 approval_file=args.approval_file,
+                session=args.session,
             )
         if args.lookup_command == "show":
-            return show_lookup(args.case_id, args.request_id)
+            return show_lookup(args.case_id, args.request_id, session=args.session)
     if args.command == "references":
         if args.reference_command == "check":
             if args.case:
@@ -441,10 +477,21 @@ def dispatch(args: argparse.Namespace) -> Any:
                 return propose_case_plan(args.case)
             if not args.manuscript:
                 raise ReviewError("give a manuscript file or --case CASE")
+            if not args.profile and not args.no_profile:
+                raise ReviewError(
+                    "propose the design profiles to the reviewer and wait for their reply first; "
+                    "then run this with --profile NAME (or --no-profile) and --confirmation "
+                    '"THEIR WORDS"'
+                )
+            confirmed = confirm_profiles(
+                [] if args.no_profile else args.profile,
+                read_statement(args.confirmation, args.confirmation_file),
+                args.session,
+            )
             files = [("manuscript", args.manuscript)] + [
                 (f"supplement-{i}", Path(p)) for i, p in enumerate(args.supplement, start=1)
             ]
-            return draft_plan(
+            return confirmed | draft_plan(
                 [
                     {"source_id": sid, "segments": parse_document(path).segments}
                     for sid, path in files
@@ -455,23 +502,39 @@ def dispatch(args: argparse.Namespace) -> Any:
     if args.command == "scan":
         command = args.scan_command
         if command == "start":
-            return start_scan(args.manuscript, _paths(args.supplement), args.session)
+            if not args.profile and not args.no_profile:
+                raise ReviewError(
+                    "name the confirmed design profiles with --profile, or pass --no-profile"
+                )
+            return start_scan(
+                args.manuscript,
+                _paths(args.supplement),
+                args.session,
+                profiles=args.profile,
+                confirmation=read_statement(args.confirmation, args.confirmation_file),
+            )
         if command == "plan":
-            return set_plan(args.scan_id, args.plan)
+            return set_plan(
+                args.scan_id,
+                args.plan,
+                read_statement(args.confirmation, args.confirmation_file) or None,
+            )
         if command == "next":
             return next_task(args.scan_id)
         if command == "submit":
             return submit_task(args.scan_id, args.proposal)
         if command == "synthesize":
             return synthesize(args.scan_id)
-        if command == "screen":
-            return screen(args.scan_id, args.screening)
+        if command == "sweep":
+            return sweep(args.scan_id, args.sweep)
         if command == "overview":
             return set_overview(args.scan_id, args.overview)
         if command == "candidate":
-            return next_candidate(args.scan_id)
+            return next_candidate(args.scan_id, reserve=args.reserve)
         if command == "status":
             return scan_status(args.scan_id)
+        if command == "record":
+            return record_response(args.scan_id, args.pool_id, args.disposition, args.words)
         if command == "purge":
             return purge_scan(args.scan_id, args.confirm)
     if args.command == "config":

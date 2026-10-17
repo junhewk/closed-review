@@ -19,7 +19,8 @@ from .errors import ReviewError
 
 TIERS = ("light", "medium", "high")
 TIER_PASSES = {"light": 1, "medium": 2, "high": 3}
-SEGMENT_ID_RE = re.compile(r"^ls-[0-9]{2,3}$")
+# Any short slug: ids name task and proposal files, so no path separators or dots.
+SEGMENT_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$")
 MIN_DRAFT_CHARS = 1_500
 LARGE_SEGMENT_CHARS = 24_000
 
@@ -265,7 +266,9 @@ def validate_plan(plan: Any, sources: list[dict[str, Any]]) -> dict[str, Any]:
             raise ReviewError(f"segment {index} must be an object")
         segment_id = str(raw.get("id") or "").strip()
         if not SEGMENT_ID_RE.fullmatch(segment_id) or segment_id in seen_ids:
-            raise ReviewError(f"segment {index} needs a unique id like ls-01")
+            raise ReviewError(
+                f"segment {index} needs a unique id of letters, digits, '-' or '_', like ls-01"
+            )
         seen_ids.add(segment_id)
         title = str(raw.get("title") or "").strip()
         if not title:

@@ -63,6 +63,8 @@ def test_install_is_dry_run_and_doctor_checks_current_profile(isolated_env, monk
     monkeypatch.setattr(hermes.httpx, "get", lambda *args, **kwargs: FakeResponse())
     report = hermes.inspect_profile("reviewer")
     assert report["ready"]
+    assert report["profile"] == "reviewer"
+    assert report["gateway"]["checked"]
     assert report["skill_privacy_block"] == "match"
     assert report["skill_changes"] == []
     assert report["privacy_boundary"] == "instructional_shell_guardrail"
@@ -400,6 +402,19 @@ def test_named_session_uses_effective_hermes_home(isolated_env, monkeypatch) -> 
     assert report["profile_root"] == str(active_home)
 
 
+def test_profile_flag_session_is_named_after_its_profile_home(isolated_env, monkeypatch) -> None:
+    # `hermes -p reviewer` sets HERMES_HOME to the profile directory and no profile variable.
+    profile = make_profile(isolated_env)
+    hermes.install_skill("reviewer", apply=True)
+    monkeypatch.setenv("HERMES_HOME", str(profile))
+
+    report = hermes.inspect_profile(None, live=False)
+
+    assert report["ready"]
+    assert report["profile"] == "reviewer"
+    assert report["profile_root"] == str(profile)
+
+
 def test_packaged_skill_includes_nested_reference_files() -> None:
     files = hermes._skill_files()
     assert "references/designs/index.md" in files
@@ -660,3 +675,12 @@ def test_install_refuses_when_an_external_checkout_provides_the_skill(isolated_e
     with pytest.raises(ReviewError, match="external directory"):
         hermes.install_skill("reviewer")
     assert not (profile / "skills" / "journal-article-review").exists()
+
+
+def test_doctor_requires_readable_session_messages(isolated_env) -> None:
+    profile = make_profile(isolated_env)
+    hermes.install_skill("reviewer", apply=True)
+    (profile / "state.db").write_bytes(b"not a database")
+    report = hermes.inspect_profile("reviewer", live=False)
+    assert not report["ready"]
+    assert problems_mention(report, "cannot read session messages")

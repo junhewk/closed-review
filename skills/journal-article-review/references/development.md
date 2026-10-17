@@ -3,21 +3,23 @@
 Use this record shape in both direct and audited reviews. It is a conversation aid, not a rigid
 journal template.
 
-## Article overview
+## Initial summary
 
-Before the first candidate, orient the reviewer in three short parts:
+Before the first candidate, give the reviewer a faithful initial summary of the article as the
+authors present it, in three short parts. It is not a preliminary review.
 
 1. **Summary** — what the article asks, what it does, and what it concludes, in a short paragraph.
 2. **Analysis** — the design; the data, sample, or sources; the analytic methods; and the
    theoretical models, frameworks, or ethical theories the analysis uses, as the authors describe
    them. Name what the authors name; where they leave something unstated, say so neutrally.
-3. **Considerations** — at most five open questions about the article as a whole for the reviewer
-   to weigh: its contribution and place in the field, the scope of its conclusions, frameworks or
-   guidance it could engage, and context such as ethics, setting, or applicability.
+3. **Special considerations** — at most five things the authors themselves single out: the scope
+   they set, limitations they acknowledge, ethical approvals or issues they raise, the context they
+   flag, or a choice they justify. State each as the authors do and quote their words.
 
-The overview describes; it does not evaluate. Considerations are questions, not candidates: give
-them no severity or evidence, do not preview or restate a candidate, and do not count them as
-review items. Literature named in the overview follows the labels below.
+The summary describes; it does not evaluate, and it raises no concern of its own. In a deep review
+creview enforces this order and the quotes: the summary is stored before any pass, so it cannot draw
+on the scan's candidates, and each consideration must quote the manuscript verbatim. In the default
+review the same rules are guidance only. Literature named in the summary follows the labels below.
 
 ## Candidate presentation
 
@@ -44,6 +46,22 @@ For each candidate show:
    the concern.
 6. **Question for the reviewer** — ask what they accept, reject, qualify, or want investigated.
 
+**Offering a lookup.** When a point's significance rests on literature you know only as
+`model_lead` or `manuscript_reported` (what a named source argues or recommends, whether prior work
+or a reporting guideline exists, how a method is normally done), offer the reviewer an approved
+scholarly lookup in its literature context. Name the provider (Crossref or OpenAlex) and the exact
+query you would send, built only from public bibliographic terms or general topic words (author
+names, titles and years of published works, guideline or method names), never manuscript text, its
+title, its specific claims, or review findings. Run it only after the reviewer approves that exact
+query: `creview lookup request`, show the URL, then `creview lookup run` with their approval. A
+result confirms that a work exists and what it is, not what it argues. creview cannot fetch pages
+or full texts, so do not offer to; ask the reviewer to supply the source when its content matters. Offer a lookup only where the point depends on literature, and never use web or
+browser tools instead.
+
+These labels apply wherever a named source appears: in the overview, literature context, why it
+matters, solution candidates, and later replies. Saying what a source argues, recommends, or warns
+against, without the reviewer having supplied or checked it, is `model_lead`, and must say so.
+
 Never invent bibliographic details. A Crossref or OpenAlex match proves identity, not what an article
 argues. Ask for the source itself when claim-level verification matters.
 
@@ -62,11 +80,14 @@ Use these dispositions:
 - `deferred`: intentionally held outside the current compiled review.
 - `dismissed`: considered and rejected.
 
-After the update, show compact status counts for surfaced records only. Separately show monitoring
+After the update, show compact status counts for surfaced records only, always all five
+(accepted, developing, candidate, deferred, dismissed), including zeros. Separately show monitoring
 progress by logical segment, using neutral coverage language such as `monitored` and `remaining to
 inspect`; do not call an unpresented possibility a candidate. Do not move to the next major issue
 until the current one has a disposition. A related minor batch may receive a shared response, but each item keeps its own
-record.
+record. Apply a shared response only when it clearly covers every item: if it names fewer items
+than the batch holds (such as "accept both" for three), or it is unclear which items it covers,
+ask about the rest instead of choosing for the reviewer.
 
 ## Compilation
 

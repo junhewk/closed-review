@@ -271,7 +271,7 @@ wheels = [
 
 [[package]]
 name = "closed-review"
-version = "0.9.0.dev4"
+version = "0.9.0.dev5"
 source = { editable = "." }
 dependencies = [
     { name = "defusedxml" },

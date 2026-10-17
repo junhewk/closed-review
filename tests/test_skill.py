@@ -47,6 +47,7 @@ DESIGNS = Path("skills/journal-article-review/references/designs")
 PROFILE_SECTIONS = [
     "## Recognize",
     "## Where it usually breaks",
+    "## Major flaws",
     "## Common false alarms",
     "## Monitoring areas",
 ]
@@ -99,10 +100,11 @@ def test_logical_segments_and_deep_review_are_in_the_skill() -> None:
         "scan next",
         "scan submit",
         "scan synthesize",
-        "scan screen",
+        "scan sweep",
         "scan candidate",
+        "scan record",
         "scan purge",
     ):
         assert f"creview {command}" in deep, command
-    assert "never show it, list it, or count it to the reviewer" in deep
-    assert "Do not tell the reviewer how many\nremain" in deep
+    assert "never show it, list it, or count it to the reviewer" in " ".join(deep.split())
+    assert "Do not tell the reviewer how many remain" in " ".join(deep.split())

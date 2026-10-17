@@ -4,6 +4,7 @@ import difflib
 import json
 import os
 import shutil
+import sqlite3
 import subprocess
 import tempfile
 from datetime import UTC, datetime
@@ -64,7 +65,14 @@ def hermes_home() -> Path:
 
 
 def selected_profile(explicit: str | None) -> str:
-    profile = (explicit or os.environ.get("HERMES_SESSION_PROFILE") or "default").strip()
+    profile = explicit or os.environ.get("HERMES_SESSION_PROFILE")
+    override = os.environ.get("HERMES_HOME")
+    if not profile and override:
+        # `hermes -p NAME` sets HERMES_HOME to <home>/profiles/NAME but no profile variable.
+        home = Path(override).expanduser()
+        if home.parent.name == "profiles":
+            profile = home.name
+    profile = (profile or "default").strip()
     if "/" in profile or "\\" in profile or profile in {".", ".."}:
         raise ReviewError("invalid Hermes profile name")
     return profile
@@ -537,6 +545,36 @@ def _load_config(config_path: Path) -> tuple[dict[str, Any], list[str]]:
     return config, []
 
 
+def agent_max_turns(profile: str | None = None) -> int | None:
+    """The tool-call budget Hermes gives one turn, when the profile sets it."""
+    config, _ = _load_config(profile_root(profile) / "config.yaml")
+    agent = config.get("agent")
+    raw = agent.get("max_turns") if isinstance(agent, dict) else None
+    if raw is None:
+        raw = config.get("max_turns")
+    try:
+        value = int(raw)
+    except (TypeError, ValueError):
+        return None
+    return value if value > 0 else None
+
+
+def _transcript_problem(root: Path) -> str | None:
+    """creview checks reviewer confirmations against the session's messages in `state.db`."""
+    path = root / "state.db"
+    if not path.is_file():
+        return None  # Hermes creates it with the first session
+    try:
+        with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as db:
+            db.execute("SELECT session_id, role, content, timestamp FROM messages LIMIT 0")
+    except sqlite3.Error as exc:
+        return (
+            f"cannot read session messages from {path} ({exc}); creview checks the reviewer's "
+            "confirmations against them, so this Hermes version is not supported"
+        )
+    return None
+
+
 def inspect_profile(
     profile: str | None, *, live: bool = True, timeout: float = 3.0
 ) -> dict[str, Any]:
@@ -623,6 +661,9 @@ def inspect_profile(
                 "`creview hermes skill-diff`, then run `creview hermes skill-restore --apply`"
             )
     problems.extend(assert_private_store())
+    transcript_problem = _transcript_problem(root)
+    if transcript_problem:
+        problems.append(transcript_problem)
 
     gateway: dict[str, Any] = {"checked": False}
     if live and endpoint_matches and model in allowed_models:
@@ -640,9 +681,9 @@ def inspect_profile(
                 for route in route_report["routes"]
                 if route["ok"] and route["model"] and route["target"] in {"trusted", "main"}
             }
-            for name in sorted({model, *routed}):
-                if name not in ids:
-                    problems.append(f"trusted gateway does not advertise {name}")
+            for model_name in sorted({model, *routed}):
+                if model_name not in ids:
+                    problems.append(f"trusted gateway does not advertise {model_name}")
         except Exception as exc:
             gateway = {"checked": True, "error": str(exc)}
             problems.append(f"trusted gateway health check failed: {exc}")

@@ -86,12 +86,28 @@ question itself.
   recommend); reason types so coarse or arbitrary that counts mean little; the reviewers' own stance
   shaping coding without acknowledgment.
 - Appraisal: the Strech and Sofaer model deliberately does not appraise reasons; McCullough,
-  Coverdale and Chervenak (2007) propose quality weighting instead. Ask which approach was taken
+  Coverdale and Chervenak (2004) propose quality weighting instead. Ask which approach was taken
   and why. Checking whether factual premises in the reasons are evidence-based is a legitimate way
   to identify gaps.
 - Sources the reviewer may wish to consult: Strech and Sofaer (2012, J Med Ethics 38:121-126);
   Sofaer and Strech (2012, Bioethics) on the need for such reviews; Mertz, Kahrass and Strech (2016)
   on ethics literature synthesis.
+
+## Major flaws
+
+Major when the quoted evidence shows them (see the index).
+
+- **frequency-as-weight**: in a review of reasons, how often a reason is cited is presented or read
+  as its strength, or reasons are weighed or ranked without the separate analysis that would
+  require.
+- **single-review**: single screening or single extraction without justification, or described
+  elsewhere in the paper as independent duplicate review.
+- **undisclosed-deviation**: unexplained changes from the protocol in outcomes, eligibility, or
+  synthesis.
+- **inappropriate-pooling**: pooling across clearly different populations, interventions, or
+  outcomes, or vote counting by significance.
+- **conclusions-beyond-certainty**: conclusions or abstract claims stronger than the certainty of
+  the included evidence.
 
 ## Common false alarms
 
