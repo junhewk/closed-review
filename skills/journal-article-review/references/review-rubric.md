@@ -31,6 +31,9 @@ argument supports) are in each profile's own list.
   is reported as saying what its own quoted text does not say.
 - **research-ethics**: participants' data, samples, or records were collected or used without the
   approval, consent, or waiver the study needs, or before approval was given.
+- **undisclosed-interest**: the paper shows a competing interest (funding, employment, an advisory
+  role, or authorship of evaluated or included work) that its competing-interests statement does not
+  declare, and the conclusions bear on that interest.
 
 ## Article-type emphasis
 

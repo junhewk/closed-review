@@ -96,15 +96,12 @@ def test_logical_segments_and_deep_review_are_in_the_skill() -> None:
     assert "creview segments set --case CASE PLAN_PATH" in workflow
     for command in (
         "scan start",
-        "scan plan",
         "scan next",
         "scan submit",
-        "scan synthesize",
-        "scan sweep",
         "scan candidate",
         "scan record",
         "scan purge",
     ):
         assert f"creview {command}" in deep, command
-    assert "never show it, list it, or count it to the reviewer" in " ".join(deep.split())
+    assert "never show them, list them, or count them to the reviewer" in " ".join(deep.split())
     assert "Do not tell the reviewer how many remain" in " ".join(deep.split())

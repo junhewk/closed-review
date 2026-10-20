@@ -17,8 +17,8 @@ authors present it, in three short parts. It is not a preliminary review.
    flag, or a choice they justify. State each as the authors do and quote their words.
 
 The summary describes; it does not evaluate, and it raises no concern of its own. In a deep review
-creview enforces this order and the quotes: the summary is stored before any pass, so it cannot draw
-on the scan's candidates, and each consideration must quote the manuscript verbatim. In the default
+creview enforces this order and the quotes: the summary is stored before any read, so it cannot draw
+on the scan's findings, and each consideration must quote the manuscript verbatim. In the default
 review the same rules are guidance only. Literature named in the summary follows the labels below.
 
 ## Candidate presentation

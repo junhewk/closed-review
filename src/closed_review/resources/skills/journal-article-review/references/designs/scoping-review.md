@@ -71,6 +71,9 @@ Major when the quoted evidence shows them (see the index).
   recommendations presented as if the review graded evidence.
 - **single-review**: single screening or single charting without justification, or described
   elsewhere in the paper as independent duplicate review.
+- **double-counting**: two or more included sources are reports of the same study, trial, or
+  sample (the same registration, cohort, or participants), counted as separate sources in a count,
+  proportion, or claim about how much evidence exists.
 
 ## Common false alarms
 

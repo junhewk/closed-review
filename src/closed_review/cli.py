@@ -56,13 +56,10 @@ from .scan import (
     next_task,
     purge_scan,
     record_response,
+    replaced,
     scan_status,
-    set_overview,
-    set_plan,
     start_scan,
     submit_task,
-    sweep,
-    synthesize,
 )
 from .segments import draft_plan
 from .session import confirm_profiles, start_session
@@ -258,7 +255,7 @@ def build_parser() -> argparse.ArgumentParser:
     segments_set.add_argument("--case", required=True)
     segments_set.add_argument("plan", type=Path)
 
-    scan = commands.add_parser("scan", help="Run a deep, segment-by-segment private scan")
+    scan = commands.add_parser("scan", help="Run a deep, part-by-part private scan")
     scan_commands = scan.add_subparsers(dest="scan_command", required=True)
     scan_start = scan_commands.add_parser("start")
     scan_start.add_argument("manuscript", type=Path)
@@ -272,13 +269,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     scan_start.add_argument("--confirmation", help="the reviewer's words confirming the profiles")
     scan_start.add_argument("--confirmation-file", type=Path)
-    scan_plan = scan_commands.add_parser("plan")
-    scan_plan.add_argument("scan_id")
-    scan_plan.add_argument("plan", type=Path)
-    scan_plan.add_argument("--confirmation", help="the reviewer's words confirming the tiers")
-    scan_plan.add_argument("--confirmation-file", type=Path)
-    for name in ("next", "synthesize", "status"):
+    for name in ("next", "status"):
         scan_commands.add_parser(name).add_argument("scan_id")
+    # The earlier deep scan's steps, which say what replaced them.
+    for name in ("plan", "overview", "synthesize", "sweep"):
+        old = scan_commands.add_parser(name, help=argparse.SUPPRESS)
+        old.add_argument("rest", nargs=argparse.REMAINDER)
     scan_candidate = scan_commands.add_parser("candidate")
     scan_candidate.add_argument("scan_id")
     scan_candidate.add_argument(
@@ -286,20 +282,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     scan_submit = scan_commands.add_parser("submit")
     scan_submit.add_argument("scan_id")
-    scan_submit.add_argument("proposal", type=Path)
-    scan_sweep = scan_commands.add_parser("sweep")
-    scan_sweep.add_argument("scan_id")
-    scan_sweep.add_argument("sweep", type=Path)
-    scan_overview = scan_commands.add_parser("overview")
-    scan_overview.add_argument("scan_id")
-    scan_overview.add_argument("overview", type=Path)
+    scan_submit.add_argument("answer", type=Path)
     scan_record = scan_commands.add_parser("record")
     scan_record.add_argument("scan_id")
-    scan_record.add_argument("pool_id")
+    scan_record.add_argument("finding_id")
     scan_record.add_argument("disposition")
-    scan_record.add_argument(
-        "--words", required=True, help="the reviewer's reply, quoted from their message"
-    )
+    scan_record.add_argument("--words", help="the reviewer's reply, quoted from their message")
+    scan_record.add_argument("--words-file", type=Path)
     scan_purge = scan_commands.add_parser("purge")
     scan_purge.add_argument("scan_id")
     scan_purge.add_argument("--confirm", required=True)
@@ -513,28 +502,19 @@ def dispatch(args: argparse.Namespace) -> Any:
                 profiles=args.profile,
                 confirmation=read_statement(args.confirmation, args.confirmation_file),
             )
-        if command == "plan":
-            return set_plan(
-                args.scan_id,
-                args.plan,
-                read_statement(args.confirmation, args.confirmation_file) or None,
-            )
+        if command in ("plan", "overview", "synthesize", "sweep"):
+            return replaced(command)
         if command == "next":
             return next_task(args.scan_id)
         if command == "submit":
-            return submit_task(args.scan_id, args.proposal)
-        if command == "synthesize":
-            return synthesize(args.scan_id)
-        if command == "sweep":
-            return sweep(args.scan_id, args.sweep)
-        if command == "overview":
-            return set_overview(args.scan_id, args.overview)
+            return submit_task(args.scan_id, args.answer)
         if command == "candidate":
             return next_candidate(args.scan_id, reserve=args.reserve)
         if command == "status":
             return scan_status(args.scan_id)
         if command == "record":
-            return record_response(args.scan_id, args.pool_id, args.disposition, args.words)
+            words = read_statement(args.words, args.words_file)
+            return record_response(args.scan_id, args.finding_id, args.disposition, words)
         if command == "purge":
             return purge_scan(args.scan_id, args.confirm)
     if args.command == "config":
