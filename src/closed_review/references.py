@@ -27,9 +27,7 @@ REFERENCE_HEADING = re.compile(r"\b(?:references|bibliography|literature cited)\
 DOI = re.compile(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", re.I)
 YEAR = re.compile(r"(?:19|20)\d{2}[a-z]?")
 SURNAME = r"[A-Z][A-Za-zÀ-ÖØ-öø-ÿ'’\-]+"
-NARRATIVE_CITATION = re.compile(
-    rf"\b({SURNAME})(?:\s+et\s+al\.)?\s*\(({YEAR.pattern})\)"
-)
+NARRATIVE_CITATION = re.compile(rf"\b({SURNAME})(?:\s+et\s+al\.)?\s*\(({YEAR.pattern})\)")
 AUTHOR_YEAR_REFERENCE = re.compile(
     rf"({SURNAME}),\s+(?:[A-Z]\.\s*)+.{{0,500}}?\(({YEAR.pattern})\)\.", re.S
 )
@@ -55,9 +53,7 @@ def _without_dense_line_numbers(value: str) -> tuple[str, bool]:
     return pattern.sub(" ", value), True
 
 
-def _repair_split_authors(
-    value: str, entries: list[dict[str, Any]]
-) -> tuple[str, int]:
+def _repair_split_authors(value: str, entries: list[dict[str, Any]]) -> tuple[str, int]:
     repaired = value
     repair_count = 0
     authors = sorted(
@@ -490,9 +486,7 @@ def request_reference_metadata(check_id: str, provider: str) -> dict[str, Any]:
     queries = []
     for entry in report["entries"]:
         query, url = _metadata_url(provider, entry)
-        queries.append(
-            {"reference_id": entry["reference_id"], "query": query, "url": url}
-        )
+        queries.append({"reference_id": entry["reference_id"], "query": query, "url": url})
     digest = sha256_bytes(json.dumps(queries, sort_keys=True).encode())
     request = {
         "schema_version": "1",
@@ -580,7 +574,7 @@ def run_reference_metadata(
             )
             response.raise_for_status()
             matches = _metadata_items(request["provider"], response.json())
-            expected_doi = ((entries.get(item["reference_id"], {}).get("dois") or [None])[0])
+            expected_doi = (entries.get(item["reference_id"], {}).get("dois") or [None])[0]
             returned_dois = {
                 str(match.get("doi") or "").removeprefix("https://doi.org/").lower()
                 for match in matches

@@ -30,8 +30,8 @@ After reading the manuscript and before the first candidate, give the reviewer t
 summary described in [references/development.md](references/development.md): a faithful account of
 what the article asks, does, and concludes; what its analysis uses (design, data or sources,
 methods, and models or frameworks); and the article's own special considerations, quoted. It is not
-a preliminary review. In a deep review, it is written before the scan's passes and presented just
-before the first candidate.
+a preliminary review. In a deep review, it is written in the scan's orientation, before any read,
+and presented just before the first finding.
 
 Then choose design profiles as described in
 [references/designs/index.md](references/designs/index.md): propose the profiles that fit, with a
@@ -79,9 +79,10 @@ review form. Do not restart the review.
 
 Use a deep review only when the user asks for it, for example with
 `/journal-article-review deep`. Read [references/deep.md](references/deep.md) and follow it. It
-reviews every segment in sequence, several times for high-scrutiny segments, and builds a private
-pool of candidates before the conversation starts. The conversation then follows the development
-loop above, drawing one candidate at a time from the pool.
+reads every part of the manuscript in order, checks the listed major flaws, and sorts what it found
+into concerns before the conversation starts, one task at a time under creview's rules. The
+conversation then follows the development loop above, drawing one finding at a time. In a deep
+review, the scan's orientation replaces the segment plan above.
 
 ## Default: direct conversation
 

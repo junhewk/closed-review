@@ -115,7 +115,7 @@ def build_receipt(
             "sums_sha256": hashlib.sha256(sums.encode("utf-8")).hexdigest(),
         },
         "environment": {
-            "host": "hermes",
+            "host": doctor.get("host", "hermes"),
             "model": doctor.get("model"),
             "endpoint_class": endpoint_class(doctor.get("base_url")),
             "doctor": "pass" if doctor.get("ready") else "fail",

@@ -54,7 +54,7 @@ and Hermes Desktop are made by Nous Research, which does not maintain or endorse
 
    ```text
    /journal-article-review          # discuss one candidate issue at a time
-   /journal-article-review deep     # search the whole manuscript segment by segment first
+   /journal-article-review deep     # search the whole manuscript part by part first
    /journal-article-review audit    # a resumable, audited case with a durable evidence ledger
    ```
 
@@ -68,8 +68,8 @@ and Hermes Desktop are made by Nous Research, which does not maintain or endorse
   survives Hermes's skill self-improvement.
 - [Review workflows](https://github.com/junhewk/closed-review/blob/main/docs/workflow.md): the default review, design profiles, logical segments,
   compiling and exporting, audited cases, literature lookups, and reference checks.
-- [Deep review](https://github.com/junhewk/closed-review/blob/main/docs/deep-review.md): the segment-by-segment scan, grouping by
-  concern key, the sweep, and how candidates reach the reviewer.
+- [Deep review](https://github.com/junhewk/closed-review/blob/main/docs/deep-review.md): the scan's tasks (orientation, reads
+  by part, flaw checks, the sweep, second checks, screening) and how findings reach the reviewer.
 - [Export receipts](https://github.com/junhewk/closed-review/blob/main/docs/receipts.md): what a receipt records and how to verify one.
 - [References](https://github.com/junhewk/closed-review/blob/main/docs/references.md): the Deep Review work this
   builds on, and the methods and reporting guidance the design profiles name, with DOIs.
