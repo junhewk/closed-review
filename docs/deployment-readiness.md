@@ -4,7 +4,8 @@
 This development build packages the medical methodological review-support redesign. It is not
 an automatic reviewer, a publication recommendation, or a certification of medical correctness.
 Install from a locally built wheel using [the development installation instructions](install.md).
-No public package release is implied by the version or repository push.
+A repository push alone does not publish a package. Tagged development builds may be distributed
+through TestPyPI/GitHub prereleases without claiming model or medical qualification.
 
 ## Current scope
 
@@ -22,12 +23,14 @@ manuscripts, keep transcripts and review records private, and inspect the output
 
 ## Engineering evidence and its limits
 
-Dev7 local verification on October 29, 2026: **999 tests passed**, with no failures, errors or
+Pre-publication dev7 local verification on October 29, 2026: **999 tests passed**, with no failures, errors or
 skips, against a fresh wheel installation on Linux x86_64 / Python 3.11.15. The source-tree
 Python path was disabled. Ruff, lock consistency, Bash/PowerShell installer parsing, packaged
 skill parity and archive-content checks passed; the exact-build publication gate refused this
 unqualified identity as intended. See [the dev7 validation record](../evals/deployment/dev7-local-validation-20261029.json).
-This is local engineering verification, not a new live-Hermes or medical-quality evaluation.
+This records the original development tree before the Windows portability corrections and
+TestPyPI workflow changes, not the eventual publication wheel. It is local engineering
+verification, not a new live-Hermes or medical-quality evaluation.
 
 Historical candidates retain their original versions, hashes, failures and limitations:
 
@@ -63,5 +66,8 @@ can still stop early and require user intervention.
 These are not prerequisites for a supervised development pilot or committing the source.
 They remain prerequisites for stronger deployment/quality claims. The exact-build
 [`release-gate.json`](../evals/deployment/release-gate.json) intentionally has no qualified
-configurations; automated publication remains blocked. Private answer keys and human audits
-stay off the model host and out of Git.
+configurations; production publication and non-development prereleases remain blocked. Only
+PEP 440 development versions may use the TestPyPI path after CI, with an explicit unqualified
+development-only notice. This exception does not change the medical qualification scorer or
+mark any configuration qualified. Private answer keys and human audits stay off the model host
+and out of Git.

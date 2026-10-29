@@ -8,9 +8,11 @@ installer already provides Git).
 
 Use a wheel and installer from the same tagged release. The installers now pin the release wheel
 and do not update a checkout unless you explicitly pass `--git-pull` / `-UpdateCheckout`.
-This checkout is **0.9.0.dev7**, an unpublished development build for supervised local pilots,
-not a qualified release. Build and install the local wheel; the default release URL is not yet
-available:
+This checkout is **0.9.0.dev7**, a development build for supervised local pilots, not a qualified
+release. Tagged development builds are distributed through
+[TestPyPI](https://test.pypi.org/project/closed-review/0.9.0.dev7/) and
+[GitHub prereleases](https://github.com/junhewk/closed-review/releases/tag/v0.9.0.dev7), not PyPI.
+For a local checkout, build and install your own wheel:
 
 ```bash
 uv build

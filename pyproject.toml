@@ -50,7 +50,7 @@ creview = "closed_review.cli:main"
 packages = ["src/closed_review"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "skills", "tests", "scripts", "evals", "docs", "README.md", "LICENSE", "pyproject.toml", "uv.lock"]
+include = ["src", "skills", "tests", "scripts", "evals", "docs", ".github/workflows", "README.md", "LICENSE", "pyproject.toml", "uv.lock"]
 
 [tool.pytest.ini_options]
 addopts = "-q"

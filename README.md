@@ -65,7 +65,10 @@ tool-capable model server. There is no bundled model or cloud fallback.
      --gateway-url http://127.0.0.1:8080/v1 --model MODEL --context-length 131072
    ```
 
-   Dev7 is not published: keep `--source`; the installer's default release URL is unavailable.
+   Keep `--source` to install your local build. Tagged development distributions are published to
+   [TestPyPI](https://test.pypi.org/project/closed-review/0.9.0.dev7/) and as
+   [GitHub prereleases](https://github.com/junhewk/closed-review/releases/tag/v0.9.0.dev7), not PyPI.
+   To use a tagged wheel, use its matching installer and wheel from the same prerelease.
    On Windows use `scripts\install-windows.ps1` with `-Source` and the equivalent profile/model
    arguments; see [Install](docs/install.md). The installer creates an isolated managed profile
    and runs its doctor check. Use a new profile name for different model/context settings.
@@ -90,7 +93,8 @@ useful prioritization, or acceptable false-alert rates.
 The bounded premature-stop recovery is in the evaluation driver, not stock Hermes's interactive
 loop. Normal interactive sessions may still stop early. A clean exact-build six-branch batch,
 interactive-path verification and independent human quality audits remain before production
-claims. The automated publication gate stays closed. See [current readiness](docs/deployment-readiness.md).
+claims. The production qualification gate stays closed; a TestPyPI development upload does not
+qualify the model or workflow. See [current readiness](docs/deployment-readiness.md).
 
 ## Documentation
 
@@ -103,7 +107,7 @@ claims. The automated publication gate stays closed. See [current readiness](doc
 - [Evaluation data](evals/README.md): synthetic fixtures, public-article provenance and what
   must stay outside Git.
 - [Legacy deployment qualification](docs/deployment.md): historical scan testing. Its scores do
-  not qualify the redesigned modules; publication remains blocked pending new human audits.
+  not qualify the redesigned modules; production publication remains blocked pending new human audits.
 - [Historical scan workflow](docs/review.md): explicitly invoked legacy commands and records.
 - [Set up a model server](docs/model-server.md):
   server requirements, common setups, and the Hermes model setting.

@@ -2,5 +2,5 @@
   "version": "0.9.0.dev7",
   "protocol": "medical-methods-v1",
   "configurations": [],
-  "status": "Development build for supervised local pilots, not a qualified release. All six module branches require repeated human audits tied to this exact wheel; historical engineering results and legacy scan scores do not qualify."
+  "status": "Unqualified development build for supervised local pilots. CI-passing PEP 440 development releases may be distributed on TestPyPI with an unqualified notice. Production and non-development releases still require repeated exact-wheel human audits of all six branches; historical engineering results and legacy scan scores do not qualify."
 }
