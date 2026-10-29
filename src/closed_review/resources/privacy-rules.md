@@ -9,8 +9,8 @@ them, so follow them even where the skill text says otherwise.
   around it, and do not install packages, alter profiles, switch providers, or use cloud fallback.
 - Ask the user to confirm that the journal permits this local AI assistance, or that permission was
   obtained, unless the current conversation already states that explicitly. Accept only an
-  explicit, case-specific reply and record it verbatim. Silence, earlier reviews, or the review
-  request itself are not confirmation.
+  explicit, case-specific reply. Silence, earlier reviews, or the review request itself are not
+  confirmation.
 
 ## Confidential material
 
@@ -20,7 +20,7 @@ them, so follow them even where the skill text says otherwise.
   an external service.
 - Do not put manuscript text in shell arguments.
 - Keep confidential material in the current Hermes conversation, its attached local files, a
-  user-selected local export, or the optional private case store.
+  user-selected local export, or creview's private store.
 - When you improve this skill or its reference files, write only generic lessons. Do not include
   manuscript text, quotations, titles, topics specific enough to identify the work, author or
   institution names, or review findings. Skill files may be committed to version control and shared.
@@ -29,12 +29,11 @@ them, so follow them even where the skill text says otherwise.
 
 External lookup is disabled until the exact outbound request is persisted and displayed.
 
-- For an individual literature query, create it with `creview lookup request --provider P --query Q`
-  (with the CASE id first in an audited review). Build the query only from public bibliographic
-  terms or general topic words: author names, titles and years of published works, guideline or
-  method names. Never put manuscript text, its title, its specific claims, or review findings in a
-  query. Show the provider, query, and URL, wait for explicit approval, then record the reply and
-  run only that request.
+- For an individual literature query, create it with `creview lookup request --provider P --query Q`.
+  Build the query only from public bibliographic terms or general topic words: author names, titles
+  and years of published works, guideline or method names. Never put manuscript text, its title,
+  its specific claims, or review findings in a query. Show the provider, query, and URL, wait for
+  explicit approval, then record the reply and run only that request.
 - For requested mechanical metadata verification, create a frozen manifest with
   `creview references request-metadata`. Show every query and URL in that manifest. One explicit
   approval covers only that exact set; any change requires a new manifest and approval.

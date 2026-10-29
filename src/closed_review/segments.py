@@ -1,13 +1,8 @@
-"""Logical segments: theme-level parts of a manuscript that every review mode works through.
+"""Logical segments: the manuscript's sections, drafted from its headings for the deep scan.
 
 The parsers split a document into blocks (paragraphs, table rows, PDF text blocks; stored as
-`segments` with `seg-NNNNN` ids for compatibility). A logical segment groups blocks that share a
-theme, such as the sampling description or the main argument. Segments may overlap and need not be
-contiguous, but together they must cover every block of each planned source, so nothing in the
-manuscript falls outside the review.
-
-`creview` drafts a plan from headings; the agent refines it (merge, split, overlap, tag with the
-confirmed design profiles' areas, set an effort tier); `creview` validates coverage before storing.
+`segments` with `seg-NNNNN` ids). A logical segment is the run of blocks under one heading; the
+scan's orientation then groups the segments into reading units and parts.
 """
 
 from __future__ import annotations
@@ -15,12 +10,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .errors import ReviewError
-
-TIERS = ("light", "medium", "high")
-TIER_PASSES = {"light": 1, "medium": 2, "high": 3}
 # Any short slug: ids name task and proposal files, so no path separators or dots.
-SEGMENT_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$")
 MIN_DRAFT_CHARS = 1_500
 LARGE_SEGMENT_CHARS = 24_000
 
@@ -69,35 +59,6 @@ SECTION_NAMES = (
     "bibliography",
     "appendix",
     "supplementary material",
-)
-LIGHT_WORDS = (
-    "abstract",
-    "introduction",
-    "background",
-    "acknowledg",
-    "funding",
-    "declaration",
-    "conflict",
-    "competing",
-    "contribution",
-    "availability",
-    "reference",
-    "bibliograph",
-    "conclusion",
-)
-HIGH_WORDS = (
-    "method",
-    "design",
-    "participant",
-    "sampl",
-    "data collection",
-    "analys",
-    "result",
-    "finding",
-    "argument",
-    "synthesis",
-    "search",
-    "eligibility",
 )
 NUMBERED_HEADING = re.compile(r"^(?:\d+(?:\.\d+)*\.?|[IVX]{1,6}\.)\s+\S.{0,100}$")
 
@@ -179,15 +140,6 @@ def _headings(blocks: list[dict[str, Any]]) -> dict[str, str]:
     return found
 
 
-def suggested_tier(title: str) -> str:
-    lowered = title.lower()
-    if any(word in lowered for word in HIGH_WORDS):
-        return "high"
-    if any(word in lowered for word in LIGHT_WORDS):
-        return "light"
-    return "medium"
-
-
 def _length(blocks: list[dict[str, Any]]) -> int:
     return sum(len(block["text"]) for block in blocks)
 
@@ -213,8 +165,8 @@ def draft_plan(sources: list[dict[str, Any]]) -> dict[str, Any]:
         merged: list[tuple[str, list[dict[str, Any]]]] = []
         for title, blocks in parts:
             # Fold short numbered subsections ("2.1 Analysis") into the part before them. Other
-            # sections stay separate however short: merging unrelated themes is worse than
-            # leaving the agent to merge.
+            # sections stay separate however short: merging unrelated themes is worse, and the
+            # scan's orientation joins short parts where they belong.
             subsection = bool(re.match(r"^\d+\.\d+", title))
             if (
                 merged
@@ -232,112 +184,6 @@ def draft_plan(sources: list[dict[str, Any]]) -> dict[str, Any]:
                     "title": title,
                     "source_id": source["source_id"],
                     "block_ids": [block["segment_id"] for block in blocks],
-                    "theme": "",
-                    "profile_areas": [],
-                    "tier": suggested_tier(title),
                 }
             )
-    return {
-        "schema_version": "1",
-        "segments": segments,
-        "instructions": (
-            "Refine this draft: merge or split segments so each holds one theme, add overlapping "
-            "segments where a theme spans parts (block_ids may repeat and need not be contiguous), "
-            "write a short theme, tag profile_areas with the confirmed design profiles' monitoring "
-            "areas, and set tier to light, medium, or high by how much scrutiny the part needs. "
-            "Every block must stay in at least one segment."
-        ),
-    }
-
-
-def validate_plan(plan: Any, sources: list[dict[str, Any]]) -> dict[str, Any]:
-    """Check a plan against parsed sources; every block of each planned source must be covered."""
-    if not isinstance(plan, dict) or not isinstance(plan.get("segments"), list):
-        raise ReviewError("segment plan must be an object with a segments list")
-    by_source = {source["source_id"]: source for source in sources}
-    known = {
-        source_id: {block["segment_id"]: block for block in source["segments"]}
-        for source_id, source in by_source.items()
-    }
-    normalized: list[dict[str, Any]] = []
-    seen_ids: set[str] = set()
-    for index, raw in enumerate(plan["segments"], start=1):
-        if not isinstance(raw, dict):
-            raise ReviewError(f"segment {index} must be an object")
-        segment_id = str(raw.get("id") or "").strip()
-        if not SEGMENT_ID_RE.fullmatch(segment_id) or segment_id in seen_ids:
-            raise ReviewError(
-                f"segment {index} needs a unique id of letters, digits, '-' or '_', like ls-01"
-            )
-        seen_ids.add(segment_id)
-        title = str(raw.get("title") or "").strip()
-        if not title:
-            raise ReviewError(f"{segment_id} needs a title")
-        source_id = str(raw.get("source_id") or "")
-        if source_id not in known:
-            raise ReviewError(f"{segment_id} names unknown source {source_id!r}")
-        block_ids = raw.get("block_ids")
-        if not isinstance(block_ids, list) or not block_ids:
-            raise ReviewError(f"{segment_id} needs a non-empty block_ids list")
-        unknown = [str(block) for block in block_ids if str(block) not in known[source_id]]
-        if unknown:
-            raise ReviewError(f"{segment_id} names unknown blocks: {', '.join(unknown[:5])}")
-        tier = str(raw.get("tier") or "").strip().lower()
-        if tier not in TIERS:
-            raise ReviewError(f"{segment_id} tier must be one of {', '.join(TIERS)}")
-        areas = raw.get("profile_areas") or []
-        if not isinstance(areas, list):
-            raise ReviewError(f"{segment_id} profile_areas must be a list")
-        ordered = [b for b in known[source_id] if b in {str(item) for item in block_ids}]
-        normalized.append(
-            {
-                "id": segment_id,
-                "title": title[:200],
-                "source_id": source_id,
-                "block_ids": ordered,
-                "locators": [known[source_id][block]["locator"] for block in ordered],
-                "theme": str(raw.get("theme") or "").strip()[:500],
-                "profile_areas": [str(area).strip() for area in areas if str(area).strip()],
-                "tier": tier,
-                "character_count": sum(len(known[source_id][block]["text"]) for block in ordered),
-            }
-        )
-    if not normalized:
-        raise ReviewError("segment plan has no segments")
-    planned_sources = {segment["source_id"] for segment in normalized}
-    if "manuscript" in by_source and "manuscript" not in planned_sources:
-        raise ReviewError("segment plan must cover the manuscript")
-    for source_id in sorted(planned_sources):
-        covered = {
-            block for s in normalized if s["source_id"] == source_id for block in s["block_ids"]
-        }
-        missing = [block for block in known[source_id] if block not in covered]
-        if missing:
-            raise ReviewError(
-                f"segment plan leaves {len(missing)} block(s) of {source_id} uncovered, starting "
-                f"at {known[source_id][missing[0]]['locator']}"
-            )
-    warnings = [
-        f"{segment['id']} is long ({segment['character_count']} characters); consider splitting it"
-        for segment in normalized
-        if segment["character_count"] > LARGE_SEGMENT_CHARS
-    ]
-    return {"schema_version": "1", "segments": normalized, "warnings": warnings}
-
-
-def outline(plan: dict[str, Any]) -> list[dict[str, Any]]:
-    """The plan without block lists: enough context for one segment's reviewer."""
-    return [
-        {key: segment[key] for key in ("id", "title", "source_id", "theme", "tier")}
-        | {"first_locator": segment["locators"][0], "last_locator": segment["locators"][-1]}
-        for segment in plan["segments"]
-    ]
-
-
-def segment_blocks(segment: dict[str, Any], source: dict[str, Any]) -> list[dict[str, Any]]:
-    selected = set(segment["block_ids"])
-    return [
-        {key: block[key] for key in ("segment_id", "locator", "kind", "text")}
-        for block in source["segments"]
-        if block["segment_id"] in selected
-    ]
+    return {"schema_version": "1", "segments": segments}

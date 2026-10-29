@@ -1,0 +1,23 @@
+{
+  "observed_at_utc": "2026-10-28T07:47:41Z",
+  "purpose": "read_only_partial_matrix_delivery_observation_not_qualification",
+  "runner": "06fdb81157279615424b5b67e88e3fad3f7b3e9c152e5d978e831d5838c7ed0f",
+  "wheel_sha256": "75e77406ae89671533bdb569f8418e16afcf04e2649486fd8179c16b8d42b0b0",
+  "matrix": "/tmp/creview-support-runtime.KrdIdTxe/matrix/batch.json",
+  "matrix_complete": false,
+  "recorded_cases": [
+    {"case_id": "case-05", "engineering_passed": true, "elapsed_seconds": 167.12},
+    {"case_id": "case-06", "engineering_passed": true, "elapsed_seconds": 174.92},
+    {"case_id": "case-02", "engineering_passed": true, "elapsed_seconds": 148.87}
+  ],
+  "statistics_delivery_trace": {
+    "profile": "/tmp/creview-support-runtime.KrdIdTxe/matrix/case-02/hermes/profiles/pilot",
+    "observed_next_read_results": 4,
+    "output_characters": [16124, 39402, 200, 105],
+    "spill_handles": 0,
+    "truncation_markers": 0,
+    "scope": "Only directly identified next/read terminal results, not a certificate of complete recovery through indirect file reads, model attention or semantic correctness."
+  },
+  "semantic_quality": "not_assessed_requires_independent_human_review",
+  "qualified": false
+}

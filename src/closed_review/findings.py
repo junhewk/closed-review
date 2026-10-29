@@ -1,10 +1,9 @@
-"""Review rules for a host app that runs the analysis itself, over plain data.
+"""Review rules for the deep scan (pipeline.py), over plain data.
 
-The host reads each segment once, checks the listed major flaws with one or more local models, and
-keeps its findings in its own session. creview supplies what it already enforces: quotes must be
-verbatim, arithmetic is computed rather than judged, and severity follows the evidence:
+creview enforces what it can: quotes must be verbatim, arithmetic is computed rather than judged,
+and severity follows the evidence:
 
-- major, when a check by any approved model confirmed a listed major flaw with verbatim quotes;
+- major, when a check confirmed a listed major flaw with verbatim quotes;
 - major, when a computed mismatch is in a figure the manuscript reuses (it is load-bearing);
 - otherwise the read's own rating, labelled as the model's judgement;
 - the reviewer decides in the end.
@@ -108,6 +107,24 @@ def recurring_figure(document: dict[str, Any], stated: str) -> bool:
     return len(blocks) >= LOAD_BEARING_BLOCKS
 
 
+SOURCE_MISREAD_FLAWS = frozenset({"general/misread-source", "legal-analysis/misread-provision"})
+
+
+def confirmed_check(item: dict[str, Any]) -> bool:
+    """Whether a check has the evidence needed for a confirmed-flaw rating.
+
+    A source-misreading check also needs the source's words as quoted in the manuscript. This
+    does not independently establish that the quotation accurately represents the source.
+    """
+    source = item.get("source_quote")
+    source_quoted = isinstance(source, dict) and bool(source.get("quote") and source.get("locator"))
+    return bool(
+        item.get("shown")
+        and item.get("quotes_verified")
+        and (item.get("flaw") not in SOURCE_MISREAD_FLAWS or source_quoted)
+    )
+
+
 def severity(finding: dict[str, Any]) -> dict[str, Any]:
     """The severity creview sets from a finding's evidence, with its basis.
 
@@ -124,7 +141,7 @@ def severity(finding: dict[str, Any]) -> dict[str, Any]:
         return {"severity": "minor", "basis": "evidence", "reasons": ["computed mismatch"]}
     confirmed: dict[str, set[str]] = {}
     for item in finding.get("flaw_checks") or []:
-        if item.get("shown") and item.get("quotes_verified"):
+        if confirmed_check(item):
             confirmed.setdefault(str(item["flaw"]), set()).add(str(item.get("model") or ""))
     if confirmed:
         return {

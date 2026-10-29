@@ -2,14 +2,14 @@ import json
 from pathlib import Path
 
 import pytest
-from conftest import assert_mode, reviewer_says
-from test_workflow import setup_profile
+from conftest import assert_mode, reviewer_answers_clarify, reviewer_says, setup_profile
 
 from closed_review.cli import main
 from closed_review.direct import finalize_direct_export, prepare_direct_export
 from closed_review.errors import ReviewError
 from closed_review.receipts import installed_identity, verify_receipt
-from closed_review.session import confirm_profiles, start_session
+from closed_review.session import start_session
+from closed_review.transcript import reviewer_words
 
 
 def export_with(session: str | None = None) -> dict:
@@ -30,20 +30,11 @@ def test_session_start_returns_package_rules_and_links_hermes_session(
     assert started["export_command"] == "creview direct prepare-export"
     assert started["rules"].startswith("# Privacy rules for journal-article-review")
     assert "Do not put manuscript text in shell arguments." in started["rules"]
+    assert any("display.inline_diffs: false" in warning for warning in started["warnings"])
     record = isolated_env / "data" / "preflights" / f"{started['session_id']}.json"
     assert_mode(record, 0o600)
     assert "20261015_101500_abcdef" not in record.read_text()
 
-    # An export needs the reviewer's own confirmation of the design profiles, sent after the
-    # preflight; words they never wrote are refused.
-    with pytest.raises(ReviewError, match="never confirmed the design profiles"):
-        prepare_direct_export()
-    reviewer_says(isolated_env / "hermes", "20261015_101500_abcdef", "Yes, qualitative only.")
-    with pytest.raises(ReviewError, match="not in any of those messages"):
-        confirm_profiles(["qualitative"], "Prompt unanswered; proceeding with qualitative.")
-    assert confirm_profiles(["qualitative"], "Yes, qualitative only.")["profiles"] == [
-        "qualitative"
-    ]
     prepared = export_with()
     finalized = finalize_direct_export(prepared["export_id"], "reviewer")
 
@@ -56,13 +47,49 @@ def test_session_start_returns_package_rules_and_links_hermes_session(
     }
 
 
+def test_skill_text_hermes_loaded_into_a_user_message_is_not_the_reviewer(
+    isolated_env: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """In the TUI and Desktop, `/journal-article-review deep ...` is stored as one user message:
+    the whole skill, then what the reviewer typed (live TUI run, 2026-10-27)."""
+    setup_profile(isolated_env)
+    monkeypatch.setenv("HERMES_SESSION_ID", "20261027_154408_0f133b")
+    start_session("reviewer", live=False)
+    invoked = (
+        '[IMPORTANT: The user has invoked the "journal-article-review" skill, indicating they '
+        "want you to follow its instructions. The full skill content is loaded below.]\n\n"
+        "Yes, qualitative only. Do not begin with a complete verdict.\n\n"
+        "The user has provided the following instruction alongside the skill invocation: deep\n\n"
+        "Please run a deep review; I use the qualitative profile."
+    )
+    reviewer_says(isolated_env / "hermes", "20261027_154408_0f133b", invoked)
+    check = {"hermes_session": True, "what": "the response to F1"}
+    with pytest.raises(ReviewError, match="not in any of those messages"):
+        reviewer_words("Yes, qualitative only.", **check)
+    assert reviewer_words("I use the qualitative profile", **check)["verified"]
+
+
+def test_an_answered_clarify_is_the_reviewer_and_an_unanswered_one_is_not(
+    isolated_env: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Hermes's own way to ask: a clarify answer counts, whether the reviewer picked an option or
+    typed one; a question no one answered (one-shot mode) gives nothing."""
+    setup_profile(isolated_env)
+    monkeypatch.setenv("HERMES_SESSION_ID", "20261027_ms5i3")
+    hermes = isolated_env / "hermes"
+    reviewer_answers_clarify(hermes, "20261027_ms5i3", None, status="unanswered")
+    check = {"hermes_session": True, "what": "the response to F1"}
+    with pytest.raises(ReviewError, match="not in any of those messages"):
+        reviewer_words("Accept", **check)
+    reviewer_answers_clarify(hermes, "20261027_ms5i3", "Accept")
+    assert reviewer_words("Accept", **check)["verified"]
+
+
 def test_session_without_hermes_id_uses_explicit_session(isolated_env: Path) -> None:
     setup_profile(isolated_env)
     started = start_session("reviewer", live=False)
     assert started["session_source"] == "explicit"
     assert started["export_command"].endswith(f"--session {started['session_id']}")
-    confirm_profiles([], "The general rubric alone is fine.", started["session_id"])
-
     linked = export_with(started["session_id"])
     unlinked = export_with()
 
@@ -152,24 +179,6 @@ def test_cli_session_and_receipt_commands(
     setup_profile(isolated_env)
     assert main(["session", "start", "--profile", "reviewer", "--skip-live"]) == 0
     session_id = json.loads(capsys.readouterr().out)["session_id"]
-    paper = isolated_env / "paper.md"
-    paper.write_text("# A paper\n\n# Methods\n\nWe interviewed nurses.\n")
-    # Segments are planned only once the reviewer has confirmed the profiles.
-    assert main(["segments", "propose", str(paper), "--session", session_id]) != 0
-    assert "wait for their reply" in capsys.readouterr().err
-    confirmed = [
-        "segments",
-        "propose",
-        str(paper),
-        "--profile",
-        "qualitative",
-        "--confirmation",
-        "Yes, qualitative only.",
-        "--session",
-        session_id,
-    ]
-    assert main(confirmed) == 0
-    assert json.loads(capsys.readouterr().out)["profiles"] == ["qualitative"]
     assert main(["direct", "prepare-export", "--session", session_id]) == 0
     prepared = json.loads(capsys.readouterr().out)
     Path(prepared["output_paths"]["editor"]).write_text("Minor revision.\n")

@@ -1,0 +1,88 @@
+{
+  "observation_started_at_utc": "2026-10-28T11:30:15.204809+00:00",
+  "observation_finished_at_utc": "2026-10-28T11:30:15.414108+00:00",
+  "purpose": "read_only_runtime_snapshot_not_candidate_peak_or_qualification",
+  "candidate": {
+    "version": "0.9.0b9",
+    "runner": "02d047cef7658cb5c1290723743f8e0b6b68344a9cc546e6f35a4f3603f7f3b8",
+    "wheel_sha256": "5e628d579a43b1955164f60742fdedb175bcbd33d2a81c920a6ce0100761331e"
+  },
+  "host": "jkworkstation",
+  "processes": {
+    "1598598": {
+      "executable": "/usr/bin/python3.12",
+      "start_ticks": "115961716"
+    },
+    "1598609": {
+      "executable": "/home/jk/Strata/engine/strata",
+      "start_ticks": "115961779"
+    },
+    "1598833": {
+      "executable": "/usr/bin/python3.12",
+      "start_ticks": "115963751"
+    }
+  },
+  "native_flags": {
+    "--pack": "/home/jk/Strata-data/packs/iq3_s",
+    "--native": "/home/jk/Strata-data/models/IQ3_S/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf",
+    "--expert-profile": "/home/jk/Strata/data/expert-profile.bin",
+    "--prefill": "auto",
+    "--mtp": "/home/jk/Strata-data/mtp/rt",
+    "--max-context": "262144"
+  },
+  "runtime_file_sha256": {
+    "/proc/1598609/exe": "b79c8622de6e30f514383017744e6359a16e0439f81696c923eab5a89a3f48a6",
+    "/home/jk/Strata/serve/server.py": "7ae13fdf626d961ee67465fd3796a1ada061d046ccf050297e980894a9e057f0",
+    "/home/jk/llama-eval/llm-gateway.py": "887e70b934c9f65d604e8bb79a19126cc16b1482e70c60ea366bc03dccbbac17",
+    "/home/jk/Strata/data/expert-profile.bin": "8f59b4aa8873209dff11c11e37bcda9529a1335b724a1afeea37bf6388975baf"
+  },
+  "native_status_snapshot": {
+    "VmHWM": "61273036 kB",
+    "VmRSS": "60071856 kB",
+    "Threads": "45"
+  },
+  "gpu_hardware_csv": [
+    "0, NVIDIA GeForce RTX 4090, GPU-03d26309-f5b2-2fa8-92fc-434e0c121bd0, 24564, 595.99.02",
+    "1, NVIDIA GeForce RTX 3090, GPU-1f6d8d82-5b0d-0e23-6c53-3d72183b4cfd, 24576, 595.99.02"
+  ],
+  "native_gpu_allocation_snapshot_csv": [
+    "1598609, GPU-03d26309-f5b2-2fa8-92fc-434e0c121bd0, 23682"
+  ],
+  "cpu": {
+    "CPU(s):": "32",
+    "Model name:": "AMD Ryzen Threadripper PRO 5955WX 16-Cores",
+    "Thread(s) per core:": "2",
+    "Core(s) per socket:": "16",
+    "Socket(s):": "1"
+  },
+  "host_memory_snapshot": {
+    "MemTotal": "263762944 kB",
+    "MemAvailable": "190297152 kB",
+    "SwapTotal": "8388604 kB"
+  },
+  "sampling": {
+    "directory": "/tmp/creview-support-b9-telemetry.jtPF7Itv",
+    "partial_suite_window": true,
+    "started_at_utc": "2026-10-28T11:11:48.817498+00:00",
+    "interval_seconds": 10
+  },
+  "queued_file_identity": {
+    "directory": "/tmp/creview-support-b9-runtime-identity.6QEVVf1C",
+    "collector_pid": 2230275,
+    "status": "waiting_for_suite_and_idle_model",
+    "planned_files": 21,
+    "planned_bytes": 86130739641,
+    "script_sha256": "9aba817133a9a47020b2be6519f487b1c5fc529a8b55031ae455a0e173472ad3"
+  },
+  "full_weight_hashes": null,
+  "candidate_attributable_peak_memory": null,
+  "services_modified": false,
+  "qualified": false,
+  "caveats": [
+    "Process-lifetime VmHWM is not this candidate's measured peak.",
+    "Per-process GPU/RSS snapshots can include other users of the shared model and are not minimum hardware requirements.",
+    "Sampling began after this suite started and cannot reconstruct earlier peaks.",
+    "Source file hashes do not attest Python code already loaded in process memory.",
+    "Queued collection is not completed weight identity or vendor authenticity verification."
+  ]
+}

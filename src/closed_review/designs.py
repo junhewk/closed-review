@@ -1,6 +1,6 @@
 """Design profiles, read from the installed package rather than the mutable Hermes skill copy.
 
-A deep scan records the profiles the reviewer confirmed. creview then hands each pass, and the
+A scan records the profiles chosen for the review. creview then hands each read, and the
 screening step, those profiles' monitoring areas, common false alarms, and major flaws itself, so
 checking a candidate against them does not depend on the agent having read the profile files.
 """
@@ -70,8 +70,8 @@ def _major_flaws(section: str) -> list[dict[str, str]]:
 
 
 def general_major_flaws() -> list[dict[str, str]]:
-    """Major flaws in any design, from the general rubric."""
-    text = _references().joinpath("review-rubric.md").read_text(encoding="utf-8")
+    """Major flaws in any design, from the profile index."""
+    text = _designs().joinpath("index.md").read_text(encoding="utf-8")
     return _major_flaws(_section(text, "Major flaws in any design"))
 
 

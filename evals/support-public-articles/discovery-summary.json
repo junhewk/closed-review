@@ -1,0 +1,26 @@
+{
+  "artifacts": {
+    "deduplicated_results": "results.jsonl",
+    "native_results": "sources/<source>.jsonl",
+    "ranked_results": "ranked-results.jsonl"
+  },
+  "completed_at": "2026-10-28T23:08:41.847467+00:00",
+  "mode": "quick",
+  "ranked_as_of": "2026-10-28",
+  "ranking_disclaimer": "Prioritization heuristic only; not GRADE, risk-of-bias, evidence quality, or a systematic-review conclusion.",
+  "ranking_version": "mdr-v2-grouped",
+  "records_after_deduplication": 20,
+  "records_before_deduplication": 20,
+  "records_by_source": {
+    "openalex": 20,
+    "semantic-scholar": 0
+  },
+  "records_filtered_by_source": {
+    "openalex": 0,
+    "semantic-scholar": 0
+  },
+  "schema_version": "2",
+  "source_failures": {
+    "semantic-scholar": "semantic-scholar failed after 4 attempts (HTTP 429): {\"message\": \"Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form\", \"code\": \"429\"}"
+  }
+}

@@ -66,6 +66,11 @@ def test_detect_adopts_hermes_main_model_on_local_server(unconfigured, monkeypat
 def test_detect_never_adopts_a_cloud_main_model(unconfigured, monkeypatch) -> None:
     profile = make_profile(unconfigured)
     write_config(profile, providers={"local": {"base_url": "https://api.openai.com/v1"}})
+    monkeypatch.setattr(
+        detect.socket,
+        "getaddrinfo",
+        lambda host, port: [(None, None, None, None, ("8.8.8.8", 0))],
+    )
     asked = serve(monkeypatch, {})
 
     result = detect.detect_gateway("reviewer")
@@ -105,3 +110,27 @@ def test_detect_resolves_hostnames_before_trusting_them(monkeypatch) -> None:
     assert detect._resolved_class("http://gpu-box:8000/v1") == "private-network"
     monkeypatch.setattr(detect.socket, "getaddrinfo", resolve("8.8.8.8"))
     assert detect._resolved_class("http://gpu-box:8000/v1") == "public"
+
+
+def test_detect_does_not_trust_mixed_or_unresolved_hostnames(unconfigured, monkeypatch) -> None:
+    profile = make_profile(unconfigured)
+    write_config(profile, providers={"local": {"base_url": "http://gpu-box:8000/v1"}})
+    asked = serve(monkeypatch, {"http://gpu-box:8000": ["qwen3.8-flash-next"]})
+    monkeypatch.setattr(
+        detect.socket,
+        "getaddrinfo",
+        lambda host, port: [
+            (None, None, None, None, ("192.168.1.20", 0)),
+            (None, None, None, None, ("8.8.8.8", 0)),
+        ],
+    )
+    assert detect._resolved_class("http://gpu-box:8000/v1") == "public"
+    assert detect.detect_gateway("reviewer")["selected"] is None
+
+    def unresolved(host, port):
+        raise OSError("DNS unavailable")
+
+    monkeypatch.setattr(detect.socket, "getaddrinfo", unresolved)
+    assert detect._resolved_class("http://gpu-box:8000/v1") == "unresolved"
+    assert detect.detect_gateway("reviewer")["selected"] is None
+    assert not any("gpu-box" in url for url in asked)

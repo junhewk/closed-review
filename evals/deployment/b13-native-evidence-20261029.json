@@ -1,0 +1,193 @@
+{
+  "protocol": "medical-methods-v1",
+  "version": "0.9.0b13",
+  "finished_at": "2026-10-28T18:08:09.393131+00:00",
+  "engineering_passed": true,
+  "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+  "requested_repetitions": 1,
+  "independent_studies": 1,
+  "source_formats": 3,
+  "corpus_independently_reviewed": false,
+  "receipts_verified": 3,
+  "source_copies_verified": 6,
+  "baseline_output_hashes_verified": 3,
+  "all_expected_paragraphs_and_grids_preserved_under_explicit_policy": true,
+  "comparison_policy": "fixture-pdf-retained-hyphen-layout-v1",
+  "cases": [
+    {
+      "case": "f00",
+      "artifact_id": "f00-r1",
+      "format": "markdown",
+      "source_sha256": "4795b5dc483dd01ce8b75702327df3f2a13ffea216dab35f3b5c6e3d140ff40d",
+      "support_seconds": 403.65,
+      "baseline_seconds": 70.48,
+      "support_passed": true,
+      "baseline_passed": true,
+      "module_status": "complete",
+      "observations": 0,
+      "calculations": 19,
+      "facts": 58,
+      "appraisals": 6,
+      "provided_blocks": 154,
+      "source_blocks": 154,
+      "tables": 3,
+      "warnings": [],
+      "repaired_refused_tasks": 0,
+      "module_failures": 0,
+      "layout_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "strict_whitespace_only_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "value_only_signatures": 19,
+      "repeated_value_only_signatures": 0
+    },
+    {
+      "case": "f01",
+      "artifact_id": "f01-r1",
+      "format": "docx",
+      "source_sha256": "0c18c14d72e62c03074e50f4504a61dd0d62270c3ee134b96e460ddac1126471",
+      "support_seconds": 380.5,
+      "baseline_seconds": 91.65,
+      "support_passed": true,
+      "baseline_passed": true,
+      "module_status": "complete",
+      "observations": 0,
+      "calculations": 19,
+      "facts": 63,
+      "appraisals": 6,
+      "provided_blocks": 151,
+      "source_blocks": 151,
+      "tables": 3,
+      "warnings": [],
+      "repaired_refused_tasks": 1,
+      "module_failures": 0,
+      "layout_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "strict_whitespace_only_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "value_only_signatures": 19,
+      "repeated_value_only_signatures": 0
+    },
+    {
+      "case": "f02",
+      "artifact_id": "f02-r1",
+      "format": "pdf",
+      "source_sha256": "2cecdaf3b9a2dd9c5553122816a540f5109ad073ef2bc58c9c10f1a421142d0d",
+      "support_seconds": 460.28,
+      "baseline_seconds": 80.53,
+      "support_passed": true,
+      "baseline_passed": true,
+      "module_status": "complete",
+      "observations": 0,
+      "calculations": 15,
+      "facts": 83,
+      "appraisals": 6,
+      "provided_blocks": 240,
+      "source_blocks": 240,
+      "tables": 3,
+      "warnings": [],
+      "repaired_refused_tasks": 1,
+      "module_failures": 0,
+      "layout_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "strict_whitespace_only_comparison": {
+        "all_expected_paragraphs_present": false,
+        "expected_paragraphs_in_order": false,
+        "table_grids_equal": false,
+        "no_detected_geometry_ambiguity": true
+      },
+      "value_only_signatures": 15,
+      "repeated_value_only_signatures": 0
+    }
+  ],
+  "value_only_signature_overlap": {
+    "common_all_three": 10,
+    "union": 28
+  },
+  "note": "Value-only signatures exclude provenance and semantic input roles. Their equality does not prove the same quantity, and a differing signature is not a missed issue. One stochastic run per format cannot establish a format-caused difference. PDF layout comparison is not source/quote correction. Human coverage/medical validity and three repetitions remain required.",
+  "human_judgments": "all_blank",
+  "qualification": "not_qualified",
+  "local": "/tmp/creview-support-b13-suite-results.B9NEpb5E",
+  "archive": {
+    "archive_sha256": "95f7316af828455714fd74d4f4e01452a68fab9f998c384c559f35076bb8dd62",
+    "regular_allowlisted_files": 261,
+    "unpacked_bytes": 6205161,
+    "absolute_paths_parent_traversal_links": false
+  },
+  "replay": {
+    "all_checks_passed": true,
+    "cases": 3,
+    "calculations_checked": 53,
+    "checker_sha256": "127285d36f9177c0fd260ee55be092a528c71f4a84296421f2551f94d276d966",
+    "source_checks": [
+      {
+        "artifact": "f00-r1",
+        "snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        }
+      },
+      {
+        "artifact": "f01-r1",
+        "snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        }
+      },
+      {
+        "artifact": "f02-r1",
+        "snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        }
+      }
+    ]
+  },
+  "replay_record_sha256": "5bb5a81a79123eb4a15dc02dff822d838536b7ad2c7dff0f09dbe51b5409de71",
+  "native_record_sha256": "40b6bef2abc2e550c14af3cff141577620e3c8b92680fcc11a3038565607378a",
+  "word_source_readback": {
+    "source_docx_sha256": "0c18c14d72e62c03074e50f4504a61dd0d62270c3ee134b96e460ddac1126471",
+    "fresh_pandoc_ast_sha256": "78f55df353f744b1ba4d6fea8bc0906fece4feab45e34b5d23e0c2d77423f5e2",
+    "pandoc": "3.1.3",
+    "ast_equals_previously_interpreted_ast": true,
+    "previous_verified_comparison_sha256": "0aa1ec312ff1109b56fa7a336f80a012b99a02a622cbcd76d19d7e0e06672fde",
+    "paragraphs": 62,
+    "tables": 3,
+    "source_docx_unchanged": true,
+    "verification_scope": "Exact fixture and independent Pandoc readback only, not the running b13 extraction or model analysis",
+    "human_approval": false,
+    "qualification": "not_qualified"
+  },
+  "keys_read_or_transferred": false,
+  "server_started": false,
+  "human_approval": false
+}

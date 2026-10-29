@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "repetitions": 3,
+  "cases": [
+    {"id": "ms1", "file": "ms1/manuscript.md", "profiles": ["qualitative", "normative-argument"]},
+    {"id": "ms2", "file": "ms2/manuscript.md", "profiles": ["systematic-review", "normative-argument"]},
+    {"id": "ms3", "file": "ms3/manuscript.md", "profiles": ["normative-argument"]},
+    {"id": "ms4", "file": "ms4/manuscript.md", "profiles": ["legal-analysis", "normative-argument"]},
+    {"id": "ms5", "file": "ms5/manuscript.md", "profiles": ["scoping-review"]},
+    {"id": "ms6", "file": "ms6/manuscript.md", "profiles": ["quantitative"]},
+    {"id": "clean-quantitative", "file": "clean-quantitative.md", "profiles": ["quantitative"], "control": true},
+    {"id": "clean-normative", "file": "clean-normative.md", "profiles": ["normative-argument"], "control": true}
+  ]
+}

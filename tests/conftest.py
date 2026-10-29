@@ -15,8 +15,10 @@ def assert_mode(path: Path, mode: int) -> None:
         assert path.stat().st_mode & 0o777 == mode
 
 
-def reviewer_says(hermes_home: Path, session_id: str, text: str) -> None:
-    """Append a reviewer message to a minimal Hermes `state.db`, as Hermes records it."""
+def reviewer_says(
+    hermes_home: Path, session_id: str, text: str, role: str = "user", tool: str | None = None
+) -> None:
+    """Append a message to a minimal Hermes `state.db`, as Hermes records it."""
     import sqlite3
     import time
 
@@ -24,12 +26,34 @@ def reviewer_says(hermes_home: Path, session_id: str, text: str) -> None:
     with sqlite3.connect(hermes_home / "state.db") as db:
         db.execute(
             "CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, "
-            "session_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT, timestamp REAL NOT NULL)"
+            "session_id TEXT NOT NULL, role TEXT NOT NULL, content TEXT, tool_name TEXT, "
+            "timestamp REAL NOT NULL)"
         )
         db.execute(
-            "INSERT INTO messages (session_id, role, content, timestamp) VALUES (?, 'user', ?, ?)",
-            (session_id, text, time.time()),
+            "INSERT INTO messages (session_id, role, content, tool_name, timestamp) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (session_id, role, text, tool, time.time()),
         )
+
+
+def reviewer_answers_clarify(
+    hermes_home: Path, session_id: str, answer: str | None, status: str = "answered"
+) -> None:
+    """A clarify result as Hermes stores it: the reviewer's answer, or none when unanswered."""
+    import json
+
+    result = {
+        "responses": [
+            {
+                "question": "Accept this finding?",
+                "choices_offered": ["Accept", "Defer"],
+                "status": status,
+                "user_response": answer,
+            }
+        ],
+        "outcome": "submitted" if status == "answered" else "undelivered",
+    }
+    reviewer_says(hermes_home, session_id, json.dumps(result), role="tool", tool="clarify")
 
 
 @pytest.fixture
@@ -42,10 +66,16 @@ def isolated_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv("CREVIEW_MODEL", "qwen3.8-flash-next")
     monkeypatch.delenv("HERMES_SESSION_ID", raising=False)
     monkeypatch.delenv("HERMES_SESSION_PROFILE", raising=False)
+    monkeypatch.delenv("HERMES_TUI_TOOL_PROGRESS", raising=False)
     monkeypatch.delenv("CREVIEW_TRUSTED_MODELS", raising=False)
     # Credentials and auxiliary overrides on the developer's machine must not leak into tests.
     for name in list(os.environ):
-        if name in CREDENTIAL_ENV or name.startswith("AUXILIARY_") or name == "OPENAI_BASE_URL":
+        if (
+            name in CREDENTIAL_ENV
+            or name.startswith("AUXILIARY_")
+            or name == "OPENAI_BASE_URL"
+            or name.lower() in {"http_proxy", "https_proxy", "all_proxy", "no_proxy"}
+        ):
             monkeypatch.delenv(name, raising=False)
     return tmp_path
 
@@ -74,9 +104,13 @@ def write_docx(
         archive.writestr("word/document.xml", xml)
 
 
-def write_pdf(path: Path, text: str = "Confidential review fixture") -> None:
+def write_pdf(
+    path: Path, text: str = "Confidential review fixture", *, content: str | None = None
+) -> None:
     escaped = text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
-    stream = f"BT /F1 12 Tf 72 720 Td ({escaped}) Tj ET".encode()
+    stream = (
+        content if content is not None else f"BT /F1 12 Tf 72 720 Td ({escaped}) Tj ET"
+    ).encode()
     objects = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
@@ -132,3 +166,22 @@ def write_xlsx(path: Path) -> None:
         archive.writestr("xl/workbook.xml", workbook)
         archive.writestr("xl/_rels/workbook.xml.rels", relationships)
         archive.writestr("xl/worksheets/sheet1.xml", worksheet)
+
+
+def setup_profile(tmp_path: Path) -> None:
+    import yaml
+
+    from closed_review import hermes
+
+    profile = tmp_path / "hermes" / "profiles" / "reviewer"
+    profile.mkdir(parents=True)
+    (profile / "config.yaml").write_text(
+        yaml.safe_dump(
+            {
+                "model": {"default": "qwen3.8-flash-next", "provider": "local"},
+                "providers": {"local": {"base_url": "http://127.0.0.1:8091/v1"}},
+                "tools": {"enabled_toolsets": ["terminal", "file", "skills"]},
+            }
+        )
+    )
+    hermes.install_skill("reviewer", apply=True)

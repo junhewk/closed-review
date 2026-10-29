@@ -1,0 +1,80 @@
+{
+  "protocol": "medical-methods-v1",
+  "corpus_id": "ordinary-medical-candidates-20261028",
+  "synthetic_only": true,
+  "independently_reviewed": false,
+  "cases": [
+    {
+      "case_id": "b09",
+      "module": "statistics",
+      "file": "b09.md",
+      "sha256": "f4214672ef12a23e74b3f4c505246c2fbf3a95aedddc26ec14f844ff7e789cb9"
+    },
+    {
+      "case_id": "c74",
+      "module": "qualitative-study",
+      "file": "c74.md",
+      "sha256": "4e30d03a8c756e72cfececc000d88be6687e1faeb53aed7a9484d1d00f6035ea"
+    },
+    {
+      "case_id": "d86",
+      "module": "systematic-review",
+      "file": "d86.md",
+      "sha256": "4fe251e0a8ee614da785f1f0d852c3665c78e4d0cdb87a9098888248c4a04ee1"
+    },
+    {
+      "case_id": "g51",
+      "module": "scoping-review",
+      "file": "g51.md",
+      "sha256": "3240afa5785151dd51f1b54e1bdb9bfe776e0ce275608041731137ea92abf451"
+    },
+    {
+      "case_id": "h36",
+      "module": "scoping-review",
+      "file": "h36.md",
+      "sha256": "d6d0a3e69506f3fe85110346047dcc44d83ccde71fefc98e00b040410f087b7a"
+    },
+    {
+      "case_id": "j23",
+      "module": "narrative-review",
+      "file": "j23.md",
+      "sha256": "c544d3c5b039ee0719f678df3359854ccca9b812031d31c338f857c393145f01"
+    },
+    {
+      "case_id": "k65",
+      "module": "logic",
+      "file": "k65.md",
+      "sha256": "e35bb2143eb1e0a809a3f4cfd0423a0667311447379cc4618e1c97cadcaa3386"
+    },
+    {
+      "case_id": "l62",
+      "module": "logic",
+      "file": "l62.md",
+      "sha256": "122cd33ec766717fd0b7f708b45f667a30d264917dbaa91bd38446e33440a091"
+    },
+    {
+      "case_id": "n54",
+      "module": "narrative-review",
+      "file": "n54.md",
+      "sha256": "fb35c7d27e8e8538fc4cd3b42517588811378f201f8e29acd09a051097334404"
+    },
+    {
+      "case_id": "q28",
+      "module": "qualitative-study",
+      "file": "q28.md",
+      "sha256": "cb28f60248163ab2ab2d0e1b5d21da37e4e6d7b1054cefc7bd41a6c5ab4bf957"
+    },
+    {
+      "case_id": "r17",
+      "module": "statistics",
+      "file": "r17.md",
+      "sha256": "4795b5dc483dd01ce8b75702327df3f2a13ffea216dab35f3b5c6e3d140ff40d"
+    },
+    {
+      "case_id": "s43",
+      "module": "systematic-review",
+      "file": "s43.md",
+      "sha256": "155b926a3c46481346e5a3d8af97447e8ddf647cf9e9a2b0337384f9a2c9ffea"
+    }
+  ]
+}

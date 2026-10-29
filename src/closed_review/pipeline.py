@@ -1,10 +1,9 @@
-"""The deep analysis as pure rules over a review's state, for any host that runs the model calls.
+"""The deep analysis as pure rules over a review's state.
 
-A host (an app through the sidecar, or the Hermes deep scan in scan.py) keeps the review and
-makes the model calls; this module says what each call is asked, checks each answer, and applies
-what is accepted. Every function takes the review state as plain data and returns problems to send
-back to the model, or the changed state. Nothing here reads files, calls
-a model, or keeps state between calls.
+The Hermes deep scan (scan.py) keeps the review and has the agent answer each task; this module says
+what each call is asked, checks each answer, and applies what is accepted. Every function takes the
+review state as plain data and returns problems to send back to the model, or the changed state.
+Nothing here reads files, calls a model, or keeps state between calls.
 
 The stages:
 
@@ -32,6 +31,7 @@ computed mismatch, otherwise the model's rating as judgement.
 from __future__ import annotations
 
 import copy
+import json
 import re
 from decimal import Decimal
 from typing import Any
@@ -96,8 +96,11 @@ ANSWER_FIELDS: dict[str, dict[str, str]] = {
             "each either a link to a concern already found {link: its id, such as F3; role: "
             + ", ".join(UPDATE_ROLES)
             + "; note: one sentence on what this part adds; quotes: from this part only}, or a "
-            "new concern {target: the passage it is about, verbatim (the claim, choice, or figure "
-            "it questions; not its evidence); different_from; title: at most 12 neutral words; "
+            "new concern {target: the passage it is about, verbatim (a string or "
+            "{quote, locator} when the passage appears more than once; the claim, choice, or "
+            "figure it questions, not its evidence); different_from: "
+            + _DIFFERENT_FROM
+            + "; title: at most 12 neutral words; "
             "issue: a falsifiable, proportionate concern, not a verdict; why: why it matters for "
             "validity, interpretation, ethics, or use; solutions: a list; type: one of "
             + ", ".join(CANDIDATE_TYPES)
@@ -114,17 +117,26 @@ ANSWER_FIELDS: dict[str, dict[str, str]] = {
     "check": {
         "shown": "true or false",
         "quotes": _QUOTES,
+        "source_quote": (
+            "only when a source-misreading flaw is shown: the source's own words as quoted "
+            "in the manuscript, verbatim, separate from the manuscript's claim about it; "
+            "a string or {quote, locator}"
+        ),
         "reason": "one sentence why",
         "concern": (
             "when shown: the id of the concern already found that it is an instance of, or none"
         ),
-        "target": "when shown and no concern fits: the passage the flaw is about, verbatim",
+        "target": (
+            "when shown and no concern fits: the passage the flaw is about, verbatim; "
+            "a string or {quote, locator}"
+        ),
         "different_from": _DIFFERENT_FROM,
     },
     "sweep": {
         "concerns": (
             "each {concern: the distinct problem in one neutral, specific sentence, what and "
-            "where; target: the passage it is about, verbatim; items: the ids of the items "
+            "where; target: the passage it is about, verbatim (a string or {quote, locator}); "
+            "items: the ids of the items "
             "listed in the task that raise it, findings (F…) and any check items (C…) listed "
             "there; never a task id; severity: major or minor; flaw: the id of the listed "
             "major flaw it is an instance of, or none}"
@@ -139,8 +151,7 @@ ANSWER_FIELDS: dict[str, dict[str, str]] = {
         ),
     },
 }
-"""Each answer's fields, for a host that has no tool schemas to carry them (an app's tool schemas
-describe the same fields)."""
+"""Each answer's fields, for a host that has no tool schemas to carry them."""
 
 Review = dict[str, Any]
 Finding = dict[str, Any]
@@ -161,6 +172,23 @@ def _text(value: Any) -> str:
     if isinstance(value, (int, float)):
         return js_number(value)
     return str(value)
+
+
+def _target_evidence(value: Any) -> str | dict[str, Any]:
+    """Normalize one target without losing a locator supplied for an ambiguous quotation."""
+    if isinstance(value, list):
+        if len(value) != 1 or not isinstance(value[0], (str, dict)):
+            return ""
+        value = value[0]
+    if isinstance(value, dict):
+        return value if isinstance(value.get("quote"), str) else ""
+    return _text(value)
+
+
+def _target(value: Any) -> str:
+    """The target's text, for checking that a passage was supplied."""
+    target = _target_evidence(value)
+    return target["quote"] if isinstance(target, dict) else target
 
 
 def js_number(value: float | int) -> str:
@@ -235,7 +263,7 @@ def _distinct(items: list[Any]) -> list[Any]:
 
 def confirmed(f: Finding) -> bool:
     """A concern a check confirmed: the check is its evidence."""
-    return any(a.get("shown") and a.get("quotes_verified") for a in f.get("flaw_checks") or [])
+    return any(rules.confirmed_check(a) for a in f.get("flaw_checks") or [])
 
 
 def listed_flaws(knowledge: dict[str, Any], profiles: list[str]) -> list[dict[str, str]]:
@@ -298,8 +326,8 @@ def unit_problems(
     """What is wrong with a proposed grouping: every segment in exactly one part of one unit, 4 to 5
     units besides the Abstract and the references (3 to 6 accepted), each part consecutive segments
     of PART_MIN_WORDS to PART_WORDS words: a single segment may be longer, and a short part may stay
-    when joining either neighbour would pass the most. The Abstract is not checked: it is made one
-    part."""
+    when no neighbour it meets in the manuscript could take it without passing the most. The
+    Abstract is not checked: it is made one part."""
     problems: list[str] = []
     known = {s["id"] for s in plan}
     position = {s["id"]: n for n, s in enumerate(plan)}
@@ -339,15 +367,27 @@ def unit_problems(
                     f"part {', '.join(part)} has {sizes[n]} words, more than {PART_WORDS}: break "
                     "it at a logical break"
                 )
-            neighbours = [sizes[k] for k in (n - 1, n + 1) if 0 <= k < len(sizes)]
-            joinable = any(m + sizes[n] <= PART_WORDS for m in neighbours)
+            # A short part may join a neighbour only where the two meet in the manuscript: a
+            # declaration placed with the methods has no neighbour it can join, so it stays.
+            joinable = [
+                parts[k]
+                for k in (n - 1, n + 1)
+                if 0 <= k < len(parts)
+                and sizes[k] + sizes[n] <= PART_WORDS
+                and _adjacent(position, parts[min(k, n)], parts[max(k, n)])
+            ]
             if len(parts) > 1 and sizes[n] < PART_MIN_WORDS and joinable:
                 problems.append(
                     f"part {', '.join(part)} has {sizes[n]} words, fewer than {PART_MIN_WORDS}: "
-                    f"join it with the part before or after it in the {u['role']} unit, whichever "
-                    "it belongs with"
+                    f"join it with the part {' or the part '.join(', '.join(j) for j in joinable)} "
+                    f"in the {u['role']} unit, whichever it belongs with"
                 )
     return problems
+
+
+def _adjacent(position: dict[str, int], before: list[str], after: list[str]) -> bool:
+    """Whether `after` starts with the segment that follows `before`'s last in the manuscript."""
+    return position[after[0]] == position[before[-1]] + 1
 
 
 def make_units(plan: list[dict[str, Any]], proposed: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -569,6 +609,18 @@ def _owner_of(review: Review, target: Evidence) -> Finding | None:
     )
 
 
+def _different_from_problem(d: Any) -> str | None:
+    """What is wrong with a given different_from's shape; it is stored as {id, reason}."""
+    if not d:
+        return None
+    if isinstance(d, dict) and _text(d.get("id")).strip() and _text(d.get("reason")).strip():
+        return None
+    return (
+        'different_from must be one object {id: "F3" or "concern 2", reason: one sentence}, '
+        f"not {json.dumps(d, ensure_ascii=False)[:120]}"
+    )
+
+
 def _differs(d: Any, owner: str) -> bool:
     """A different_from that names `owner` with a reason."""
     return isinstance(d, dict) and d.get("id") == owner and bool(_text(d.get("reason")).strip())
@@ -675,7 +727,7 @@ def read_answer(
             or not c.get("why")
             or c.get("type") not in CANDIDATE_TYPES
             or c.get("severity") not in ("major", "minor")
-            or not _text(c.get("target")).strip()
+            or not _target(c.get("target")).strip()
         ):
             problems.append(
                 f"{label} is new, so it needs title, issue, why, type, severity, and target"
@@ -684,6 +736,8 @@ def read_answer(
             problems.append(f"{label} names flaw {c['flaw']}, which is not listed")
         if not c.get("quotes"):
             problems.append(f"{label} has no quote")
+        if not c.get("link") and _different_from_problem(c.get("different_from")):
+            problems.append(f"{label} {_different_from_problem(c.get('different_from'))}")
     quote_sets = [rules.check_quotes(document, c.get("quotes") or []) for c in concerns]
     for i, q in enumerate(quote_sets):
         problems += [f"concern {i + 1}: {p}" for p in q["problems"]]
@@ -701,8 +755,8 @@ def read_answer(
                 f"blocks {', '.join(locators)}, or leave the link out"
             )
     targets = [
-        rules.check_quotes(document, [_text(c.get("target"))])
-        if not c.get("link") and _text(c.get("target")).strip()
+        rules.check_quotes(document, [_target_evidence(c.get("target"))])
+        if not c.get("link") and _target(c.get("target")).strip()
         else None
         for c in concerns
     ]
@@ -718,9 +772,19 @@ def read_answer(
         owner_finding = _owner_of(review, target)
         owner = owner_finding["id"] if owner_finding else seen.get(target["locator"])
         if owner and not _differs(concerns[i].get("different_from"), owner):
+            # Name both by title: in a long answer a model miscounts "concern 7".
+            owner_title = (
+                owner_finding.get("title")
+                if owner_finding
+                else concerns[int(owner.split()[1]) - 1].get("title")
+            )
+            given = concerns[i].get("different_from")
+            named = given.get("id") if isinstance(given, dict) else None
             problems.append(
-                f"concern {i + 1} is about the same passage as {owner} ([{target['locator']}]): "
-                f"link to {owner} with a role, or, if it is a different problem, give "
+                f'concern {i + 1} ("{_text(concerns[i].get("title"))}") is about the same passage '
+                f'as {owner} ("{_text(owner_title)}") ([{target["locator"]}])'
+                + (f"; its different_from names {_text(named)}, not {owner}" if named else "")
+                + f": link to {owner} with a role, or, if it is a different problem, give "
                 "different_from: "
                 f'{{id: "{owner}", reason: how it differs, in one sentence}}'
             )
@@ -828,6 +892,17 @@ def read_answer(
 def check_task(
     flaw: dict[str, str], segment_titles: list[str], register_text: str, answer: str = "check"
 ) -> str:
+    source_rule = (
+        [
+            "For this source-misreading flaw, provide source_quote: the source's own words as "
+            "quoted in the manuscript, separate from the manuscript's claim about it. If those "
+            "words are not quoted in the manuscript, say shown false; an uncited claim alone "
+            "does not show a misreading. The source quotation is manuscript-reported, not "
+            "independently verified."
+        ]
+        if flaw["id"] in rules.SOURCE_MISREAD_FLAWS
+        else []
+    )
     return "\n\n".join(
         [
             f"Task: flaw check. Flaw {flaw['id']}: {flaw['flaw']}",
@@ -842,7 +917,32 @@ def check_task(
             "questions), "
             "verbatim. If it is not shown, say shown false with no quotes.",
         ]
+        + source_rule
     )
+
+
+def _source_quote(
+    document: dict[str, Any], flaw: str, params: dict[str, Any], claims: list[Evidence]
+) -> tuple[Evidence | None, list[str]]:
+    """For a source misreading, require the source's words as the manuscript quotes them."""
+    if flaw not in rules.SOURCE_MISREAD_FLAWS:
+        return None, []
+    value = params.get("source_quote")
+    if not _target(value).strip():
+        return None, [
+            f"{flaw} needs source_quote: the source's own words as quoted in "
+            "the manuscript, separate from its claim about the source. If those words are not "
+            "available, say shown false; an uncited claim alone does not show a misreading"
+        ]
+    checked = rules.check_quotes(document, [_target_evidence(value)])
+    if checked["problems"]:
+        return None, [f"source_quote: {problem}" for problem in checked["problems"]]
+    source = checked["verified"][0]
+    normalized = " ".join(source["quote"].split())
+    claim_texts = [" ".join(claim["quote"].split()) for claim in claims]
+    if not any(normalized not in text and text not in normalized for text in claim_texts):
+        return None, ["source_quote needs a separate quote of the manuscript's claim about it"]
+    return source, []
 
 
 def check_answer(
@@ -869,6 +969,10 @@ def check_answer(
     problems = list(checked["problems"])
     if not checked["verified"] and not problems:
         problems.append("a flaw shown needs at least one verbatim quote")
+    source_quote, source_problems = _source_quote(document, flaw, params, checked["verified"])
+    problems += source_problems
+    if _different_from_problem(params.get("different_from")):
+        problems.append(_different_from_problem(params.get("different_from")))
     concern = (
         _text(params["concern"]) if params.get("concern") and params["concern"] != "none" else None
     )
@@ -876,10 +980,10 @@ def check_answer(
     if concern:
         if concern not in known:
             problems.append(f"concern {concern} is not one of the concerns found so far")
-    elif not _text(params.get("target")).strip():
+    elif not _target(params.get("target")).strip():
         problems.append("with no concern, give target: the passage the flaw is about")
     else:
-        t = rules.check_quotes(document, [_text(params.get("target"))])
+        t = rules.check_quotes(document, [_target_evidence(params.get("target"))])
         problems += [f"target: {p}" for p in t["problems"]]
         target = t["verified"][0] if t["verified"] else None
         owner = _owner_of(review, target) if target else None
@@ -903,6 +1007,8 @@ def check_answer(
         made["concern"] = concern
     elif target:
         made["target"] = target
+    if source_quote:
+        made["source_quote"] = source_quote
     if params.get("different_from"):
         d = params["different_from"]
         made["different_from"] = {"id": _text(d.get("id")), "reason": _text(d.get("reason"))}
@@ -1090,8 +1196,10 @@ def sweep_answer(
             placed[i] = placed.get(i, 0) + 1
         if not _text(c.get("concern")).strip():
             problems.append(f"{label} has no statement")
-        if not _text(c.get("target")).strip():
+        if not _target(c.get("target")).strip():
             problems.append(f"{label} has no target")
+        if c.get("severity") not in ("major", "minor"):
+            problems.append(f"{label} needs severity: major or minor")
         if not items:
             problems.append(f"{label} has no items")
         unknown = [i for i in items if i not in by_item]
@@ -1109,8 +1217,8 @@ def sweep_answer(
         if c.get("flaw") and c["flaw"] != "none" and c["flaw"] not in flaw_ids:
             problems.append(f"{label} names {c['flaw']}, which is not a listed major flaw")
     targets = [
-        rules.check_quotes(document, [_text(c.get("target"))])
-        if _text(c.get("target")).strip()
+        rules.check_quotes(document, [_target_evidence(c.get("target"))])
+        if _target(c.get("target")).strip()
         else None
         for c in concerns
     ]
@@ -1267,6 +1375,16 @@ def confirm_task(f: Finding, flaw: dict[str, str], answer: str = "check") -> str
             "passage shows a different problem, or the flaw only in a weaker form, say shown "
             "false with no quotes.",
         ]
+        + (
+            [
+                "For this source-misreading flaw, give source_quote: the source's own words as "
+                "quoted in the manuscript, separate from its claim about the source. If the "
+                "source's words are unavailable, say shown false. The quotation remains "
+                "manuscript-reported, not independently verified."
+            ]
+            if flaw["id"] in rules.SOURCE_MISREAD_FLAWS
+            else []
+        )
     )
 
 
@@ -1295,20 +1413,21 @@ def confirm_answer(
         if quotes
         else {"verified": [], "problems": ["a flaw shown needs at least one verbatim quote"]}
     )
-    if checked["problems"]:
-        return {"problems": checked["problems"]}
-    return {
-        "problems": [],
-        "answer": {
-            "flaw": flaw,
-            "model": model,
-            "shown": True,
-            "quotes_verified": True,
-            "quotes": checked["verified"],
-            "reason": reason,
-            "concern": finding_id,
-        },
+    source_quote, source_problems = _source_quote(document, flaw, params, checked["verified"])
+    if problems := [*checked["problems"], *source_problems]:
+        return {"problems": problems}
+    answer = {
+        "flaw": flaw,
+        "model": model,
+        "shown": True,
+        "quotes_verified": True,
+        "quotes": checked["verified"],
+        "reason": reason,
+        "concern": finding_id,
     }
+    if source_quote:
+        answer["source_quote"] = source_quote
+    return {"problems": [], "answer": answer}
 
 
 def apply_confirmations(

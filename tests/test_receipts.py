@@ -3,8 +3,7 @@ import json
 from pathlib import Path
 
 import pytest
-from conftest import assert_mode
-from test_workflow import setup_profile
+from conftest import assert_mode, setup_profile
 
 from closed_review.cli import main
 from closed_review.direct import finalize_direct_export, prepare_direct_export

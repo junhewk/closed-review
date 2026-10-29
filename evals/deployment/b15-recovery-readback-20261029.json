@@ -1,0 +1,225 @@
+{
+  "observed_at": "2026-10-29T02:49:52+00:00",
+  "scope": "four_completed_recovery_jobs_only_not_public_or_native_suite",
+  "archive": {
+    "sha256": "54f1974285e78f999ed5cdb4c0ee378e5669c523635d7a0cbb8fd67b44ef62bf",
+    "files": 101,
+    "bytes": 1375581,
+    "remote_path": "/tmp/creview-support-b15-recovery.1zxlkgp2.tar.gz"
+  },
+  "local_root": "/tmp/creview-support-b15-recovery-results.7tKkPlsX/copied-verified",
+  "archive_validation": {
+    "passed": true,
+    "archive_sha256": "54f1974285e78f999ed5cdb4c0ee378e5669c523635d7a0cbb8fd67b44ef62bf",
+    "files": 101,
+    "bytes": 1375581,
+    "verified_copy": "/tmp/creview-support-b15-recovery-results.7tKkPlsX/copied-verified",
+    "initial_premature_copy_preserved": "/tmp/creview-support-b15-recovery-results.7tKkPlsX/initial-unverified-copy",
+    "initial_validation_failed_because_scp_incomplete": true,
+    "revalidated_before_new_extraction": true
+  },
+  "readback": {
+    "runner": "aad45258aa8dd462a448e19f184e2dafa0edf3c582e70ec51f734a64fa8d3708",
+    "cases": [
+      {
+        "job": "iteration-handoff",
+        "source_snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        },
+        "receipt_verified": true,
+        "event_checks": {
+          "actual_iteration_stop": true,
+          "same_session": true,
+          "same_run": true,
+          "nonzero_exit_preserved": true,
+          "committed_progress": true
+        },
+        "calculations": [
+          {
+            "id": "statistics-c0001",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0002",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0003",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0004",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0005",
+            "matches_saved": true
+          }
+        ],
+        "saved_status": "complete",
+        "saved_observations": 1,
+        "semantic_judgments": "not_assessed",
+        "checks_passed": true
+      },
+      {
+        "job": "stale-draft",
+        "source_snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        },
+        "receipt_verified": true,
+        "event_checks": {
+          "old_bytes_preserved": true,
+          "fresh_draft_exists": true
+        },
+        "calculations": [
+          {
+            "id": "statistics-c0001",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0002",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0003",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0004",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0005",
+            "matches_saved": true
+          }
+        ],
+        "saved_status": "complete",
+        "saved_observations": 1,
+        "semantic_judgments": "not_assessed",
+        "checks_passed": true
+      },
+      {
+        "job": "bootstrap-limit",
+        "source_snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        },
+        "receipt_verified": true,
+        "event_checks": {
+          "original_query_hash": true,
+          "bootstrap_query_hash": true,
+          "actual_unissued_boundary": true,
+          "actual_forced_three": true,
+          "expected_exit_recovered": true
+        },
+        "calculations": [
+          {
+            "id": "statistics-c0001",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0002",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0003",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0004",
+            "matches_saved": true
+          }
+        ],
+        "saved_status": "complete",
+        "saved_observations": 1,
+        "semantic_judgments": "not_assessed",
+        "checks_passed": true
+      },
+      {
+        "job": "compression",
+        "source_snapshot": {
+          "matches": true,
+          "differing_fields_total": 0,
+          "differing_fields": [],
+          "differing_fields_truncated": false,
+          "only_table_bbox_coordinates_differ": false
+        },
+        "receipt_verified": true,
+        "event_checks": {
+          "actual_same_session_commit": true
+        },
+        "calculations": [
+          {
+            "id": "statistics-c0001",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0002",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0003",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0004",
+            "matches_saved": true
+          },
+          {
+            "id": "statistics-c0005",
+            "matches_saved": true
+          }
+        ],
+        "saved_status": "complete",
+        "saved_observations": 2,
+        "semantic_judgments": "not_assessed",
+        "checks_passed": true,
+        "all_compression_attempts": [
+          {
+            "event": "compression_attempt",
+            "session_id": "20261029_112706_24c47e",
+            "commit_status": "aborted",
+            "fallback_used": false
+          },
+          {
+            "event": "compression_attempt",
+            "session_id": "20261029_112706_24c47e",
+            "commit_status": "committed",
+            "fallback_used": false
+          },
+          {
+            "event": "compression_attempt",
+            "session_id": "20261029_112706_24c47e",
+            "commit_status": "aborted",
+            "fallback_used": false
+          }
+        ]
+      }
+    ],
+    "source_copies_verified": 4,
+    "receipts_verified": 4,
+    "calculations_checked": 19,
+    "all_checks_passed": true,
+    "qualification": "not_qualified",
+    "original_artifacts_changed": false,
+    "model_or_network_calls": false,
+    "private_keys_read": false,
+    "human_judgments_created": false,
+    "note": "Record reproduction/event checks, not medical quality, input-role or independent formula validation."
+  },
+  "readback_sha256": "4eaa638225588275d49ea9b345063f6ae689e6131491160149aaea9f1508e6bc",
+  "verifier_sha256": "fb85a91dbaca1d503ecdb149613a022021b0cd896f5811e3fadbe2c4e0bd437a",
+  "whole_suite_pass": false,
+  "goal_complete": false
+}

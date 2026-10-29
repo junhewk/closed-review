@@ -1,8 +1,8 @@
 # Export receipts
 
-Every export writes a `receipt.json` beside the drafts: automatically for audited exports, and through
-`creview direct finalize EXPORT_ID` after the agent writes a direct export. Each receipt is also
-appended to the private local log `receipts.jsonl` in the case-data directory. Nothing is sent
+Every export writes a `receipt.json` beside the drafts, through `creview direct finalize EXPORT_ID`
+after the agent writes them. Each receipt is also appended to the private local log
+`receipts.jsonl` in creview's private store. Nothing is sent
 anywhere.
 
 A receipt records the creview version, a SHA-256 of the installed package's file list

@@ -47,6 +47,19 @@ jobs:
           uvx --isolated --from "./dist/closed_review-${{ steps.version.outputs.version }}-py3-none-any.whl" \
             creview receipts sums > sums.json
           python3 -c "import json; d = json.load(open('sums.json')); open('dist/creview-sums-${{ steps.version.outputs.version }}.txt', 'w', newline='').write(d['sums']); print(d['sums_sha256'])"
+      - name: Require model and workflow qualification for this exact wheel
+        run: |
+          uv run python - <<'PY'
+          import json
+          from pathlib import Path
+          from closed_review.qualification import check_release_gate
+          identity = json.loads(Path('sums.json').read_text())
+          print(check_release_gate(Path('evals/deployment/release-gate.json'),
+                                   identity['version'], identity['sums_sha256']))
+          PY
+      - name: Include matching installers and qualification record
+        run: |
+          cp scripts/install.sh scripts/install-windows.ps1 evals/deployment/release-gate.json dist/
       - uses: actions/upload-artifact@v4
         with:
           name: dist
@@ -66,11 +79,14 @@ jobs:
         with:
           name: dist
           path: dist/
-      - name: Keep only the packages
-        run: rm dist/*.txt
+      - name: Select distribution packages
+        run: |
+          mkdir packages
+          cp dist/*.whl dist/*.tar.gz packages/
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
+          packages-dir: packages/
 
   pypi:
     needs: build
@@ -86,9 +102,13 @@ jobs:
         with:
           name: dist
           path: dist/
-      - name: Keep only the packages
-        run: rm dist/*.txt
+      - name: Select distribution packages
+        run: |
+          mkdir packages
+          cp dist/*.whl dist/*.tar.gz packages/
       - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/
 
   github-release:
     needs: [build, testpypi, pypi]

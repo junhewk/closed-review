@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "repetitions": 3,
+  "cases": [
+    {"id": "ms1", "file": "ms1/manuscript.md", "profiles": ["qualitative", "normative-argument"]},
+    {"id": "ms2", "file": "ms2/manuscript.md", "profiles": ["systematic-review", "normative-argument"]},
+    {"id": "ms3", "file": "ms3/manuscript.md", "profiles": ["normative-argument"]},
+    {"id": "ms4", "file": "ms4/manuscript.md", "profiles": ["legal-analysis", "normative-argument"]},
+    {"id": "ms5", "file": "ms5/manuscript.md", "profiles": ["scoping-review"]},
+    {"id": "ms6", "file": "ms6/manuscript.md", "profiles": ["quantitative"]},
+    {"id": "clean-quantitative", "file": "clean-quantitative.md", "profiles": ["quantitative"], "control": true},
+    {"id": "clean-normative", "file": "clean-normative.md", "profiles": ["normative-argument"], "control": true},
+    {"id": "long-ms1-timing", "file": "deployment-ordinary-v1/long-ms1/manuscript.md", "profiles": ["qualitative", "normative-argument"], "timing_only": true},
+    {"id": "long-ms3-timing", "file": "deployment-ordinary-v1/long-ms3/manuscript.md", "profiles": ["normative-argument"], "timing_only": true},
+    {"id": "long-ms4-timing", "file": "deployment-ordinary-v1/long-ms4/manuscript.md", "profiles": ["legal-analysis", "normative-argument"], "timing_only": true}
+  ]
+}

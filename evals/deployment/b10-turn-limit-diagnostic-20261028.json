@@ -1,0 +1,23 @@
+{
+  "protocol": "medical-methods-v1",
+  "result": "failed",
+  "error": "first turn did not stop at the requested task boundary",
+  "seconds": 27.34,
+  "run": "support-00fd24bd8316594bf7bc0c0703aceb7b",
+  "cursor": 0,
+  "issued_task": null,
+  "task_count": 4,
+  "module_status": "pending",
+  "attempts": {},
+  "reason": "Model stopped after start without calling next; no answer, processing refusal, forced interruption, or resume event occurred.",
+  "preserve_old_failure": true,
+  "next_action": "Implement one bounded same-session checkpoint-completion request in evaluator driver, not module restart. Recovery probes should force the analysis invocation only after an issued checkpoint, not hardcoded invocation #2. Preserve six actual invocation cap, strict state/boundary checks and genuine recovery event evidence. Frozen bundles/queued b11 harness must not be patched in place; new harness bundle/controller needed.",
+  "artifact_directory": "/tmp/creview-support-b10-turn-limit-results.QOdhGFTu",
+  "archive_sha256": "8ad94c64f3b10430b9f900480b2e2e429512b5acf93a0dcc9f1cccc7abf6ccfc",
+  "archive_regular_files": 8,
+  "archive_unpacked_bytes": 34902,
+  "source_and_saved_runner_verified": true,
+  "receipt_available": false,
+  "no_export_created": true,
+  "qualification": "not_qualified"
+}

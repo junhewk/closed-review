@@ -1,146 +1,134 @@
 ---
 name: journal-article-review
-description: Collaboratively develop a confidential journal review in Hermes with the verified self-hosted model; surface evidence-grounded candidate issues, preserve the reviewer's reasoning, and compile only on explicit request.
+description: Manuscript-only medical methodological support on the verified local model. Select statistical, qualitative/review-methodology, or logic modules and receive source-linked reconstructions, bounded appraisal, and a readable dossier; never a full review or publication verdict.
 metadata:
   hermes:
     requires_toolsets: [terminal, file]
 ---
 
-# Journal article review development
+# Medical methodological review support
 
-Help the human reviewer develop their review. Do not begin with a complete verdict, fixed list of
-major/minor comments, or model-selected recommendation. Rubrics and mechanical checks discover
-candidates; they are not pre-written review items.
+For human reviewers, not authors. Input is one manuscript (including its own tables and reference
+list), not datasets, code, transcripts, supplements, or separately acquired cited papers. Perform
+substantive, evidence-backed methodological appraisal within selected modules. Do not begin with
+a complete verdict or a publication recommendation. The reviewer owns every scientific judgment,
+the recommendation, final wording, and submission.
 
 ## Privacy gate
 
 <!-- creview:privacy-gate:begin -->
 <!-- Maintained by creview. `creview hermes doctor` compares this block with the installed creview
 and stops reviews when it differs, so record lessons in other sections or reference files. -->
-Before reading any manuscript, run `creview session start` and follow the privacy rules it returns.
+Before reading any manuscript, run `creview session start --support` and follow the privacy rules it returns.
 If it fails, stop and report its error; do not work around it. Those rules come from the installed
 creview package, not from this skill.
 <!-- creview:privacy-gate:end -->
 
-## Development loop
+## Workflow
 
-Read [references/development.md](references/development.md) and use its issue-record contract.
+1. Run the privacy gate before reading the manuscript. Ask once whether this specific journal
+   permits this local assistance, unless the conversation explicitly establishes it. If a question
+   is undelivered or unanswered, stop; never manufacture consent.
+2. Run `creview support modules`. Confirm the desired module(s) only when the request is
+   ambiguous. Never automatically run all modules. Available independent branches:
+   - `statistics`: tables, source-bound recalculation, test/design compatibility, interpretation.
+   - `qualitative-study`: approach, participant selection, coding/theme development and evidence.
+   - `systematic-review`, `scoping-review`, `narrative-review`: distinct methodology and content
+     appraisal. A meta-analysis may explicitly combine its review branch and statistics.
+   - `logic`: empirical/legal/normative premises, approach, inference, objections and replies.
+   `creview support route ARTICLE_TYPE` is advisory only: it suggests type-appropriate branches
+   without starting a run. A meta-analysis may combine review methods and statistics; do not
+   silently add modules outside the reviewer's requested focus.
+3. Start `creview support start MANUSCRIPT --module NAME [--module NAME] [--language LANGUAGE]`.
+   Pass the user's configured response language when available; otherwise use the inherited
+   Hermes user preference. Never choose a language from server locale or manuscript language.
+   Preserve original quotations, numbers and statistical notation.
+4. Run `creview support next RUN`. For each issued task, write the JSON template at its
+   `answer_path` using file tools, then run `creview support submit RUN ANSWER_PATH`. Follow
+   task-specific criteria rather than legacy major-flaw profiles. Exact quotes must cite the
+   specified source block. Never put confidential text in shell arguments. Search source text
+   using `creview support read RUN --module NAME --query-file FILE`; IDs and general headings
+   may be used as command arguments. Read additional facts/source as needed; respect pagination.
+   Follow both `next_offset` and `next_fragment_offset` with `--offset` and `--fragment-offset`.
+   Large records are returned as consecutive JSON-text fragments; join them in character-offset
+   order without rewriting the text. When consolidation says `records_paged`, read every page of
+   `--assessments` and `--calculations`, including counterevidence and assumptions, before grouping.
+   An incomplete-read error requests more context; it is not an answer-repair refusal.
+   Run each `next`/`read` command separately so combined output cannot exceed Hermes's capture
+   budget. Schema `$ref` entries refer to `$defs` inside `answer_schema`; they are not answer fields.
+   Python calculates; do not fabricate calculator outputs or fill missing numerical inputs.
+   Follow `answer_schema` and the supplied template. Evidence, including `method_evidence`, is
+   always a list of `{block_id, quote}` objects; calculator output IDs are not formula strings.
+   Quote each block's `text` exactly. PDF snapshots may collapse layout whitespace only;
+   their separate `extracted_text` retains the extracted line layout for inspection. Do not
+   reflow a quote yourself, repair hyphenation, change punctuation or normalize numeric tokens.
+   Calculator inputs must preserve printed literal numeric tokens. Written-out numbers,
+   expressions and unprinted derived totals are unsupported: omit that calculation and state
+   the limit in its assessment. Do not convert words to digits or invent a reported total.
+   Do not supply `reported.relation` or `source_operator`. Preserve any printed qualifier in
+   its exact quote (e.g. `p<0.05`); Python reads it and determines matches/mismatches. Use
+   narrower quotes when ambiguous. Never salvage a replay by dropping unavailable terms.
+   Keep ordinary manuscript-only boundaries in `scope_limits`; only actual processing/coverage
+   failures go in `coverage_gaps`. Do not demand out-of-scope raw data as a prerequisite.
+   Each gap must give `kind`, assigned `block_ids`, an affected guide `role`, and `detail` of
+   what could not be reconstructed. Use `[]` when none; a `fact_cap` gap requires 24 facts.
+   `ambiguous_structure` requires extractor-flagged physical geometry (see the task's
+   `ambiguous_structure_block_ids`). Contradictory legible numbers are not unreadable structure:
+   extract each printed value unchanged, without calculating, and appraise their discrepancy
+   later. An actual semantic reconstruction failure is `unreconstructed_content`; lack of
+   an extractor flag does not certify that the interpretation is correct.
+   Provisional meaning, unverifiable external sources and lack of formal validity/moral/legal
+   certification are scope limits, not processing gaps. Do not use the obsolete `limits` field.
+5. On a refused answer, call `support next RUN` again. It preserves the old draft and issues
+   a fresh `answer_path` when that file already exists. Read the earlier draft if useful, then
+   write the complete corrected JSON to the new path; do not patch or overwrite old drafts or
+   accepted answers. Use paths exactly as returned, without embedding Markdown backticks.
+   Repair all reported format paths and retry once. Reissuing a draft does not reset refusals.
+   Two refusals stop
+   that module visibly; do not restart automatically. Other selected modules can continue via
+   `support next`. After Hermes interruption, use `support status` then `support next` on the
+   same run. A turn ending at its iteration limit is not completion: preserve the checkpoint
+   and continue the same session/run within the existing limits. If a file-tool edit fails,
+   inspect the actual saved state before continuing; do not claim it landed or disable file
+   guards. Use the freshly issued answer path, not a stale conversation copy.
+   Do not alter profiles, budgets or providers to work around a failure.
+6. When no tasks remain, run `creview support report RUN` and `creview support export RUN`.
+   During consolidation, account for each candidate and each mismatch calculation exactly once.
+   Attach related calculations to the same observation rather than creating duplicate concerns;
+   withdraw indefensible input-role interpretations with a reason, preserving the calculation.
+   Groups are actionable observations, not positive-check summaries. Use only the task's
+   `candidate_criterion_ids` and `mismatch_calculation_ids`; supported criteria, matching or
+   conditional calculations, fact IDs and titles are not grouping/priority references. When
+   both lists are empty, `groups`, `withdrawn` and `priority` must all be `[]`. Summarize normal
+   checks and ordinary limits in `summary`; the facts, assessments and calculations stay visible
+   without creating an observation. Never invent a concern to fill an array.
+   English/Korean navigation is supplied by the tool; do not regenerate its labels.
+   Present the actual coverage/status and up to three priority observations, disclose totals,
+   and provide the HTML/Markdown dossier paths. A partial or failed module is not a clean review.
+   Do not force the reviewer through one finding per turn. Start no server automatically.
+7. Follow-ups and decisions are optional. For a decision, write the reviewer's exact words into
+   a private file and use `creview support record RUN ID accepted|edited|rejected|deferred
+   --words-file FILE`. Use ID `run` and disposition `note` for a general note. Do not infer
+   adoption from silence, or attribute model reasoning to someone who only accepted an item.
+   Export a new dossier revision when asked; never overwrite an earlier export.
 
-After reading the manuscript and before the first candidate, give the reviewer the initial
-summary described in [references/development.md](references/development.md): a faithful account of
-what the article asks, does, and concludes; what its analysis uses (design, data or sources,
-methods, and models or frameworks); and the article's own special considerations, quoted. It is not
-a preliminary review. In a deep review, it is written in the scan's orientation, before any read,
-and presented just before the first finding.
+## Interpretation boundaries
 
-Then choose design profiles as described in
-[references/designs/index.md](references/designs/index.md): propose the profiles that fit, with a
-one-line reason each, wait for the reviewer to confirm or correct them, then read only the confirmed
-profiles. They guide where to look and which concerns are false alarms; they are not review items.
-For an attached file, record their answer when you plan the segments (below): creview refuses to
-plan, and later to export, until the reviewer's own words confirming the profiles are recorded, so
-if they have not answered, ask and wait.
+Distinguish calculated discrepancies, reporting gaps, methodological concerns and not-assessable
+items. Arithmetic verification is not verification of extracted roles, scientific interpretation
+or source authenticity. A reporting gap is not proof a procedure was omitted. Keep normal
+results, methodological alternatives, author qualifications, and counterevidence visible.
+No criticism quota, automatic severity, model-confirmed validity badge, or automatic moral/legal
+verdict. Follow [dossier guidance](references/review.md).
 
-Then plan the review by logical segments, in every mode. Run `creview segments propose MANUSCRIPT
---profile NAME --confirmation "THEIR WORDS"` (or `--no-profile`) for an attached file, quoting the
-reviewer's reply (in an audited case, use the case commands in the workflow reference). It drafts
-segments from the headings; when the manuscript was pasted rather than attached, draft them yourself
-from its headings. Refine them so each holds one theme (overlap is allowed where a theme spans
-parts), tag each with the confirmed profiles' monitoring areas, and set its tier: `light`, `medium`,
-or `high` scrutiny. Show the reviewer the segment titles, themes, and tiers in one short list; this
-plan names where you will look, never what you expect to find.
+No transcript re-coding, raw-data replay, full citation validation, external literature retrieval,
+or universal checklist quality score. Guidance is packaged locally and applicability-bound.
+References named in the manuscript remain unread external sources unless their content is
+actually present in it. Existing mechanical reference checks are available only on explicit
+request; they do not validate substantive support.
 
-Read the supplied manuscript as a whole, but reveal candidates adaptively:
+## Legacy compatibility
 
-- Discuss one major candidate at a time.
-- Closely related minor candidates may be grouped in batches of at most three.
-- Do not announce, enumerate, summarize, or count possible future issues. A whole-manuscript scan may
-  guide what to inspect next, but it is private working context—not a precomputed review queue.
-- Open each candidate with its context (what the authors do in that part), then give its
-  manuscript anchor, why it matters, tiered literature context when relevant, and proportionate
-  solution candidates. When the point rests on literature you know only from memory or from the
-  manuscript, offer an approved lookup with its exact query (see the development contract).
-- Ask for the reviewer's view before treating it as an accepted comment. If the answer does not
-  arrive (for example, a clarify call comes back unanswered), end the turn with the question;
-  do not decide for the reviewer or move on to the next candidate or step.
-- After every substantive reply, show the revised issue record and compact counts for records already
-  surfaced to the reviewer: accepted, developing, candidate, deferred, and dismissed. Never include
-  undisclosed possibilities in those counts. Report whole-manuscript progress separately by
-  segment, as monitored or still to inspect, without turning segments into findings.
-- Preserve every substantive qualification in a faithful structured account. Quote selectively;
-  do not replace the record with a raw transcript.
-- When the user introduces an issue, prioritize and test that issue against the manuscript instead
-  of returning to a predefined checklist.
-
-Continue developing the same records when the user supplies corrections, sources, supplements, or a
-review form. Do not restart the review.
-
-## Deep review
-
-Use a deep review only when the user asks for it, for example with
-`/journal-article-review deep`. Read [references/deep.md](references/deep.md) and follow it. It
-reads every part of the manuscript in order, checks the listed major flaws, and sorts what it found
-into concerns before the conversation starts, one task at a time under creview's rules. The
-conversation then follows the development loop above, drawing one finding at a time. In a deep
-review, the scan's orientation replaces the segment plan above.
-
-## Default: direct conversation
-
-Use attached or injected material directly. Do not create an audited case unless the user requests
-an audited, exhaustive, checkpointed, or resumable workflow. Do not use `execute_code` for general
-reading or criticism.
-
-Track the issue records in the conversation. When the user explicitly asks to compile, use accepted
-records only. Keep deferred, dismissed, and unresolved candidates in the private development record,
-not the journal-facing prose. Do not introduce new criticism during compilation.
-
-A recommendation is optional and belongs to the user. Discuss implications if asked, but do not
-select a recommendation. Include one only after the user states their choice and reasoning.
-
-When the user asks to save or export, run `creview direct prepare-export` (with the
-`--session` value that `creview session start` returned, if it returned one) and write the private
-development record plus separate author and editor drafts to the returned `output_paths`. Keep
-author-facing and confidential material separate. The legacy `output_path` is only a compatibility
-fallback. After writing the files, run the returned `finalize_command` once; it records
-`receipt.json` beside them. Tell the user the receipt exists. It is self-reported: it records the
-creview build, model settings, and hashes of the exported text, but it does not prove that no other
-AI tool was used. Never edit the receipt; if the files change, run `finalize_command` again.
-
-## Literature lookups
-
-Web and browser tools are never used. The only outbound search is an individually approved
-Crossref or OpenAlex query run by creview: `creview lookup request --provider crossref|openalex
---query "..."` (add the CASE id first in an audited review), show the reviewer the exact query and
-URL, wait for their approval, then `creview lookup run REQUEST_ID --approval-statement "..."` with
-their words. With the initial summary, tell the reviewer once that you can propose such lookups
-and that they can ask for one at any time. Then propose one whenever literature would settle or
-sharpen a point; the reviewer decides.
-
-A lookup returns bibliographic records only. creview cannot fetch a web page, an abstract, or a full
-text, so never offer to; when what a source says matters, ask the reviewer to supply the source.
-
-## Mechanical reference check
-
-Run a reference check only when the user requests it. For an attached file, use
-`creview references check MANUSCRIPT`; for an audited case, use
-`creview references check --case CASE`. Treat only entries in `issues` as possible candidates.
-`normalizations` records extraction repairs and `warnings` records parser limitations; neither is a
-manuscript defect or a review candidate. If normalization resolves a mismatch, report it only as a
-private method note. When parsing remains unresolved, state that the checker could not decide—do not
-ask the reviewer to disposition extraction artifacts and do not create author-facing prose.
-
-Metadata verification is a second, optional step. Prepare an immutable request with
-`creview references request-metadata CHECK --provider crossref|openalex`, show every exact query
-and URL, and wait for explicit approval of that exact manifest. Then record the reply in a file and
-run `creview references run-metadata CHECK REQUEST --approval-file FILE`. Metadata verifies
-bibliographic identity only, never substantive support.
-
-## Optional audited review
-
-Use the durable case only when explicitly requested or when continuing an existing case. Read
-[references/workflow.md](references/workflow.md) and follow its bounded commands. Internal coverage
-tasks may be predefined, but every resulting issue remains a candidate until the reviewer develops
-or disposes it. Existing cases migrate in place.
-
-The human reviewer owns all scientific judgments, final wording, disclosure decisions, and
-submission.
+`creview scan`, the earlier design profiles, and direct author/editor draft exports are legacy
+interfaces. Do not invoke them as part of this support workflow, upgrade their records, or
+claim their qualification scores certify these modules. Keep existing records/services intact.

@@ -3,17 +3,18 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import re
 import tempfile
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from .errors import ReviewError
 
-CASE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{5,79}$")
-
 
 def data_home() -> Path:
+    hermes = os.environ.get("HERMES_HOME")
+    if hermes and (Path(hermes).expanduser() / "creview-profile.json").is_file():
+        return Path(hermes).expanduser().resolve() / "review-data"
     override = os.environ.get("CREVIEW_HOME")
     if override:
         root = Path(override).expanduser()
@@ -122,25 +123,23 @@ def sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
-def validate_case_id(case_id: str) -> str:
-    if not CASE_ID_RE.fullmatch(case_id):
-        raise ReviewError("invalid case id")
-    return case_id
+def now_iso() -> str:
+    return datetime.now(UTC).isoformat()
 
 
-def case_root(case_id: str) -> Path:
-    validate_case_id(case_id)
-    return data_home() / "cases" / case_id
+def read_statement(statement: str | None, statement_file: Path | None) -> str:
+    if statement_file:
+        try:
+            return statement_file.read_text(encoding="utf-8")
+        except OSError as exc:
+            raise ReviewError(f"cannot read statement file: {exc}") from exc
+    return statement or ""
 
 
-def load_case(case_id: str) -> tuple[Path, dict[str, Any]]:
-    root = case_root(case_id)
-    manifest = read_json(root / "manifest.json")
-    if manifest.get("case_id") != case_id:
-        raise ReviewError("case manifest does not match its directory")
-    return root, manifest
-
-
-def safe_name(name: str) -> str:
-    clean = re.sub(r"[^A-Za-z0-9._-]+", "-", Path(name).name).strip(".-")
-    return clean[:120] or "document"
+def assert_private_store() -> list[str]:
+    problems: list[str] = []
+    root = data_home()
+    problem = permission_problem(root) if root.exists() else None
+    if problem:
+        problems.append(f"data store is not private: {problem}")
+    return problems

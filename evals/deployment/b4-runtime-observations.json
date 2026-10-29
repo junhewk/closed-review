@@ -1,0 +1,47 @@
+{
+  "observed_at_utc": "2026-10-28T07:06:53Z",
+  "purpose": "read_only_service_snapshot_not_candidate_peak_or_qualification",
+  "candidate_runner": "becf7ad4a5d77f1fc2fb500923ba8eeba1da822d0852d6a7511837b87ffdf1fb",
+  "matrix_started_at_utc": "2026-10-28T07:11:16.174531+00:00",
+  "snapshot_predates_matrix": true,
+  "collection_note": "Hardware and small-file metadata were collected in separate read-only calls; the timestamp identifies the initial GPU snapshot, not simultaneous sampling of every field.",
+  "host": "jkworkstation",
+  "native_process": {
+    "pid": 1598609,
+    "executable": "/home/jk/Strata/engine/strata",
+    "pack": "/home/jk/Strata-data/packs/iq3_s",
+    "mtp": "/home/jk/Strata-data/mtp/rt",
+    "max_context": 262144,
+    "gpu_memory_snapshot_mib": 23682,
+    "rss_snapshot_kib": 60100696,
+    "process_lifetime_rss_high_water_kib": 61273036
+  },
+  "metadata_sha256": {
+    "/home/jk/Strata-data/packs/iq3_s/index.txt": "b2a014878c3b61d6a6f915e194055a5e68ede34f9465dd1cb13249d902f008ac",
+    "/home/jk/Strata-data/packs/iq3_s/native_experts.txt": "d9ac2dfa3ee63c55c9c6a6db26f72da0cec0ee41733f007e5cbbbba71617aa5d",
+    "/home/jk/Strata-data/packs/iq3_s/conversions.json": "51df3cd6ffd0d38c2da8e2d3a95a604b4a96c20b06fc639a9bf477282a42b86a",
+    "/home/jk/Strata-data/mtp/mtp-manifest.json": "1ad281ed87ad9cd42f9c048e9c49172165ea714a600d15f1d80cd0a02db12328",
+    "/home/jk/Strata-data/mtp/tensors/verified.json": "1ee1f93438472523785ac7f6ba71603098a25592cde9d92ec3f6656bb2e7e597"
+  },
+  "weight_hashes": null,
+  "task_delivery_observed_at_utc": "2026-10-28T07:37:12Z",
+  "task_delivery": {
+    "profile": "/tmp/creview-support-runtime.fIobqKL4/matrix/case-01/hermes/profiles/pilot",
+    "observed_next_read_results": 5,
+    "spill_handles": 1,
+    "truncation_markers": 1,
+    "largest_recorded_terminal_output_characters": 49864,
+    "unindexed_statistics_task_printed_characters": 145489,
+    "note": "Read-only actual-session tool trace metadata. This confirms clipping, not whether the model subsequently recovered all omitted content or understood it."
+  },
+  "candidate_attributable_peak_memory": null,
+  "caveats": [
+    "Other workloads were using the shared model at this snapshot.",
+    "The snapshot is per native process, not total GPU use, but is not this candidate's measured peak or a hardware recommendation.",
+    "VmHWM is process-lifetime history, not an isolated candidate measurement.",
+    "Metadata hashes do not establish the identity of the referenced multi-gigabyte model weights.",
+    "Heavy weight-file hashing was deferred while inference was active."
+  ],
+  "services_modified": false,
+  "qualified": false
+}

@@ -1,0 +1,14 @@
+{
+  "protocol": "medical-methods-v1",
+  "corpus_id": "numerical-engine-regression-20261029",
+  "synthetic_only": true,
+  "independently_reviewed": false,
+  "cases": [
+    {
+      "case_id": "p73",
+      "module": "statistics",
+      "file": "p73.md",
+      "sha256": "2fd50e2fae276ab560f07a6d80583a679f2c6b5fa98229cf33c2e6f7281b8990"
+    }
+  ]
+}

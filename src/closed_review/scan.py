@@ -1,13 +1,12 @@
 """Deep scan for the Hermes host: creview's analysis pipeline (pipeline.py), one task at a time.
 
-`/journal-article-review deep` runs this before the conversation surfaces findings. The stages and
-their rules are the ones a host app runs through the sidecar: orientation (the initial summary and
-the reading units, each in parts), one read per part in order with the register of concerns found so
-far, a check of each listed major flaw a read flagged, the sweep, a second check of majors on
-judgement, and screening. Here the Hermes agent is the only model: `scan next` gives the current
-task with its instructions and answer template, and `scan submit` checks the answer with the
-pipeline and either records it and returns the next task or refuses it with what to fix. Code does
-the steps between.
+`/journal-article-review` on an attached file runs this before the conversation surfaces findings.
+The stages are orientation (the initial summary and the reading units, each in parts), one read per
+part in order with the register of concerns found so far, a check of each listed major flaw a read
+flagged, the sweep, a second check of majors on judgement, and screening. Here the Hermes agent is
+the only model: `scan next` gives the current task with its instructions and answer template, and
+`scan submit` checks the answer with the pipeline and either records it and returns the next task or
+refuses it with what to fix. Code does the steps between.
 
 The conversation then opens with the initial summary and draws the findings one at a time, majors
 first, in creview's order; the reviewer's response to each is recorded with their own words. The
@@ -31,11 +30,10 @@ from filelock import FileLock
 
 from . import findings as rules
 from . import pipeline
-from .cases import now_iso
 from .designs import general_major_flaws, load_profiles
 from .errors import ReviewError
 from .hermes import agent_max_turns, inspect_profile
-from .io import atomic_write_json, data_home, ensure_private_dir, read_json, sha256_file
+from .io import atomic_write_json, data_home, ensure_private_dir, now_iso, read_json, sha256_file
 from .literature import label_citations, lookup_candidates, lookup_query
 from .lookups import create_lookup, purge_scan_lookups
 from .parsers import parse_document
@@ -50,7 +48,7 @@ SCHEMA_VERSION = "2"
 DISPOSITIONS = ("accepted", "developing", "deferred", "dismissed")
 MAX_MINOR_BATCH = 3
 # The sweep is refused until every item is placed; after this many refusals the scan goes on
-# without it, as a host app does when its sweep fails: the findings as the reads found them.
+# without it: the findings as the reads found them.
 MAX_SWEEP_REFUSALS = 5
 # About three tool calls per task (write, submit, an occasional read), and a few for the rest.
 CALLS_PER_TASK = 3
@@ -58,12 +56,6 @@ CALLS_OUTSIDE_TASKS = 12
 # Before the reads, the checks and the second checks are not known; this many is typical.
 EXPECTED_LATER_TASKS = 10
 ANSWER = "a JSON object written at answer_path"
-REPLACED = {
-    "plan": "the reading units are part of orientation",
-    "overview": "the initial summary is part of orientation",
-    "synthesize": "the tasks after the reads come one by one",
-    "sweep": "the sweep is a task like the others",
-}
 
 
 def _scan_root(scan_id: str) -> Path:
@@ -152,26 +144,18 @@ def start_scan(
     session: str | None = None,
     *,
     profiles: list[str],
-    confirmation: str,
+    confirmation: str = "",
 ) -> dict[str, Any]:
-    """`profiles` are the design profiles the reviewer confirmed (none means the general rubric
-    alone); `confirmation` is the reviewer's own words confirming that choice."""
+    """`profiles` are the design profiles chosen for the review (none means the general rubric
+    alone); `confirmation` is what the reviewer said about them, if the agent gives it (not
+    checked)."""
     key, source = session_key(session)
     preflight = preflight_summary(key, source)
     if preflight["status"] != "passed":
         raise ReviewError("run `creview session start` in this session before a deep scan")
     confirmed = load_profiles(profiles)
-    # Only a reply sent after `creview session start` counts: the opening message's policy
-    # confirmation ("I confirm that") is not a confirmation of the design profiles.
-    confirmed_by = reviewer_words(
-        confirmation,
-        hermes_session=source == "hermes_session",
-        what="the design-profile confirmation",
-        since=preflight["checked_at"],
-        min_chars=8,
-    )
     if key is not None:
-        record_profiles(key, [p["id"] for p in confirmed], confirmed_by)
+        record_profiles(key, [p["id"] for p in confirmed], confirmation)
     paths = [("manuscript", manuscript)] + [
         (f"supplement-{index}", path) for index, path in enumerate(supplements or [], start=1)
     ]
@@ -203,7 +187,7 @@ def start_scan(
             for s in sources
         ],
         "profiles": chosen,
-        "profile_confirmation": confirmed_by,
+        "profile_words": confirmation.strip() or None,
         "model": _model(),
         "phase": "orient",
         "step": 0,
@@ -530,14 +514,6 @@ def _phase_next(scan: dict[str, Any]) -> str:
     return f"creview scan next {scan_id}"
 
 
-def replaced(command: str) -> dict[str, Any]:
-    """A command of the earlier deep scan, which this one does not have."""
-    raise ReviewError(
-        f"scan {command} is no longer part of the deep scan ({REPLACED[command]}); run creview "
-        "scan next SCAN for the current task"
-    )
-
-
 # The conversation.
 
 
@@ -557,7 +533,6 @@ def _literature(
     lookups = []
     for item in lookup_candidates(labelled):
         request = create_lookup(
-            None,
             "crossref",
             lookup_query(item),
             session=scan["session_id"],
@@ -610,7 +585,14 @@ def _presented(scan: dict[str, Any], f: dict[str, Any], rated: dict[str, Any]) -
         "later_units": [u for u in later if u["role"] != "answers"],
         "authors_answers": [u for u in later if u["role"] == "answers"],
         "checks": [
-            {k: a[k] for k in ("flaw", "model", "shown", "reason")} for a in f["flaw_checks"]
+            {k: a[k] for k in ("flaw", "model", "shown", "reason")}
+            | {"confirmed": rules.confirmed_check(a)}
+            | (
+                {"source_quote": a["source_quote"], "source_quote_status": "manuscript_reported"}
+                if a.get("source_quote")
+                else {}
+            )
+            for a in f["flaw_checks"]
         ],
         "verifiable": rules._verifiable(f),
         **({"computed_check": f["number_check"]} if f.get("number_check") else {}),
@@ -629,14 +611,17 @@ OVERVIEW_INSTRUCTIONS = (
 
 def _instructions(shape: str, ids: str, scan_id: str) -> str:
     return (
-        f"{shape}, following the development contract, and present only what is returned here, "
+        f"{shape} (references/legacy-review.md), and present only what is returned here, "
         "never other findings from memory. Open each with its context: in one or two sentences, "
         "what the authors do at the passage it is about (`about`, in the unit and segment named "
         "by `found_in`). In why it matters, give the strongest reply the authors could make from "
         "their own manuscript, starting from `authors_answers` (passages where the authors "
         "address it) when there are any, citing where it says so, and why the concern survives "
         "it, so the reviewer can judge it quickly; if the reply answers the concern, say so "
-        "plainly. Say what each check found. For a computed_check, show the expression and the "
+        "plainly. Say what each check found, distinguishing its model's answer from whether it "
+        "qualifies as confirmed. A source_quote is only the source's words as quoted in the "
+        "manuscript, not an independent check of the source; ask for the source when it matters. "
+        "For a computed_check, show the expression and the "
         "stated figure, and ask the reviewer to confirm the expression is what the manuscript "
         "implies. literature gives creview's label for each work the record cites; use exactly "
         "those labels, and label any content_claim (what a work argues or requires) model_lead, "

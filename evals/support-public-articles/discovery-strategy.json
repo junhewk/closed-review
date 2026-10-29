@@ -1,0 +1,129 @@
+{
+  "created_at": "2026-10-28T23:08:32.757983+00:00",
+  "limit_per_source": 20,
+  "mode": "quick",
+  "question": {
+    "components": {
+      "concept": {
+        "groups": [
+          {
+            "candidate_mesh": [],
+            "label": "experience",
+            "resolved_mesh": [],
+            "synonyms": [
+              "experiences of healthcare"
+            ],
+            "text": "healthcare experiences"
+          },
+          {
+            "candidate_mesh": [],
+            "label": "method",
+            "resolved_mesh": [],
+            "synonyms": [
+              "qualitative interview study"
+            ],
+            "text": "qualitative interviews"
+          }
+        ]
+      },
+      "population": {
+        "groups": [
+          {
+            "candidate_mesh": [],
+            "label": "participants",
+            "resolved_mesh": [],
+            "synonyms": [],
+            "text": "patients"
+          }
+        ]
+      }
+    },
+    "exclude_sources": [],
+    "filters": {
+      "from_date": "2023-01-01",
+      "languages": [
+        "en"
+      ],
+      "publication_types": [],
+      "to_date": "2024-12-31"
+    },
+    "framework": "PCC",
+    "question": "Which openly accessible qualitative interview studies describe patients' experiences of healthcare, for use as real-paper engineering fixtures rather than a clinical evidence synthesis?",
+    "schema_version": "2",
+    "sources": [
+      "openalex",
+      "semantic-scholar"
+    ]
+  },
+  "schema_version": "2",
+  "strategies": {
+    "openalex": {
+      "degradations": [
+        {
+          "fallback": "Resolved MeSH headings are submitted as free-text alternatives.",
+          "feature": "controlled_vocabulary",
+          "reason": "OpenAlex has no MeSH field."
+        },
+        {
+          "fallback": "Terms are searched across title, abstract, and indexed full text.",
+          "feature": "field_tags",
+          "reason": "OpenAlex has no PubMed title/abstract field tags."
+        }
+      ],
+      "precision_query": null,
+      "query": "\"patients\" AND (\"healthcare experiences\" OR \"experiences of healthcare\") AND (\"qualitative interviews\" OR \"qualitative interview study\")",
+      "request_parameters": {
+        "cursor": "*",
+        "filter": "from_publication_date:2023-01-01,to_publication_date:2024-12-31,language:en",
+        "search": "\"patients\" AND (\"healthcare experiences\" OR \"experiences of healthcare\") AND (\"qualitative interviews\" OR \"qualitative interview study\")"
+      },
+      "selected_variant": "sensitivity",
+      "source": "openalex",
+      "warnings": []
+    },
+    "semantic-scholar": {
+      "degradations": [
+        {
+          "fallback": "Quick relevance search retains canonical group text and omits controlled-vocabulary alternatives that cannot be ORed safely.",
+          "feature": "controlled_vocabulary",
+          "reason": "Semantic Scholar has no MeSH field."
+        },
+        {
+          "fallback": "Terms are searched in title and abstract.",
+          "feature": "field_tags",
+          "reason": "Semantic Scholar has no PubMed field tags."
+        },
+        {
+          "fallback": "Canonical text from every selected group is submitted without Boolean syntax.",
+          "feature": "boolean_groups",
+          "reason": "Semantic Scholar relevance search accepts plain text only."
+        },
+        {
+          "fallback": "ISO date bounds are reduced to inclusive years.",
+          "feature": "date_precision",
+          "reason": "Semantic Scholar filters publication dates at year precision."
+        },
+        {
+          "fallback": "Returned language metadata is filtered when available.",
+          "feature": "language_filter",
+          "reason": "Semantic Scholar search does not expose a language filter."
+        }
+      ],
+      "precision_query": null,
+      "query": "patients healthcare experiences qualitative interviews",
+      "request_parameters": {
+        "endpoint": "relevance",
+        "query": "patients healthcare experiences qualitative interviews",
+        "year": "2023-2024"
+      },
+      "selected_variant": "sensitivity",
+      "source": "semantic-scholar",
+      "warnings": []
+    }
+  },
+  "tool_version": "0.3.0",
+  "warnings": [
+    "Comparison/outcome/context components are retained as optional precision additions and are not required by the default high-recall query.",
+    "MeSH resolution was explicitly skipped."
+  ]
+}

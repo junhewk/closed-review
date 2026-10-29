@@ -1,0 +1,125 @@
+{
+  "protocol": "medical-methods-v1",
+  "started_at": "2026-10-28T14:11:36.739848+00:00",
+  "finished_at": "2026-10-28T14:46:09.660695+00:00",
+  "engineering_passed": true,
+  "runner": "bed5cfcee482492f4b44e5fe98313235bce787ce46d03790e3e3dd94bcd73f46",
+  "cases": [
+    {
+      "case_id": "case-02",
+      "module": "statistics",
+      "observations": 1,
+      "calculations": 5,
+      "seconds": 213.64,
+      "refusals": []
+    },
+    {
+      "case_id": "case-12",
+      "module": "logic",
+      "observations": 1,
+      "calculations": 0,
+      "seconds": 164.76,
+      "refusals": []
+    },
+    {
+      "case_id": "case-11",
+      "module": "logic",
+      "observations": 0,
+      "calculations": 0,
+      "seconds": 148.83,
+      "refusals": []
+    },
+    {
+      "case_id": "case-01",
+      "module": "statistics",
+      "observations": 0,
+      "calculations": 5,
+      "seconds": 157.49,
+      "refusals": []
+    },
+    {
+      "case_id": "case-03",
+      "module": "qualitative-study",
+      "observations": 0,
+      "calculations": 0,
+      "seconds": 128.59,
+      "refusals": []
+    },
+    {
+      "case_id": "case-04",
+      "module": "qualitative-study",
+      "observations": 2,
+      "calculations": 0,
+      "seconds": 182.94,
+      "refusals": []
+    },
+    {
+      "case_id": "case-05",
+      "module": "systematic-review",
+      "observations": 2,
+      "calculations": 1,
+      "seconds": 244.29,
+      "refusals": [
+        "answer source-reference errors:\n$.assessments[2].evidence[0]: quote is not an exact substring of source block seg-00008; read that block again and preserve its punctuation\nanswer numeric-binding errors:\n$.calculations[0].inputs.part_4: numeric input must preserve the exact reported numeric token\nIf a required literal input is unavailable, omit the ENTIRE calculation and explain the limit in the assessment. Do not drop terms, substitute a different quantity, or invent an inequality to salvage a replay."
+      ]
+    },
+    {
+      "case_id": "case-06",
+      "module": "systematic-review",
+      "observations": 2,
+      "calculations": 1,
+      "seconds": 217.89,
+      "refusals": [
+        "answer source-reference errors:\n$.facts[6].evidence[0]: quote is not an exact substring of source block seg-00006; read that block again and preserve its punctuation"
+      ]
+    },
+    {
+      "case_id": "case-07",
+      "module": "scoping-review",
+      "observations": 0,
+      "calculations": 2,
+      "seconds": 218.19,
+      "refusals": []
+    },
+    {
+      "case_id": "case-08",
+      "module": "scoping-review",
+      "observations": 1,
+      "calculations": 2,
+      "seconds": 147.77,
+      "refusals": []
+    },
+    {
+      "case_id": "case-09",
+      "module": "narrative-review",
+      "observations": 0,
+      "calculations": 0,
+      "seconds": 114.37,
+      "refusals": []
+    },
+    {
+      "case_id": "case-10",
+      "module": "narrative-review",
+      "observations": 1,
+      "calculations": 0,
+      "seconds": 134.15,
+      "refusals": []
+    }
+  ],
+  "synthetic_only": true,
+  "independently_reviewed": false,
+  "repetitions": 1,
+  "artifact_directory": "/tmp/creview-support-b10-matrix-results.6QIsP1ZQ",
+  "archive_sha256": "5e2b67e1a6dae9fa0f224f9f26fca4fb161b6bec86342b9f654a8b758804d0e8",
+  "archive_regular_files": 273,
+  "archive_unpacked_bytes": 3839969,
+  "verified_receipts": 12,
+  "audit_directory": "/tmp/creview-support-b10-matrix-results.6QIsP1ZQ/audit",
+  "unjudged_proposals": 10,
+  "calculations": 16,
+  "human_fields": "all_blank",
+  "keys_imported": false,
+  "server_started": false,
+  "qualification": "not_qualified",
+  "note": "12/12 short branch engineering passes, not medical qualification or independent control/seed approval. Two SR cases repaired source/numeric refusals within the retry allowance; rejected payloads remain. Larger b10 suite is still running and includes preserved full-length SR and checkpoint failures."
+}

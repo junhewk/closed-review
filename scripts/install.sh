@@ -6,35 +6,37 @@
 # `creview hermes doctor`. Use the same command to install and to update.
 #
 # Usage: scripts/install.sh [options]
-#   --source SRC          Any source `uv tool install` accepts: a git+https:// or git+ssh:// URL, or
-#                         a local folder. Default on the first run: the public GitHub repository.
-#                         Later runs without --source upgrade from the source uv recorded.
+#   --source SRC          Override the pinned release wheel with a wheel, folder, or Git URL.
+#   --review-profile NAME Create/update a dedicated review profile; needs --gateway-url and --model.
 #   --profile NAME        The Hermes profile (default: HERMES_SESSION_PROFILE, else "default" under
 #                         HERMES_HOME or ~/.hermes).
 #   --gateway-url URL     The trusted model server's OpenAI-compatible URL. Optional: when no
 #                         gateway is stored, the script runs `creview config detect --apply`.
 #   --model NAME          The review model on that server. Required with --gateway-url.
+#   --context-length N    Verified context tokens; required with --review-profile (at least 65536).
 #   --trusted-model NAME  Another model on the same server that Hermes routes may use (repeatable).
 #   --replace-unmanaged   Move a hand-copied skill folder to a backup without asking.
 #   --no-git-pull         Do not update the Git checkout this script runs from.
+#   --git-pull            Developer opt-in: update the checkout before installing.
 #   -h, --help            Show this help.
 #
-# Run from a Git clone, the script first fast-forwards that clone (setting local edits aside with
-# `git stash` and restoring them), so the script and skill files match what it installs.
+# The release install never updates the checkout. --git-pull retains the developer update path.
 #
 # Written for the bash 3.2 that macOS ships.
 
 set -euo pipefail
 
-DEFAULT_SOURCE="git+https://github.com/junhewk/closed-review.git"
+DEFAULT_SOURCE="https://github.com/junhewk/closed-review/releases/download/v0.9.0.dev7/closed_review-0.9.0.dev7-py3-none-any.whl"
 source_arg=""
 profile=""
+review_profile=""
 gateway_url=""
 model=""
+context_length=""
 trusted_models=()
 replace_unmanaged=0
 
-no_git_pull=0
+no_git_pull=1
 original_args=("$@")
 
 usage() { sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; }
@@ -43,15 +45,32 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --source) source_arg="${2:?--source needs a value}"; shift 2 ;;
         --profile) profile="${2:?--profile needs a value}"; shift 2 ;;
+        --review-profile) review_profile="${2:?--review-profile needs a value}"; shift 2 ;;
         --gateway-url) gateway_url="${2:?--gateway-url needs a value}"; shift 2 ;;
         --model) model="${2:?--model needs a value}"; shift 2 ;;
+        --context-length) context_length="${2:?--context-length needs a value}"; shift 2 ;;
         --trusted-model) trusted_models+=("${2:?--trusted-model needs a value}"); shift 2 ;;
         --replace-unmanaged) replace_unmanaged=1; shift ;;
         --no-git-pull) no_git_pull=1; shift ;;
+        --git-pull) no_git_pull=0; shift ;;
         -h|--help) usage; exit 0 ;;
         *) echo "Unknown option: $1 (see --help)" >&2; exit 2 ;;
     esac
 done
+
+if [ -n "$review_profile" ] && { [ -n "$profile" ] || [ -z "$gateway_url" ] || [ -z "$model" ]; }; then
+    echo "--review-profile requires --gateway-url and --model, and cannot be combined with --profile." >&2
+    exit 2
+fi
+if [ -n "$review_profile" ] && { [ -z "$context_length" ] ||
+    ! [[ "$context_length" =~ ^[0-9]{5,9}$ ]] || [ "$context_length" -lt 65536 ]; }; then
+    echo "--review-profile requires --context-length with verified tokens (at least 65536)." >&2
+    exit 2
+fi
+if [ -n "$context_length" ] && [ -z "$review_profile" ]; then
+    echo "--context-length is only used with --review-profile." >&2
+    exit 2
+fi
 
 if { [ -n "$gateway_url" ] && [ -z "$model" ]; } || { [ -z "$gateway_url" ] && [ -n "$model" ]; }; then
     echo "Pass --gateway-url and --model together." >&2
@@ -121,20 +140,7 @@ if [ -d "$tool_dir/hermes-review" ]; then
     echo "==> Removing hermes-review, the old name of closed-review"
     uv tool uninstall hermes-review
 fi
-receipt="$tool_dir/closed-review/uv-receipt.toml"
-from_git=0
-if [ -f "$receipt" ] && grep -Eq '\bgit[[:space:]]*=' "$receipt"; then
-    from_git=1
-fi
-install_from=""
-if [ -n "$source_arg" ]; then
-    install_from="$source_arg"
-elif [ "$from_git" -eq 0 ]; then
-    if [ -f "$receipt" ]; then
-        echo "creview was installed from a local folder; switching to $DEFAULT_SOURCE."
-    fi
-    install_from="$DEFAULT_SOURCE"
-fi
+install_from="${source_arg:-$DEFAULT_SOURCE}"
 case "$install_from" in
     git+*)
         if ! command -v git >/dev/null 2>&1; then
@@ -143,13 +149,8 @@ case "$install_from" in
             exit 1
         fi ;;
 esac
-if [ -n "$install_from" ]; then
-    echo "==> Installing creview from $install_from"
-    uv tool install --force "$install_from"
-else
-    echo "==> Updating creview"
-    uv tool upgrade closed-review
-fi
+echo "==> Installing creview from $install_from"
+uv tool install --force "$install_from"
 
 bin_dir="$(uv tool dir --bin)"
 creview="$bin_dir/creview"
@@ -165,6 +166,15 @@ case ":$PATH:" in
         echo "    Open a new terminal (and restart Hermes Desktop) for the change to apply." ;;
 esac
 "$creview" --version
+
+if [ -n "$review_profile" ]; then
+    "$creview" hermes setup-profile --profile "$review_profile" --gateway-url "$gateway_url" --model "$model" --context-length "$context_length" --apply
+    "$creview" hermes doctor --profile "$review_profile" --support
+    echo "Restart Hermes with: hermes -p $review_profile"
+    echo "Use /journal-article-review with an explicit focus. Setup does not qualify medical quality."
+    echo "Run the new module pilot and offline audit before deployment; legacy smoke is not sufficient."
+    exit 0
+fi
 
 profile_args=()
 if [ -n "$profile" ]; then

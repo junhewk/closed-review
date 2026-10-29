@@ -7,10 +7,8 @@ Installs or updates the creview runner with uv, then installs or updates the man
 journal-article-review skill in the active Hermes profile, then runs `creview hermes doctor`.
 Use the same command to install and to update.
 
-The first run installs from -Source, or from the public GitHub repository if -Source is not given.
-Later runs without -Source upgrade from the source that uv recorded. If the runner was installed
-from a local folder (the old download-and-copy method), the script switches it to the Git source
-so that updates fetch new commits.
+Installs the release wheel pinned by this script. -Source selects a developer checkout or another
+wheel. The checkout is not updated unless -UpdateCheckout is explicitly supplied.
 
 .PARAMETER Source
 Any source that `uv tool install` accepts: a git+ssh:// or git+https:// URL, or a local folder.
@@ -34,9 +32,16 @@ HERMES_SESSION_PROFILE, otherwise "default" under HERMES_HOME or %LOCALAPPDATA%\
 Move a hand-copied skill folder to a backup without asking first.
 
 .PARAMETER NoGitPull
-Do not update the Git checkout this script runs from. By default, run from a Git clone, the script
-first fast-forwards that clone (setting local edits aside with `git stash` and restoring them), so
-the script and skill files match what it installs.
+Do not update the Git checkout, even when -UpdateCheckout was supplied.
+
+.PARAMETER ReviewProfile
+Create a dedicated profile with isolated storage. Requires -GatewayUrl, -Model and -ContextLength.
+
+.PARAMETER ContextLength
+Verified model context tokens (at least 65536). Required with -ReviewProfile.
+
+.PARAMETER UpdateCheckout
+Developer opt-in to update the checkout before installation.
 
 .EXAMPLE
 powershell -ExecutionPolicy Bypass -File .\scripts\install-windows.ps1 -GatewayUrl http://192.168.1.20:8000/v1 -Model qwen3-32b
@@ -55,12 +60,25 @@ param(
     [string[]]$TrustedModel,
     [Alias('Profile')]
     [string]$HermesProfile,
+    [string]$ReviewProfile,
+    [int]$ContextLength,
     [switch]$ReplaceUnmanaged,
-    [switch]$NoGitPull
+    [switch]$NoGitPull,
+    [switch]$UpdateCheckout
 )
 
 $ErrorActionPreference = 'Stop'
-$DefaultSource = 'git+https://github.com/junhewk/closed-review.git'
+$DefaultSource = 'https://github.com/junhewk/closed-review/releases/download/v0.9.0.dev7/closed_review-0.9.0.dev7-py3-none-any.whl'
+
+if ($ReviewProfile -and ($HermesProfile -or -not $GatewayUrl -or -not $Model)) {
+    throw '-ReviewProfile requires -GatewayUrl and -Model, and cannot be combined with -HermesProfile.'
+}
+if ($ReviewProfile -and $ContextLength -lt 65536) {
+    throw '-ReviewProfile requires -ContextLength with verified tokens (at least 65536).'
+}
+if ($ContextLength -and -not $ReviewProfile) {
+    throw '-ContextLength is only used with -ReviewProfile.'
+}
 
 function Invoke-Checked {
     param([string]$File, [string[]]$Arguments)
@@ -87,7 +105,7 @@ function Invoke-Captured {
 # the old copy did not know about, so bring the clone up to date first.
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $hasGit = [bool](Get-Command git -ErrorAction SilentlyContinue)
-if ($NoGitPull -or $env:CREVIEW_INSTALLER_UPDATED -eq '1') {
+if ($NoGitPull -or -not $UpdateCheckout -or $env:CREVIEW_INSTALLER_UPDATED -eq '1') {
     # Skipped on request, or this is the updated copy re-running.
 } elseif (-not $hasGit -or (Invoke-Captured git @('-C', $repoRoot, 'rev-parse', '--is-inside-work-tree')).Code -ne 0) {
     Write-Host "==> $repoRoot is not a Git checkout; not updating it"
@@ -152,30 +170,15 @@ if (Test-Path (Join-Path $toolDir 'hermes-review')) {
     Write-Host '==> Removing hermes-review, the old name of closed-review'
     Invoke-Checked uv @('tool', 'uninstall', 'hermes-review')
 }
-$receipt = Join-Path $toolDir 'closed-review\uv-receipt.toml'
-$fromGit = (Test-Path $receipt) -and (Select-String -Path $receipt -Pattern '\bgit\s*=' -Quiet)
-$installFrom = $null
-if ($Source) {
-    $installFrom = $Source
-} elseif (-not $fromGit) {
-    if (Test-Path $receipt) {
-        Write-Host "creview was installed from a local folder; switching to $DefaultSource."
-    }
-    $installFrom = $DefaultSource
-}
-if (($installFrom -like 'git+*' -or (-not $installFrom -and $fromGit)) -and
+$installFrom = if ($Source) { $Source } else { $DefaultSource }
+if (($installFrom -like 'git+*') -and
     -not (Get-Command git -ErrorAction SilentlyContinue)) {
     Write-Host 'git is required to install from a Git URL. Install Git for Windows, or pass'
     Write-Host '-Source with the path of a downloaded copy of the repository.'
     exit 1
 }
-if ($installFrom) {
-    Write-Host "==> Installing creview from $installFrom"
-    Invoke-Checked uv @('tool', 'install', '--force', $installFrom)
-} else {
-    Write-Host '==> Updating creview'
-    Invoke-Checked uv @('tool', 'upgrade', 'closed-review')
-}
+Write-Host "==> Installing creview from $installFrom"
+Invoke-Checked uv @('tool', 'install', '--force', $installFrom)
 
 $binDir = (& uv tool dir --bin).Trim()
 $exe = if ($env:OS -eq 'Windows_NT') { 'creview.exe' } else { 'creview' }
@@ -191,12 +194,29 @@ if ($env:OS -eq 'Windows_NT' -and -not $onPath) {
 }
 Invoke-Checked $creview @('--version')
 
+if ($ReviewProfile) {
+    Invoke-Checked $creview @('hermes', 'setup-profile', '--profile', $ReviewProfile,
+        '--gateway-url', $GatewayUrl, '--model', $Model, '--context-length', "$ContextLength", '--apply')
+    Invoke-Checked $creview @('hermes', 'doctor', '--profile', $ReviewProfile, '--support')
+    Write-Host "Restart Hermes with: hermes -p $ReviewProfile"
+    Write-Host 'Use /journal-article-review with an explicit focus. Setup does not qualify medical quality.'
+    Write-Host 'Run the module pilot and offline audit before deployment; legacy smoke is not sufficient.'
+    exit 0
+}
+
 # 2. The managed skill in the Hermes profile.
 $profileArgs = if ($HermesProfile) { @('--profile', $HermesProfile) } else { @() }
 $installArgs = @('hermes', 'install', '--apply') + $profileArgs
+$skipSkill = $false
 if (-not $ReplaceUnmanaged) {
     $dryRun = Invoke-Captured $creview (@('hermes', 'install') + $profileArgs)
-    if ($dryRun.Code -ne 0 -and $dryRun.Output -match 'unmanaged skill') {
+    if ($dryRun.Code -ne 0 -and $dryRun.Output -match 'external directory') {
+        Write-Host ''
+        Write-Host 'The profile loads the skill from a Git checkout (skills.external_dirs), so this'
+        Write-Host 'script leaves it there. Update that checkout to the same release as creview:'
+        Write-Host "  $($dryRun.Output)"
+        $skipSkill = $true
+    } elseif ($dryRun.Code -ne 0 -and $dryRun.Output -match 'unmanaged skill') {
         Write-Host ''
         Write-Host 'The journal-article-review skill folder was copied by hand, so creview cannot'
         Write-Host 'update it safely. It can be moved to a backup folder (outside skills\, so Hermes'
@@ -214,8 +234,10 @@ if (-not $ReplaceUnmanaged) {
 if ($ReplaceUnmanaged) {
     $installArgs += '--replace-unmanaged'
 }
-Write-Host '==> Installing the journal-article-review skill'
-Invoke-Checked $creview $installArgs
+if (-not $skipSkill) {
+    Write-Host '==> Installing the journal-article-review skill'
+    Invoke-Checked $creview $installArgs
+}
 
 # 3. The trusted gateway: the only endpoint confidential material may reach. There is no default.
 if ($GatewayUrl -or $Model) {

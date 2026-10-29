@@ -1,0 +1,191 @@
+{
+  "version": "0.9.0b15",
+  "protocol": "medical-methods-v1",
+  "answer_contract": 10,
+  "persisted_schema": 1,
+  "objective": "fix limit/edit/rejection errors and retest, so to make deployment-ready.",
+  "goal_complete": false,
+  "qualification": "not_qualified",
+  "build": "/tmp/creview-support-b15-development.lnZyr4W9",
+  "wheel_sha256": "f3f0ba77dd8709db3094226af382e0e63b94a486a41074a106517bac4cff7b76",
+  "runner": "aad45258aa8dd462a448e19f184e2dafa0edf3c582e70ec51f734a64fa8d3708",
+  "package_files": 52,
+  "source_equals_wheel": true,
+  "independent_wheel_sums_equal_installed": true,
+  "changed_package_files_since_b14": [
+    "__init__.py",
+    "resources/skills/journal-article-review/SKILL.md",
+    "support/contracts.py",
+    "support/sources.py",
+    "support/workflow.py"
+  ],
+  "added_package_files": [
+    "support/continuation.py"
+  ],
+  "fixes": [
+    "Schedule recognized Markdown tables as intact native cell rows, retaining original extracted table text in snapshot metadata rather than duplicating a giant task block.",
+    "Reissue fresh answer paths when a prior draft exists, preserving old bytes and refusal counters; require the currently issued submission path.",
+    "Recover only a genuine new foreground host iteration event with committed same-session/run task progress and unchanged source/identity/routes; unresolved edit-verifier failures remain fatal."
+  ],
+  "budgets_raised": false,
+  "refusal_limit_unchanged": 2,
+  "local_verification": {
+    "python": "3.11.15",
+    "fresh_installed_wheel": true,
+    "source_pythonpath_disabled": true,
+    "hash_pinned_dependencies_installed_offline": 31,
+    "tests_passed": 942,
+    "elapsed_seconds": 100.55,
+    "ruff": "passed",
+    "lock": "passed",
+    "shell_syntax": "passed",
+    "diff_check": "passed",
+    "skill_validation": "passed",
+    "skill_copies_equal": true,
+    "privacy_block_changed": false,
+    "release_gate": "expected_refusal_no_fully_qualified_configuration"
+  },
+  "bundle": "/tmp/creview-support-b15-candidate.pf8uua67",
+  "bundle_manifest_sha256": "939cd9f1f7942fa4a37b88d8a5a58108b7472558c2e82e8534227cb8995d8b85",
+  "bundle_files": 23,
+  "public_manifest_sha256": "12b799d631cf60050078d1af7ba4acaf1c74e44d3345264abfe026e49d57def1",
+  "source_manuscripts_unchanged": true,
+  "input_preapproval_required": false,
+  "private_keys_transferred": false,
+  "workstation": {
+    "root": "/tmp/creview-support-runtime._z4usy4r",
+    "controller_pid": 2903288,
+    "controller_sha256": "19d895f047eb5a0e102709d44b0481cccf3889117a92fe5b823e088e8677282d",
+    "bootstrap_sha256": "c9b66f5475302d262c79ab2465f770d7692024cc40e844698cfd751482ffb6da",
+    "fresh_offline_dependencies": 25,
+    "python": "3.14.2",
+    "strict_preflight_ready": true,
+    "tests_passed": 942,
+    "installed_wheel_test_seconds": 100.55,
+    "qualification": "not_qualified",
+    "controller_start_ticks": "125681069",
+    "sampler_pid": 2903290,
+    "started_at": "2026-10-29T02:17:09.828775+00:00",
+    "model": "qwen3.8-flash-next",
+    "gateway": "http://100.122.169.13:8091/v1",
+    "explicit_context_length": 262144,
+    "whole_suite_status": "running",
+    "regular_profiles_or_services_modified": false,
+    "heartbeat_seconds": 15,
+    "memory_sample_seconds": 10,
+    "memory_scope": "warm_shared_not_cold_exclusive_or_hardware_minimum"
+  },
+  "observed_at": "2026-10-29T02:27:25+00:00",
+  "finished_first_checks": [
+    {
+      "job": "iteration-handoff",
+      "probe_passed": true,
+      "checks": {
+        "actual_host_handoff_recorded": true
+      },
+      "receipt_verified": true,
+      "original_copy_source_match": true,
+      "invocations": 3,
+      "handoffs": [
+        {
+          "reason": "max_iterations_reached(20/20)",
+          "session": "20261029_111719_34f4a6",
+          "run_id": "support-b6887f93138adbfe63f1d9cc7c8d89a1",
+          "from_task": 0,
+          "to_task": 3,
+          "verified_host_event": true,
+          "engineering_success_claimed": false,
+          "invocation": 2,
+          "exit_code": 1,
+          "log": "turn-1.log"
+        }
+      ],
+      "runtime_status": "verified",
+      "calculations": 5,
+      "observations": 1,
+      "no_failed_edit_footer": true
+    },
+    {
+      "job": "stale-draft",
+      "probe_passed": true,
+      "checks": {
+        "existing_draft_injected": true,
+        "old_draft_bytes_unchanged": true,
+        "new_answer_draft_written": true
+      },
+      "receipt_verified": true,
+      "original_copy_source_match": true,
+      "invocations": 2,
+      "handoffs": [],
+      "runtime_status": "verified",
+      "calculations": 5,
+      "observations": 1,
+      "no_failed_edit_footer": true,
+      "injected_draft_still_unchanged": true
+    }
+  ],
+  "job_snapshot": [
+    {
+      "name": "iteration-handoff",
+      "status": "finished",
+      "exit_code": 0,
+      "pid": 2903301,
+      "start_ticks": "125681088"
+    },
+    {
+      "name": "stale-draft",
+      "status": "finished",
+      "exit_code": 0,
+      "pid": 2908309,
+      "start_ticks": "125703674"
+    },
+    {
+      "name": "bootstrap-limit",
+      "status": "finished",
+      "exit_code": 0,
+      "pid": 2912229,
+      "start_ticks": "125721738"
+    },
+    {
+      "name": "compression",
+      "status": "running",
+      "exit_code": null,
+      "pid": 2916072,
+      "start_ticks": "125739802"
+    }
+  ],
+  "all_six_real_paper_pairs_complete": false,
+  "all_three_native_format_pairs_complete": false,
+  "whole_suite_pass": false,
+  "final_local_b15_artifact_readback_complete": false,
+  "human_judgments_created": false,
+  "medical_fidelity_or_precision_recall_claimed": false,
+  "preserved_b14": {
+    "local_root": "/tmp/creview-support-b14-results.zpxAQ7E2/copied",
+    "archive_sha256": "840c330d0d8fee97228364b1712e85dce6760574d4a63c7515a8371f9263bb04",
+    "files": 258,
+    "bytes": 6506212,
+    "paths_types_and_member_hashes_verified_before_extraction": true,
+    "original_b14_installed_code_used": true,
+    "source_copies_verified": 12,
+    "source_snapshots_reproduced": 5,
+    "receipts_verified": 3,
+    "actual_baseline_outputs_verified": 6,
+    "calculations_reproduced": 11,
+    "readback_sha256": "10390bcf050b78c55b6f16ab0bc40791fd3fca49a52f5d5583e9d98c6fc00b32",
+    "old_failures_preserved": true
+  },
+  "later_observation": {
+    "at": "2026-10-29T02:32:24+00:00",
+    "all_four_recovery_jobs_exit_zero": true,
+    "public_pairs_status": "running",
+    "public_driver_pid": 2920163,
+    "public_driver_start_ticks": "125763888",
+    "statistics_task": 1,
+    "statistics_tasks": 23,
+    "statistics_facts": 17,
+    "statistics_failures": 0,
+    "native_pairs_status": "queued",
+    "whole_suite_pass": false
+  }
+}

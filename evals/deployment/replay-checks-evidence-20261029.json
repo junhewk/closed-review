@@ -1,0 +1,100 @@
+{
+  "protocol": "medical-methods-v1",
+  "checker": "scripts/check-support-replays.py",
+  "checker_sha256": "599a9f9bc2b73c077e15ba825c8bf37fccb482d337a0c544de8ffd490dbc2c9e",
+  "evaluator_only": true,
+  "artifact_runner": "5a37d154ee4efa99b6d7fdbe995507de45df142dc1a8ccad27a09371411e55da",
+  "evaluator_runner": "e95934c9e2be05d432fefb964a1b9beb5728a34ebd781f4df928bdf8daabfe2a",
+  "packet": "/tmp/creview-support-b11-ordinary-results.59Ok30n0/ordinary-audit",
+  "report": "/tmp/creview-support-b11-ordinary-results.59Ok30n0/replay-checks-v2.json",
+  "report_sha256": "ed97fc700e05aa0ca429d2e764c694140ecfbe9dd38463eee576931ce43bbce9",
+  "source_snapshots_reproduced": 6,
+  "calculations_reproduced": 29,
+  "replay_parser_code_matches_trusted_reference": true,
+  "not_numerical_agreement_or_medical_validation": true,
+  "source_or_answer_normalization": false,
+  "original_packet_changed": false,
+  "audit_template_or_private_keys_read": false,
+  "model_or_network_calls": false,
+  "existing_runs_reclassified": false,
+  "local_tests": {
+    "new_tests": 29,
+    "focused_passed": 29,
+    "focused_seconds": 12.43,
+    "full_passed": 831,
+    "full_seconds": 75.54,
+    "source_pythonpath_disabled": true,
+    "installed_b12_wheel_unchanged": true,
+    "ruff": "passed",
+    "lock": "passed",
+    "diff": "passed"
+  },
+  "native_run_observation": {
+    "observed_at": "2026-10-28T16:18:08.642044+00:00",
+    "worker_pid": 2513422,
+    "worker": {
+      "live": true,
+      "state": "S",
+      "start_ticks": "121943665"
+    },
+    "batch_finished_at": null,
+    "engineering_passed": false,
+    "support": [
+      {
+        "case": "f00",
+        "passed": true,
+        "seconds": 426.79
+      },
+      {
+        "case": "f01",
+        "passed": true,
+        "seconds": 415.24
+      }
+    ],
+    "baselines": [
+      {
+        "case": "f00",
+        "passed": true,
+        "seconds": 104.38
+      },
+      {
+        "case": "f01",
+        "passed": true,
+        "seconds": 80.34
+      }
+    ],
+    "active_runs": [
+      {
+        "artifact": "f02-r1",
+        "status": "running",
+        "cursor": 8,
+        "total_tasks": 9,
+        "source_blocks": 240,
+        "provided_blocks": 240,
+        "facts": 70,
+        "appraisals": 6,
+        "calculations": 11,
+        "refused_tasks": 1
+      }
+    ]
+  },
+  "qualification": "not_qualified",
+  "independent_source_approval": "pending",
+  "formal_repetitions_or_human_audits_completed": false,
+  "regular_profiles_or_services_changed": false,
+  "new_server_started": false,
+  "subsequent_finished_native_evidence": "b11-ordinary-native-evidence-20261029.json",
+  "subsequent_native_source_snapshots_reproduced": 3,
+  "subsequent_native_calculations_reproduced": 40,
+  "native_observation_above_is_historical_not_reclassified": true,
+  "subsequent_bbox_diagnostics": {
+    "evidence": "b11-short-native-evidence-20261029.json",
+    "script_sha256": "127285d36f9177c0fd260ee55be092a528c71f4a84296421f2551f94d276d966",
+    "new_tests": 9,
+    "full_installed_old_b12_tests_passed": 840,
+    "seconds": 78.85,
+    "tolerance_added": false,
+    "strict_mismatch_preserved": true,
+    "original_python_runtime_reproduced_strict_snapshot_three_times": true
+  }
+}

@@ -39,7 +39,7 @@ def test_skill_changes_use_posix_names_on_windows(tmp_path, monkeypatch) -> None
     destination = tmp_path / "skill"
     write_exact_skill(destination)
     (destination / "references" / "lessons.md").write_text("learned")
-    (destination / "references" / "development.md").write_text("edited content")
+    (destination / "references" / "review.md").write_text("edited content")
     original_relative_to = Path.relative_to
 
     def windows_relative_to(self, *args, **kwargs):
@@ -48,7 +48,7 @@ def test_skill_changes_use_posix_names_on_windows(tmp_path, monkeypatch) -> None
     monkeypatch.setattr(Path, "relative_to", windows_relative_to)
 
     assert hermes.skill_changes(destination) == [
-        {"file": "references/development.md", "change": "modified"},
+        {"file": "references/review.md", "change": "modified"},
         {"file": "references/lessons.md", "change": "added"},
     ]
 
@@ -135,7 +135,7 @@ def test_restore_reinserts_a_deleted_privacy_block(isolated_env) -> None:
     path = profile / "skills" / "journal-article-review" / "SKILL.md"
     text = path.read_text()
     start = text.index("## Privacy gate")
-    end = text.index("## Development loop")
+    end = text.index("## Workflow")
     path.write_text(text[:start] + text[end:])
     assert hermes.inspect_profile("reviewer", live=False)["skill_privacy_block"] == "missing"
 
@@ -172,7 +172,7 @@ def pretend_previous_release(profile: Path, relative: str, old: bytes) -> None:
 def test_install_update_merges_upstream_changes_with_hermes_edits(isolated_env) -> None:
     profile = make_profile(isolated_env)
     hermes.install_skill("reviewer", apply=True)
-    relative = "references/development.md"
+    relative = "references/review.md"
     new = hermes._skill_files()[relative]
     first, rest = new.split(b"\n", 1)
     old = b"# An older heading\n" + rest
@@ -193,7 +193,7 @@ def test_install_update_merges_upstream_changes_with_hermes_edits(isolated_env) 
 def test_install_update_keeps_conflicting_edit_and_saves_upstream(isolated_env) -> None:
     profile = make_profile(isolated_env)
     hermes.install_skill("reviewer", apply=True)
-    relative = "references/development.md"
+    relative = "references/review.md"
     new = hermes._skill_files()[relative]
     _first, rest = new.split(b"\n", 1)
     pretend_previous_release(profile, relative, b"# An older heading\n" + rest)
@@ -662,6 +662,24 @@ def test_doctor_warns_about_outbound_toolsets_and_mcp_servers(isolated_env) -> N
         mcp_servers={},
     )
     assert not any("toolsets" in warning for warning in quiet["warnings"])
+
+
+def test_doctor_warns_when_hermes_can_display_draft_scan_answers(isolated_env, monkeypatch) -> None:
+    default = doctor_with(isolated_env)
+    assert default["ready"]
+    assert any("display.inline_diffs: false" in warning for warning in default["warnings"])
+
+    quiet = doctor_with(isolated_env, display={"inline_diffs": False, "tool_progress": "all"})
+    assert not any("draft scan answers" in warning for warning in quiet["warnings"])
+
+    verbose = doctor_with(isolated_env, display={"inline_diffs": False, "tool_progress": "verbose"})
+    assert any("verbose tool progress" in warning for warning in verbose["warnings"])
+    monkeypatch.setenv("HERMES_TUI_TOOL_PROGRESS", "off")
+    overridden = hermes.inspect_profile("reviewer", live=False)
+    assert not any("verbose tool progress" in warning for warning in overridden["warnings"])
+    monkeypatch.setenv("HERMES_TUI_TOOL_PROGRESS", "verbose")
+    verbose = doctor_with(isolated_env, display={"inline_diffs": False, "tool_progress": "all"})
+    assert any("verbose tool progress" in warning for warning in verbose["warnings"])
 
 
 def test_install_refuses_when_an_external_checkout_provides_the_skill(isolated_env) -> None:

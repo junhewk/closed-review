@@ -1,0 +1,15 @@
+{
+  "schema_version": "2",
+  "framework": "PCC",
+  "question": "Which openly accessible qualitative interview studies describe patients' experiences of healthcare, for use as real-paper engineering fixtures rather than a clinical evidence synthesis?",
+  "components": {
+    "population": {"groups": [{"label": "participants", "text": "patients", "synonyms": []}]},
+    "concept": {"groups": [
+      {"label": "experience", "text": "healthcare experiences", "synonyms": ["experiences of healthcare"]},
+      {"label": "method", "text": "qualitative interviews", "synonyms": ["qualitative interview study"]}
+    ]}
+  },
+  "filters": {"from_date": "2023-01-01", "to_date": "2024-12-31", "languages": ["en"]},
+  "sources": ["openalex", "semantic-scholar"],
+  "exclude_sources": []
+}

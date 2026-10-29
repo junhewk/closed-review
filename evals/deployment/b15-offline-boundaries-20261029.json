@@ -1,0 +1,133 @@
+{
+  "observed_at": "2026-10-29T02:56:54+00:00",
+  "scope": "offline_source_scheduling_not_model_reconstruction",
+  "runner": "aad45258aa8dd462a448e19f184e2dafa0edf3c582e70ec51f734a64fa8d3708",
+  "installed_package": "/tmp/creview-support-b15-development.lnZyr4W9/venv/lib/python3.11/site-packages/closed_review/__init__.py",
+  "bundle_manifest_sha256": "939cd9f1f7942fa4a37b88d8a5a58108b7472558c2e82e8534227cb8995d8b85",
+  "bundle_files_rechecked": 23,
+  "public_sources": [
+    {
+      "case_id": "public-statistics",
+      "sha256": "2636a120e2caca2f9fa805ae3da40a63230b5dfe1fe70e00eecb52c3e10893d3",
+      "blocks": 974,
+      "extraction_tasks": 20,
+      "tables": 2,
+      "native_cells": 783,
+      "intact_rows": 87,
+      "warnings": [],
+      "scope_limits": []
+    },
+    {
+      "case_id": "public-qualitative",
+      "sha256": "46b3dcdb949f822309eb67b9c7f44102ef619e5e1959d3e0962ca322ff0ad3a0",
+      "blocks": 258,
+      "extraction_tasks": 9,
+      "tables": 2,
+      "native_cells": 80,
+      "intact_rows": 40,
+      "warnings": [],
+      "scope_limits": []
+    },
+    {
+      "case_id": "public-systematic",
+      "sha256": "5940966d434f76c3e3cc78d676c38c9d43f622f1d97348561c3e7a1d8403992d",
+      "blocks": 278,
+      "extraction_tasks": 10,
+      "tables": 1,
+      "native_cells": 120,
+      "intact_rows": 24,
+      "warnings": [],
+      "scope_limits": []
+    },
+    {
+      "case_id": "public-scoping",
+      "sha256": "01b2f78dcdc516578a91e65e61ea0d590693f743e77cb597af2c50e9653a4ac5",
+      "blocks": 496,
+      "extraction_tasks": 16,
+      "tables": 3,
+      "native_cells": 65,
+      "intact_rows": 30,
+      "warnings": [],
+      "scope_limits": []
+    },
+    {
+      "case_id": "public-narrative",
+      "sha256": "1260e70a27d1a49ccca2a837f145956fef1c34b2449e3f62a80633cdeb49ddb3",
+      "blocks": 120,
+      "extraction_tasks": 6,
+      "tables": 0,
+      "native_cells": 0,
+      "intact_rows": 0,
+      "warnings": [],
+      "scope_limits": []
+    },
+    {
+      "case_id": "public-logic",
+      "sha256": "f304aeb5ad2242fe4eb9f6385fa3fce0a47a4a5c7b18b7bdeac89077b1386b9d",
+      "blocks": 126,
+      "extraction_tasks": 7,
+      "tables": 0,
+      "native_cells": 0,
+      "intact_rows": 0,
+      "warnings": [],
+      "scope_limits": []
+    }
+  ],
+  "checks_passed_for_every_source": {
+    "all_blocks_scheduled_once_in_order": true,
+    "source_snapshot_unchanged_by_scheduling": true,
+    "original_table_text_matches_parsed_source_block": true,
+    "all_native_cells_preserved": true,
+    "all_native_rows_intact": true,
+    "source_sha256_matches_frozen_manifest": true
+  },
+  "totals": {
+    "source_blocks": 2252,
+    "tables": 8,
+    "native_cells": 1048,
+    "intact_rows": 181,
+    "extraction_tasks": 68
+  },
+  "focused_status_tests": {
+    "command": "/tmp/creview-support-b15-development.lnZyr4W9/venv/bin/python -m pytest -o pythonpath= tests/test_support.py -k 'scope_boundaries or coverage_gaps or readable_conflict or gap_contract or reached_fact_cap' tests/test_support_pilot.py",
+    "passed": 8,
+    "deselected": 108,
+    "seconds": 1.71,
+    "exit_code": 0
+  },
+  "last_remote_terminal_observation": {
+    "at": "2026-10-29T02:49:22+00:00",
+    "source": "existing_read_only_ssh_monitor_session_1798_buffered_output",
+    "run_id": "support-71bd8951d742923b28ed7784124db0e5",
+    "task": 23,
+    "tasks": 23,
+    "module_status": "partial",
+    "facts": 179,
+    "calculations": 13,
+    "observations": 4,
+    "failures": 0,
+    "current_process_liveness": "unverified_after_connectivity_loss",
+    "final_case_export_and_gap_detail_retrieved": false
+  },
+  "connectivity": {
+    "checked_between": ["2026-10-29T02:54:00+00:00", "2026-10-29T02:57:00+00:00"],
+    "target": "100.122.169.13",
+    "ssh": "connection_timeout_exit_255",
+    "gateway_models_read": "connection_timeout_exit_28",
+    "tailscale_ping": "two_timeouts_no_reply",
+    "local_tailscale_self_online": true,
+    "tailscale_peer_online": false,
+    "tailscale_peer_last_seen": "2026-10-29T02:50:00.1Z",
+    "remote_jobs_known_stopped": false,
+    "remote_jobs_or_services_restarted": false
+  },
+  "actual_statistics_gap_cause": "unretrieved_do_not_infer_kind_or_clear_partial",
+  "all_six_real_paper_pairs_verified": false,
+  "all_three_native_pairs_verified": false,
+  "deployment_ready": false,
+  "qualification": "not_qualified",
+  "model_calls_in_this_audit": false,
+  "original_test_artifacts_changed": false,
+  "private_keys_read": false,
+  "human_judgments_created": false
+}

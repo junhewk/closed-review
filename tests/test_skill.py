@@ -20,27 +20,30 @@ def test_repository_skill_matches_packaged_skill() -> None:
     assert repository_files == package_files
 
 
-def test_skill_defaults_to_development_and_keeps_audit_explicit() -> None:
-    skill = Path("skills/journal-article-review/SKILL.md").read_text()
-    workflow = Path("skills/journal-article-review/references/workflow.md").read_text()
+def test_repository_skills_folder_holds_only_the_hermes_skill() -> None:
+    # Hermes discovers every skill under skills/ when a profile points skills.external_dirs at a
+    # checkout (docs/install.md), so nothing else may live there.
+    assert sorted(p.name for p in Path("skills").iterdir()) == ["journal-article-review"]
 
-    development = Path("skills/journal-article-review/references/development.md").read_text()
 
-    assert "## Development loop" in skill
-    assert "## Default: direct conversation" in skill
-    assert "## Optional audited review" in skill
-    assert "Do not begin with a complete verdict" in skill
-    assert "recommendation is optional and belongs to the user" in skill
-    assert "Compile only when the user explicitly asks" in development
-    assert "run `creview direct prepare-export`" in skill
-    assert "Use `creview` for every confidential manuscript" not in skill
-    assert "creview case create" not in skill
-    assert "creview case create" in workflow
-    assert "Direct review must not create a case" in workflow
-    assert "finding respond" in workflow
-    assert "request-metadata" in skill
-    assert "Do not announce, enumerate, summarize, or count possible future issues" in skill
-    assert "status counts for surfaced records only" in development
+def test_support_modules_replace_the_default_scan() -> None:
+    skill = " ".join(Path("skills/journal-article-review/SKILL.md").read_text().split())
+    review = " ".join(
+        Path("skills/journal-article-review/references/review.md").read_text().split()
+    )
+
+    assert "## Workflow" in skill
+    assert "a complete verdict" in skill
+    assert "The reviewer owns every scientific judgment" in skill
+    for command in ("modules", "start", "next", "submit", "report", "record", "export"):
+        assert f"creview support {command}" in skill, command
+    assert "Never automatically run all modules" in skill
+    assert "disclose totals" in skill
+    assert "one finding per turn" in skill
+    assert "user's configured response language" in skill
+    assert "## Legacy compatibility" in skill
+    assert "not a full review" in review
+    assert "counterevidence" in review
 
 
 DESIGNS = Path("skills/journal-article-review/references/designs")
@@ -76,32 +79,10 @@ def test_design_profiles_share_structure_and_are_indexed() -> None:
         assert f"]({path.name})" in index, f"{path.name} is not listed in the index"
 
 
-def test_design_profiles_are_wired_into_skill() -> None:
+def test_legacy_profiles_are_not_the_new_module_rules() -> None:
     skill = Path("skills/journal-article-review/SKILL.md").read_text()
     index = (DESIGNS / "index.md").read_text()
-    assert "references/designs/index.md" in skill
-    assert "wait for the reviewer to confirm" in skill
+    assert "earlier design profiles" in skill
+    assert "legacy major-flaw profiles" in skill
     assert "Load at most three" in index
     assert "`model_lead`" in index
-
-
-def test_logical_segments_and_deep_review_are_in_the_skill() -> None:
-    skill = Path("skills/journal-article-review/SKILL.md").read_text()
-    workflow = Path("skills/journal-article-review/references/workflow.md").read_text()
-    deep = Path("skills/journal-article-review/references/deep.md").read_text()
-    assert "plan the review by logical segments, in every mode" in skill
-    assert "creview segments propose MANUSCRIPT" in skill
-    assert "## Deep review" in skill
-    assert "references/deep.md" in skill
-    assert "creview segments set --case CASE PLAN_PATH" in workflow
-    for command in (
-        "scan start",
-        "scan next",
-        "scan submit",
-        "scan candidate",
-        "scan record",
-        "scan purge",
-    ):
-        assert f"creview {command}" in deep, command
-    assert "never show them, list them, or count them to the reviewer" in " ".join(deep.split())
-    assert "Do not tell the reviewer how many remain" in " ".join(deep.split())

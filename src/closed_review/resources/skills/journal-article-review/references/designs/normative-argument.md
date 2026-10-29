@@ -3,20 +3,18 @@ id: normative-argument
 applies_to: philosophical, bioethical, or conceptual arguments and position papers, and the normative part of empirical bioethics
 not_for: analysis of what the law requires (legal-analysis); descriptive studies of views that draw no normative conclusion (empirical profile alone)
 reporting_guidance: none; for empirical bioethics see Davies, Ives and Dunn (2015) on methodologies; Ives et al. (2018) on standards of practice; Mertz et al. (2014) on quality criteria
-version: 2
+version: 3
 ---
 
 # Normative or conceptual argument
 
 ## Recognize
 
-Cues: a thesis about what ought to be done, what a concept means, or whether a position is
-justified; reasoning from premises, cases, theories, or principles. When the argument also rests on
-the authors' own empirical data, this is empirical bioethics: load the empirical profile as well and
-use the last section of this profile.
+Cues: a thesis about what ought to be done, what a concept means, or whether a position is justified;
+reasoning from premises, cases, theories, or principles. With the authors' own empirical data,
+load the empirical profile as well and use the last section of this profile.
 
-The reviewer judges the quality of the argument, not whether they share its conclusion. Keep that
-distinction visible in every candidate.
+Judge the argument's quality, not agreement with its conclusion. Keep that distinction visible.
 
 ## Where it usually breaks
 
@@ -36,8 +34,10 @@ distinction visible in every candidate.
   account of why the slope is likely (empirical) or unavoidable (logical); appeals to intuition
   without saying whose intuitions or why they should count; thought experiments that differ from the
   real case in a morally relevant way.
-- Would settle it: a reconstruction of the main argument with each premise stated. Offer one in the
-  candidate when it helps the reviewer see the gap.
+- Reconstruct the actual conclusion, scope, premises and required bridge. Separately test whether
+  the conclusion follows if the premises are granted and whether the substantive premises are
+  justified for the actual claim. Stating a premise exposes the reasoning; it does not settle its
+  adequacy. Preserve adequate implicit reasoning and do not supply disputed justification yourself.
 
 ### Empirical premises
 - Signals: factual claims without sources, outdated clinical or legal facts, or a normative
@@ -63,7 +63,9 @@ distinction visible in every candidate.
 ### From conclusion to recommendation
 - Signals: policy or practice recommendations that need premises about feasibility, institutions, or
   consequences that the paper never defends; a conclusion stronger than the argument supports.
-- Proportionate fixes: state the bridging premises, or narrow the recommendation.
+- Proportionate fixes: justify a disputed bridging premise or narrow the recommendation. Merely
+  stating the desired obligation in a definition is not substantive repair. Conversely, an explicitly
+  conditional or conceptual contribution need not justify adopting the framework it assumes.
 
 ### Use of the literature
 - Signals: cited authors represented in ways their work may not support; central contributions to the
@@ -108,7 +110,8 @@ ethics: use the empirical profile alone and check only that its conclusions stay
 
 Major when the quoted evidence shows them (see the index).
 
-- **missing-premise**: the main conclusion does not follow without a premise the paper never states.
+- **missing-premise**: the main conclusion needs a premise supplied neither explicitly nor by
+  adequate implicit reasoning. Distinguish this from a stated but unjustified normative premise.
 - **equivocation**: a central term shifts meaning between premises that the argument joins.
 - **weak-objection**: the strongest objection to the thesis is missing, or answered only in a weaker
   form than the one that bears on the conclusion.
@@ -138,12 +141,10 @@ Major when the quoted evidence shows them (see the index).
 - Asking for evidence of contextual background that readers in the field take as given (for
   example how a national insurance system governs practice), when the conclusion does not turn on
   it.
-- With the authors' own data: insisting on one correct integration method (there is no consensus);
-  faulting descriptive ethics for not reaching normative conclusions it never claims; treating the
-  is-ought gap as fatal in itself rather than asking how the paper bridges it.
+- With the authors' own data: insisting on one correct integration method; faulting descriptive
+  ethics for not making normative claims; treating the is-ought gap as fatal without testing its bridge.
 
 ## Monitoring areas
 
-Thesis and contribution; concepts; structure and validity; empirical premises; objections and
-replies; theory and context; recommendations; use of the literature. With the authors' own data,
-also: aim; integration; role of the data; from data to norms; team and reflexivity.
+Thesis; concepts; validity; empirical premises; objections; theory; recommendations; literature.
+With authors' own data: aim; integration; data's role; data-to-norms; team and reflexivity.

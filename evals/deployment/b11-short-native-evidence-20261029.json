@@ -1,0 +1,248 @@
+{
+  "protocol": "medical-methods-v1",
+  "version": "0.9.0b11",
+  "finished_at": "2026-10-28T16:31:45.920769+00:00",
+  "engineering_passed": true,
+  "runner": "5a37d154ee4efa99b6d7fdbe995507de45df142dc1a8ccad27a09371411e55da",
+  "requested_repetitions": 1,
+  "independent_studies": 1,
+  "source_formats": 3,
+  "corpus_independently_reviewed": false,
+  "receipts_verified": 3,
+  "source_copies_verified": 6,
+  "baseline_output_hashes_verified": 3,
+  "all_expected_paragraphs_and_grids_preserved_under_explicit_policy": true,
+  "comparison_policy": "fixture-pdf-retained-hyphen-layout-v1",
+  "cases": [
+    {
+      "case": "f00",
+      "artifact_id": "f00-r1",
+      "format": "markdown",
+      "source_sha256": "874c8516d3dea2bc8c1e16a15ac4cf74e5a0220954670b0086d03592e3134133",
+      "support_seconds": 141.92,
+      "baseline_seconds": 55.09,
+      "support_passed": true,
+      "baseline_passed": true,
+      "module_status": "complete",
+      "observations": 1,
+      "calculations": 4,
+      "facts": 13,
+      "appraisals": 6,
+      "provided_blocks": 27,
+      "source_blocks": 27,
+      "tables": 1,
+      "warnings": [],
+      "repaired_refused_tasks": 0,
+      "module_failures": 0,
+      "layout_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "strict_whitespace_only_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "value_only_signatures": 4,
+      "repeated_value_only_signatures": 0
+    },
+    {
+      "case": "f01",
+      "artifact_id": "f01-r1",
+      "format": "docx",
+      "source_sha256": "e3fc6073fbdcdf0ed352a01181ae25bdd1f213a4adf294681a735b4ff2141e63",
+      "support_seconds": 183.79,
+      "baseline_seconds": 48.49,
+      "support_passed": true,
+      "baseline_passed": true,
+      "module_status": "complete",
+      "observations": 1,
+      "calculations": 6,
+      "facts": 14,
+      "appraisals": 6,
+      "provided_blocks": 26,
+      "source_blocks": 26,
+      "tables": 1,
+      "warnings": [],
+      "repaired_refused_tasks": 0,
+      "module_failures": 0,
+      "layout_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "strict_whitespace_only_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "value_only_signatures": 6,
+      "repeated_value_only_signatures": 0
+    },
+    {
+      "case": "f02",
+      "artifact_id": "f02-r1",
+      "format": "pdf",
+      "source_sha256": "ec2ef9faf0c5dfda900d07910ca740edf8e7e8ea4bda303b773f94eb7f2cf6d0",
+      "support_seconds": 179.83,
+      "baseline_seconds": 53.54,
+      "support_passed": true,
+      "baseline_passed": true,
+      "module_status": "complete",
+      "observations": 1,
+      "calculations": 5,
+      "facts": 15,
+      "appraisals": 6,
+      "provided_blocks": 37,
+      "source_blocks": 37,
+      "tables": 1,
+      "warnings": [],
+      "repaired_refused_tasks": 0,
+      "module_failures": 0,
+      "layout_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "strict_whitespace_only_comparison": {
+        "all_expected_paragraphs_present": true,
+        "expected_paragraphs_in_order": true,
+        "table_grids_equal": true,
+        "no_detected_geometry_ambiguity": true
+      },
+      "value_only_signatures": 5,
+      "repeated_value_only_signatures": 0
+    }
+  ],
+  "human_judgments": "all_blank",
+  "qualification": "not_qualified",
+  "local": "/tmp/creview-support-b11-short-native-results.dFPcYg1w",
+  "archive_sha256": "51d951cbb79f13f522c2222b3392243e54050ac7ca1433a03ab22c66b3a6c075",
+  "archive_regular_files": 80,
+  "archive_unpacked_bytes": 1228633,
+  "saved_calculations_reproduced": 15,
+  "strict_evaluator_source_matches": {
+    "markdown": true,
+    "docx": true,
+    "pdf": false
+  },
+  "strict_mismatch_preserved": true,
+  "float_runtime_diagnostic": {
+    "source": "/tmp/creview-support-b11-short-native-results.dFPcYg1w/short-native-audit/f02-r1/manuscript.pdf",
+    "source_sha256": "ec2ef9faf0c5dfda900d07910ca740edf8e7e8ea4bda303b773f94eb7f2cf6d0",
+    "strict_failed_report_preserved": "/tmp/creview-support-b11-short-native-results.dFPcYg1w/replay-checks.json",
+    "strict_failed_report_sha256": "2ac12b82dd6bfb3a09f134540c84c9c771f2e1a0f4a51f4fd2e959289f487b7b",
+    "differing_field": "/tables/0/bbox/1",
+    "changed_text_or_cells": false,
+    "relative_difference_ulps": 1,
+    "evaluator": {
+      "python": "3.11.15",
+      "pdfplumber": "0.11.9",
+      "snap_objects_source_sha256": "306088bab431842e1833a0ac4f3a5e00aa016f8713487935a996f516ac14af65",
+      "saved": "403.93571428571425",
+      "saved_hex": "0x1.93ef8af8af8afp+8",
+      "matching_edge_clusters": [
+        {
+          "values": [
+            "404.15",
+            "403.9",
+            "403.9",
+            "403.9",
+            "403.9",
+            "403.9",
+            "403.9"
+          ],
+          "sum_average": "403.9357142857143",
+          "fsum_average": "403.93571428571425",
+          "sum_hex": "0x1.93ef8af8af8b0p+8"
+        }
+      ],
+      "difference_ulps": 1
+    },
+    "original_runtime": {
+      "python": "3.14.2",
+      "pdfplumber": "0.11.9",
+      "snap_objects_source_sha256": "306088bab431842e1833a0ac4f3a5e00aa016f8713487935a996f516ac14af65",
+      "saved": "403.93571428571425",
+      "saved_hex": "0x1.93ef8af8af8afp+8",
+      "matching_edge_clusters": [
+        {
+          "values": [
+            "404.15",
+            "403.9",
+            "403.9",
+            "403.9",
+            "403.9",
+            "403.9",
+            "403.9"
+          ],
+          "sum_average": "403.93571428571425",
+          "fsum_average": "403.93571428571425",
+          "sum_hex": "0x1.93ef8af8af8afp+8"
+        }
+      ],
+      "difference_ulps": 0
+    },
+    "original_runtime_strict_repetitions": {
+      "python": "3.14.2",
+      "saved_bbox_y": "403.93571428571425",
+      "saved_bbox_y_hex": "0x1.93ef8af8af8afp+8",
+      "checks": [
+        {
+          "strict_json_equal": true,
+          "bbox_y": "403.93571428571425",
+          "bbox_y_hex": "0x1.93ef8af8af8afp+8"
+        },
+        {
+          "strict_json_equal": true,
+          "bbox_y": "403.93571428571425",
+          "bbox_y_hex": "0x1.93ef8af8af8afp+8"
+        },
+        {
+          "strict_json_equal": true,
+          "bbox_y": "403.93571428571425",
+          "bbox_y_hex": "0x1.93ef8af8af8afp+8"
+        }
+      ]
+    },
+    "cause": "Identical pdfplumber snap_objects source averages the same seven edge coordinates using Python sum; Python 3.11 and 3.14 produce adjacent binary64 results.",
+    "primary_documentation": "https://docs.python.org/3/library/functions.html#sum",
+    "no_tolerance_added": true,
+    "no_source_rewrite": true,
+    "no_model_or_network_calls_by_parser": true,
+    "not_independent_mathematical_or_medical_validation": true,
+    "old_reports_reclassified": false,
+    "qualification": "not_qualified"
+  },
+  "strict_diagnostic_report_sha256": "c063ddb05d9871f43dce641035bebbecf46eb0e63c85d00d32f598b44faa1d8d",
+  "evaluator_script_sha256": "127285d36f9177c0fd260ee55be092a528c71f4a84296421f2551f94d276d966",
+  "new_evaluator_diagnostic_tests": 9,
+  "old_installed_b12_tests_after_diagnostics": {
+    "passed": 840,
+    "seconds": 78.85
+  },
+  "word_ast_check": {
+    "paragraphs": 11,
+    "tables": 1,
+    "matched": true,
+    "source_unchanged": true,
+    "record_sha256": "cdb01a2f6b345f4790f763f75ecef3c788c9da8ce4d3c7b907d9e403ae5f8b6e"
+  },
+  "format_value_signatures": {
+    "markdown": 4,
+    "docx": 6,
+    "pdf": 5,
+    "common": 3,
+    "union": 8,
+    "not_role_or_quantity_identity": true,
+    "not_miss_or_causation_measure": true
+  },
+  "keys_imported": false,
+  "server_started": false
+}

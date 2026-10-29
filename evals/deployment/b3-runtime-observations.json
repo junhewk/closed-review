@@ -1,0 +1,53 @@
+{
+  "observed_at_utc": "2026-10-28T04:56:25Z",
+  "purpose": "read_only_runtime_observations_not_qualification",
+  "candidate": {
+    "version": "0.9.0b3",
+    "runner": "a81c219d65334c60730acc81322aa94d85f51b032662e9007e8b7633df59145f",
+    "wheel_sha256": "461fc0793348484782b9bac3b0a03275a23ec149c9d0d11f34207c47b99a0b4d"
+  },
+  "gateway": {
+    "host": "jkworkstation",
+    "endpoint": "http://100.122.169.13:8091/v1",
+    "public_model": "qwen3.8-flash-next",
+    "configured_backend_model": "qwen3.8-flash-next",
+    "configured_upstream": "http://127.0.0.1:1919",
+    "repository_head": "959b9a36aa558e20689b597e1fed7a234715caee",
+    "tracked_source_modified": true,
+    "source_sha256": "887e70b934c9f65d604e8bb79a19126cc16b1482e70c60ea366bc03dccbbac17",
+    "evidence": "read_only_listening_process_mapping_and_allowlisted_live_process_route_settings",
+    "network_isolation": "not_enforced_by_plugin"
+  },
+  "runtime": {
+    "name": "Strata",
+    "repository_head": "7f783d192e4e1562c8830f4cd6f09de80cc9561c",
+    "tracked_source_modified": false,
+    "untracked_files_present": true,
+    "native_binary_sha256": "b79c8622de6e30f514383017744e6359a16e0439f81696c923eab5a89a3f48a6",
+    "server_source_sha256": "7ae13fdf626d961ee67465fd3796a1ada061d046ccf050297e980894a9e057f0",
+    "pack_path": "/home/jk/Strata-data/packs/iq3_s",
+    "quantization_label": "IQ3_S",
+    "weight_hashes": null,
+    "max_context_tokens": 262144,
+    "kv_cache": "int8",
+    "resident_kv_tokens": 32768,
+    "conversation_cache_mib": 8192,
+    "expert_cache": "auto",
+    "prefill": "auto",
+    "speculative_tokens": 4,
+    "speculative_min_probability": 0.5,
+    "mtp_path": "/home/jk/Strata-data/mtp/rt"
+  },
+  "hardware": {
+    "gpus": [
+      {"name": "NVIDIA GeForce RTX 4090", "total_mib": 24564},
+      {"name": "NVIDIA GeForce RTX 3090", "total_mib": 24576}
+    ],
+    "driver": "595.99.02",
+    "attributable_peak_memory": null,
+    "caveat": "Both Qwen and Gemma services are loaded. Total GPU usage is not this candidate's model-specific memory requirement or peak."
+  },
+  "services_modified": false,
+  "qualified": false,
+  "pending": ["weight_file_hashes", "attributable_peak_memory", "independent_human_audits"]
+}

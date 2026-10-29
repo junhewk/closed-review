@@ -1,0 +1,138 @@
+{
+  "protocol": "medical-methods-v1",
+  "answer_contract": 9,
+  "persisted_schema": 1,
+  "version": "0.9.0b12",
+  "runner": "e95934c9e2be05d432fefb964a1b9beb5728a34ebd781f4df928bdf8daabfe2a",
+  "wheel_sha256": "51086c03754259961912db7a67db76d98fd313e0ff612083429bad530cf37993",
+  "package_files": 51,
+  "changed_package_files": [
+    "__init__.py",
+    "support/contracts.py",
+    "support/localization.py",
+    "support/render.py"
+  ],
+  "source_equals_wheel": true,
+  "independent_wheel_sums_equal_installed": true,
+  "bundle": "/tmp/creview-support-b12-candidate.0rq7fd6d",
+  "bundle_files": 38,
+  "bundle_manifest_sha256": "408aa0a6d9fdcba488a3c0422d1ab590b9981d5b99013a4a9c4c87ebcee4af95",
+  "keys_transferred": false,
+  "source_approval": "pending_independent_reviewer",
+  "qualification": "not_qualified",
+  "local_build": "/tmp/creview-support-b12-final.xlQrkYcZ",
+  "local_installed_tests": {
+    "passed": 802,
+    "seconds": 66.96,
+    "python": "3.11.15",
+    "locked_dependencies": 31,
+    "source_pythonpath_disabled": true,
+    "ruff": "passed",
+    "lock": "passed",
+    "diff": "passed"
+  },
+  "package_change_scope": "Version, answer-contract version, navigation labels and static renderer only; calculators, extraction, workflow, module criteria, profile/routes and skill bytes unchanged.",
+  "browser_qa": {
+    "synthetic_only": true,
+    "browser": "HeadlessChrome/152.0.7977.8",
+    "languages": [
+      "en",
+      "ko"
+    ],
+    "viewports": [
+      {
+        "width": 1360,
+        "height": 1400
+      },
+      {
+        "width": 390,
+        "height": 1100
+      }
+    ],
+    "three_views_passed": true,
+    "agent_visually_inspected": true,
+    "source_links_and_expandable_details": true,
+    "no_page_horizontal_overflow": true,
+    "narrow_tables_keyboard_scrollable": true,
+    "human_usability_or_translation_approved": false,
+    "record": "/tmp/creview-support-b12-final.xlQrkYcZ/browser-qa.json",
+    "record_sha256": "e2b074f234b612014b7fd21e75c0cc4c6265cfb9cc645da0798e92ff0a090d58",
+    "script_sha256": "38e4bba151fecaf962e8e25f31485ce9901bbdcea3d76db86c47ae7b98a95e01"
+  },
+  "bootstrap_harness": {
+    "script": "scripts/probe-support-bootstrap.py",
+    "sha256": "5b3bfdef2bc1a958c3d406a6cba30b7613d4685afbf273518c962076af81a8b3",
+    "new_unit_cases": 9,
+    "focused_recovery_checks": 30,
+    "live_executed": false,
+    "required_start_state": "unissued",
+    "required_extra_completion_requests": 1,
+    "required_forced_invocation": 3,
+    "max_actual_invocations": 6
+  },
+  "both_hosts_bundle_checksums_verified": true,
+  "remote_runtime": "/tmp/creview-support-runtime.wzz1l14s",
+  "remote_python": "3.14.2",
+  "hash_pinned_runtime_dependencies": 25,
+  "dependency_install_offline": true,
+  "strict_live_preflight_without_generation": true,
+  "preflight_runtime_status": "not_in_hermes",
+  "controller": {
+    "controller_pid": 2513917,
+    "controller_start_ticks": "121944614",
+    "controller_sha256": "cd724e90d4e8960a04cf298f7dca95b4e332ad2428bce54347757b54ce943a2c",
+    "runner": "e95934c9e2be05d432fefb964a1b9beb5728a34ebd781f4df928bdf8daabfe2a",
+    "launched_at": "2026-10-28T15:54:25.212908+00:00",
+    "previous_suite_running_at_launch": true,
+    "inference_started_by_launcher": false,
+    "qualification": "not_qualified"
+  },
+  "queue": {
+    "status": "waiting_for_b11",
+    "queued_at": "2026-10-28T15:54:25.292215+00:00",
+    "controller_pid": 2513917,
+    "controller_start_ticks": "121944614",
+    "identity": "e95934c9e2be05d432fefb964a1b9beb5728a34ebd781f4df928bdf8daabfe2a",
+    "bundle_manifest_sha256": "408aa0a6d9fdcba488a3c0422d1ab590b9981d5b99013a4a9c4c87ebcee4af95",
+    "controller_sha256": "cd724e90d4e8960a04cf298f7dca95b4e332ad2428bce54347757b54ce943a2c",
+    "previous_suite_state": "/tmp/creview-support-runtime.tm9ClpRZ/suite-state.json",
+    "qualification": "not_qualified",
+    "inference_started_by_queue": false,
+    "scope": "Four targeted engineering jobs, not full medical qualification"
+  },
+  "observed_queue_at": "2026-10-28T16:34:25.716067+00:00",
+  "live_targeted_jobs": [
+    "bootstrap-turn-limit",
+    "korean",
+    "multi-module",
+    "ordinary-native-formats-three-pairs"
+  ],
+  "live_inference_started": false,
+  "whole_suite_or_formal_qualification": false,
+  "release_gate": "closed_empty_configuration_list_correctly_refused",
+  "regular_profiles_or_services_changed": false,
+  "private_keys_read_or_transferred": false,
+  "new_tailscale_server_started": false,
+  "note": "Superseded by b13 after a fixed-epsilon arithmetic bug was verified. The unstarted b12 controller was canceled before inference; the queue object above is a preserved historical snapshot, not current activity. None of its four unrun jobs is a pass. Earlier b11 evidence does not qualify b12 or b13; human gates remain incomplete.",
+  "current_status": "superseded_cancelled_before_inference",
+  "superseded_by": "0.9.0b13",
+  "cancellation": {
+    "status": "cancelled_before_inference",
+    "cancelled_at": "2026-10-28T16:53:59.443188+00:00",
+    "controller_pid": 2513917,
+    "controller_start_ticks": "121944614",
+    "inference_started": false,
+    "child_jobs_at_cancellation": [],
+    "original_queue_state_preserved": true,
+    "original_queue_state_sha256": "ae6e7c3514f4bb4a8729cf3a8ae2ea8f7abe97d9f7227295498ae6fae0f75a93",
+    "record_sha256": "c741c50309128425e97bb3342a4e72a903ec0c383a8e371eb53971070186f8ec",
+    "no_unrun_job_counted_as_pass": true
+  },
+  "evaluator_only_continuation": {
+    "evidence": "replay-checks-evidence-20261029.json",
+    "installed_wheel_unchanged": true,
+    "full_tests_passed": 831,
+    "full_test_seconds": 75.54,
+    "source_pythonpath_disabled": true
+  }
+}

@@ -11,7 +11,7 @@ from defusedxml import ElementTree
 
 from .errors import ReviewError
 
-SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".md", ".markdown"}
+SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".md", ".markdown", ".txt"}
 WORD_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 SHEET_NS = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
 OFFICE_REL_NS = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
@@ -113,6 +113,55 @@ def _paragraph_style(element: ElementTree.Element) -> str | None:
     return style.attrib.get(f"{WORD_NS}val")
 
 
+def _outline_heading(element: ElementTree.Element) -> bool | None:
+    level = element.find(f"{WORD_NS}pPr/{WORD_NS}outlineLvl")
+    if level is None:
+        return None
+    return level.attrib.get(f"{WORD_NS}val") in {str(n) for n in range(9)}
+
+
+def _word_heading_styles(archive: zipfile.ZipFile) -> dict[str, bool]:
+    """Resolve Word styles, whose IDs may be localized or numeric, without changing the DOCX."""
+    if "word/styles.xml" not in archive.namelist():
+        return {}
+    root = ElementTree.fromstring(archive.read("word/styles.xml"))
+    styles = {
+        style.attrib[f"{WORD_NS}styleId"]: style
+        for style in root.findall(f"{WORD_NS}style")
+        if style.attrib.get(f"{WORD_NS}type") == "paragraph" and f"{WORD_NS}styleId" in style.attrib
+    }
+
+    def heading(style_id: str) -> bool:
+        seen: set[str] = set()
+        while style_id and style_id not in seen:
+            seen.add(style_id)
+            style = styles.get(style_id)
+            if style is None:
+                return style_id.lower().startswith(("heading", "title"))
+            outlined = _outline_heading(style)
+            if outlined is not None:
+                return outlined
+            name = style.find(f"{WORD_NS}name")
+            label = name.attrib.get(f"{WORD_NS}val", "") if name is not None else ""
+            if style_id.lower().startswith(("heading", "title")) or label.lower().startswith(
+                ("heading", "title")
+            ):
+                return True
+            parent = style.find(f"{WORD_NS}basedOn")
+            style_id = parent.attrib.get(f"{WORD_NS}val", "") if parent is not None else ""
+        return False
+
+    return {style_id: heading(style_id) for style_id in styles}
+
+
+def _word_paragraph_heading(element: ElementTree.Element, styles: dict[str, bool]) -> bool:
+    outlined = _outline_heading(element)
+    if outlined is not None:
+        return outlined
+    style_id = _paragraph_style(element) or ""
+    return styles.get(style_id, style_id.lower().startswith(("heading", "title")))
+
+
 def _safe_office_members(archive: zipfile.ZipFile, format_name: str) -> None:
     total = 0
     for info in archive.infolist():
@@ -136,6 +185,7 @@ def parse_docx(path: Path) -> ParsedDocument:
             body = root.find(f"{WORD_NS}body")
             if body is None:
                 raise ReviewError("DOCX has no document body")
+            heading_styles = _word_heading_styles(archive)
             paragraph_number = 0
             table_number = 0
             current_heading = "Document"
@@ -145,11 +195,8 @@ def parse_docx(path: Path) -> ParsedDocument:
                     if not text:
                         continue
                     paragraph_number += 1
-                    style = (_paragraph_style(child) or "").lower()
                     kind = (
-                        "heading"
-                        if style.startswith("heading") or style.startswith("title")
-                        else "paragraph"
+                        "heading" if _word_paragraph_heading(child, heading_styles) else "paragraph"
                     )
                     if kind == "heading":
                         current_heading = text[:160]
@@ -344,6 +391,30 @@ def parse_markdown(path: Path) -> ParsedDocument:
     return ParsedDocument("markdown", segments, warnings)
 
 
+def parse_text(path: Path) -> ParsedDocument:
+    """Plain UTF-8 text: blank-line paragraphs; no line is treated as Markdown markup."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError as exc:
+        raise ReviewError("text input must be UTF-8") from exc
+    lines = text.replace("\r\n", "\n").replace("\r", "\n").splitlines()
+    segments: list[dict[str, Any]] = []
+    buffer: list[str] = []
+    start_line = 1
+    for number, line in enumerate([*lines, ""], start=1):
+        if line.strip():
+            if not buffer:
+                start_line = number
+            buffer.append(line)
+        elif buffer:
+            value = _clean("\n".join(buffer))
+            if value:
+                locator = f"lines:{start_line}-{number - 1}"
+                segments.append(_segment(len(segments) + 1, locator, value))
+            buffer = []
+    return ParsedDocument("text", segments, [] if segments else ["text contains no paragraphs"])
+
+
 def parse_document(path: Path) -> ParsedDocument:
     suffix = path.suffix.lower()
     if suffix not in SUPPORTED_EXTENSIONS:
@@ -354,4 +425,6 @@ def parse_document(path: Path) -> ParsedDocument:
         return parse_docx(path)
     if suffix == ".xlsx":
         return parse_xlsx(path)
+    if suffix == ".txt":
+        return parse_text(path)
     return parse_markdown(path)

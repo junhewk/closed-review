@@ -1,8 +1,8 @@
 """Individually approved scholarly lookups (Crossref, OpenAlex).
 
 A request records the exact query and URL before anything leaves the machine; `run` executes only
-that URL, after the reviewer's approval is recorded. Requests belong to an audited case, or, in a
-direct or deep review, to the Hermes session that passed `creview session start`.
+that URL, after the reviewer's approval is recorded. Requests belong to the Hermes session that
+passed `creview session start`.
 """
 
 from __future__ import annotations
@@ -16,9 +16,15 @@ import httpx
 from filelock import FileLock
 
 from . import __version__
-from .cases import append_event, now_iso, read_statement
 from .errors import ReviewError
-from .io import atomic_write_json, data_home, ensure_private_dir, load_case, read_json
+from .io import (
+    atomic_write_json,
+    data_home,
+    ensure_private_dir,
+    now_iso,
+    read_json,
+    read_statement,
+)
 from .session import preflight_summary, session_key
 from .transcript import reviewer_words
 
@@ -44,18 +50,13 @@ def _request_url(provider: str, query: str) -> str:
     return f"https://api.openalex.org/works?{params}"
 
 
-def _store(case_id: str | None, session: str | None) -> tuple[Path, dict[str, str], Path | None]:
-    """The lookups directory, the owner recorded on each request, and the case root for events."""
-    if case_id:
-        root, _ = load_case(case_id)
-        return root / "lookups", {"case_id": case_id}, root
+def _store(session: str | None) -> tuple[Path, dict[str, str]]:
+    """The session's lookups directory and the owner recorded on each request."""
     key, source = session_key(session)
     if preflight_summary(key, source)["status"] != "passed":
-        raise ReviewError(
-            "run `creview session start` in this Hermes session first, or pass an audited CASE"
-        )
+        raise ReviewError("run `creview session start` in this Hermes session first")
     directory = ensure_private_dir(ensure_private_dir(data_home() / "lookups") / str(key))
-    return directory, {"session_id": str(key)}, None
+    return directory, {"session_id": str(key)}
 
 
 def _request_path(directory: Path, request_id: str) -> Path:
@@ -68,7 +69,6 @@ def _request_path(directory: Path, request_id: str) -> Path:
 
 
 def create_lookup(
-    case_id: str | None,
     provider: str,
     query: str,
     *,
@@ -81,7 +81,7 @@ def create_lookup(
         raise ReviewError("lookup provider must be crossref or openalex")
     if not query or len(query) > 500:
         raise ReviewError("lookup query must contain 1 to 500 characters")
-    directory, owner, case_root = _store(case_id, session)
+    directory, owner = _store(session)
     request = {
         "schema_version": "1",
         "request_id": f"lookup-{secrets.token_hex(5)}",
@@ -97,12 +97,6 @@ def create_lookup(
         "result": None,
     }
     atomic_write_json(directory / f"{request['request_id']}.json", request)
-    if case_root:
-        append_event(
-            case_root,
-            "lookup_requested",
-            {"request_id": request["request_id"], "provider": provider, "query": query},
-        )
     return request
 
 
@@ -149,7 +143,6 @@ def _openalex_items(payload: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def run_lookup(
-    case_id: str | None,
     request_id: str,
     *,
     approval_statement: str | None = None,
@@ -157,13 +150,13 @@ def run_lookup(
     session: str | None = None,
     timeout: float = 15.0,
 ) -> dict[str, Any]:
-    directory, owner, case_root = _store(case_id, session)
+    directory, owner = _store(session)
     path = _request_path(directory, request_id)
-    lock = FileLock(str((case_root or directory) / ".lock"))
+    lock = FileLock(str(directory / ".lock"))
     with lock:
         request = read_json(path)
         if any(request.get(name) != value for name, value in owner.items()):
-            raise ReviewError("lookup request belongs to another case or session")
+            raise ReviewError("lookup request belongs to another session")
         if request.get("status") != "pending_approval":
             raise ReviewError("lookup request is not waiting for approval")
         expected_url = _request_url(request.get("provider", ""), request.get("query", ""))
@@ -174,7 +167,7 @@ def run_lookup(
             raise ReviewError("record the user's explicit approval of this exact query")
         approval = reviewer_words(
             statement,
-            hermes_session="session_id" in owner and session_source(session) == "hermes_session",
+            hermes_session=session_source(session) == "hermes_session",
             what="the lookup approval",
             since=request.get("created_at"),
         )
@@ -204,10 +197,6 @@ def run_lookup(
             request["executed_at"] = now_iso()
             request["error"] = str(exc)
             atomic_write_json(path, request)
-            if case_root:
-                append_event(
-                    case_root, "lookup_failed", {"request_id": request_id, "error": str(exc)}
-                )
         raise ReviewError(f"approved lookup failed: {exc}") from exc
 
     with lock:
@@ -216,19 +205,11 @@ def run_lookup(
         request["executed_at"] = now_iso()
         request["result"] = result
         atomic_write_json(path, request)
-        if case_root:
-            append_event(
-                case_root,
-                "lookup_executed",
-                {"request_id": request_id, "result_count": len(result)},
-            )
     return request
 
 
-def show_lookup(
-    case_id: str | None, request_id: str, *, session: str | None = None
-) -> dict[str, Any]:
-    directory, _, _ = _store(case_id, session)
+def show_lookup(request_id: str, *, session: str | None = None) -> dict[str, Any]:
+    directory, _ = _store(session)
     return read_json(_request_path(directory, request_id))
 
 

@@ -27,9 +27,18 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - name: Lint
-        run: uv run --extra dev ruff check src tests
+        run: uv run --extra dev ruff check src tests scripts
       - name: Test
         run: uv run --extra dev pytest -q
       - name: Check the installer scripts parse
         if: runner.os != 'Windows'
         run: bash -n scripts/install.sh
+      - name: Parse the PowerShell installer
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            "$pwd/scripts/install-windows.ps1", [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count) { $errors | Format-List; exit 1 }

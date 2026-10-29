@@ -1,0 +1,74 @@
+{
+  "protocol": "medical-methods-v1",
+  "synthetic_only": true,
+  "independently_reviewed": false,
+  "article_count": 1,
+  "format_count": 3,
+  "evaluator_directory": "/tmp/creview-support-native-formats.siGXEe71",
+  "builder": {
+    "script": "scripts/build-support-format-fixture.cjs",
+    "sha256": "55b4afaccf06afbd7a2211bc5d7fbf8b50803cda2b4ae6b4650ba00eb4619eb1",
+    "node": "22.22.2",
+    "docx": "9.15.0",
+    "temporary_dependency_lock_sha256": "8b58183434ab3aacc68c257e8a0c7ee0bc58092c9f9053a3a6e3b03a7f19df96"
+  },
+  "render": {
+    "libreoffice": "24.2.7.2 420(Build:2)",
+    "pages": 1,
+    "agent_visual_layout_inspection": true,
+    "page_image_sha256": "04fb4c08aea38c2fcb372b16f241bdc0d2576c868a32530bc685f88ddcaa66e8",
+    "independent_human_review": null
+  },
+  "sources": {
+    "f00.md": "874c8516d3dea2bc8c1e16a15ac4cf74e5a0220954670b0086d03592e3134133",
+    "f01.docx": "e3fc6073fbdcdf0ed352a01181ae25bdd1f213a4adf294681a735b4ff2141e63",
+    "f01.pdf": "ec2ef9faf0c5dfda900d07910ca740edf8e7e8ea4bda303b773f94eb7f2cf6d0"
+  },
+  "key_free_manifest_sha256": "be47355407f923c15a55fe3d7a22f53c3e98be7526b62d6b9f223fa5c0bad5ed",
+  "inspection": {
+    "script": "scripts/check-support-format-fixtures.py",
+    "sha256": "b20e0181053a5c80f94dde999f4ba9f15da34717af270f00e1132042546d925b",
+    "runner": "fc7e7ee468171179c8bcc160f6251399903d528879ca87d89fe8d9017e03c9ac",
+    "expected_paragraphs_present": true,
+    "native_table_grid": "5 rows x 3 columns, unchanged across formats",
+    "detected_geometry_ambiguity": false,
+    "clinical_quality": "not_assessed"
+  },
+  "regression": {
+    "b7_pdf_warnings": 1,
+    "b7_warning": "PDF table detection may miss tables; figures/scans have not been read. No OCR.",
+    "b8_pdf_warnings": 0,
+    "b8_preserved_pdf_scope_limits": 1,
+    "historical_results_changed": false
+  },
+  "model_inference_on_native_fixtures": "b8_pdf_support_failed_b9_support_passed_baseline_checker_failed",
+  "b8_runtime": "/tmp/creview-support-runtime.t5MkgBGS",
+  "b8_queue_controller_pid": 2131296,
+  "b8_result": {
+    "finished_at": "2026-10-28T10:32:28Z",
+    "support_complete": ["Markdown", "DOCX"],
+    "support_failed": ["PDF"],
+    "pdf_failure": "Two exact-quote refusals: extracted layout line breaks reflowed in submitted quotes.",
+    "baselines_passed": 3,
+    "receipts_verified": 3,
+    "evaluator_directory": "/tmp/creview-support-b8-format-results.nWRQ0VAH"
+  },
+  "b9_followup": {
+    "runner": "02d047cef7658cb5c1290723743f8e0b6b68344a9cc546e6f35a4f3603f7f3b8",
+    "runtime": "/tmp/creview-support-runtime.jwiCD2vE",
+    "suite_controller_pid": 2196301,
+    "status": "finished_original_batch_failed",
+    "finished_at": "2026-10-28T11:13:20Z",
+    "support_engineering_passed": 3,
+    "baseline_engineering_passed": 2,
+    "baseline_failure": "Original checker omitted ordinary local search_files; original result preserved.",
+    "revised_baseline_harness_sha256": "f75d6d0428b4e40f05872020a6f9b6ec290614c2c028ae2cb1941e7a18b175bb",
+    "read_only_revised_trace_passed": true,
+    "original_baseline_result_unchanged": true,
+    "engineering_repetitions": 1,
+    "pdf_quote_text_policy": "pdf-layout-whitespace-v1",
+    "independent_medical_approval": null
+  },
+  "qualification": "not_qualified",
+  "note": "Controlled format-preservation evidence only. Not independent studies, medical controls, seeded issue keys or proof of no hidden content. No clinical recommendation."
+}

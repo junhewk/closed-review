@@ -1,0 +1,40 @@
+{
+  "version": "0.9.0b6",
+  "protocol": "medical-methods-v1",
+  "runner_identity": "af326686c57ad42b2d932176bed9dca46067981905b26dd426781e3e704b6622",
+  "suite_finished_at": "2026-10-28T09:26:18.156633+00:00",
+  "original_suite_engineering_passed": false,
+  "matrix_engineering_passed": true,
+  "matrix_cases": 12,
+  "suite_archive_sha256": "574f26ba8a5c3bbeae93051b7d3e48331c31faebd4dd2dc2281bc7012d5311c4",
+  "evaluator_directory": "/tmp/creview-support-b6-suite-results.sWq52DK0",
+  "archive_regular_files": 436,
+  "archive_unpacked_bytes": 6299952,
+  "export_receipts_independently_verified": 18,
+  "compression": {
+    "original_probe_passed": false,
+    "original_result_unchanged": true,
+    "workflow_engineering_passed": true,
+    "log_sha256": "e5d3806d5881b7210361314dc5765c07b4399708067c1c03a60cdd4015e73c89",
+    "session": "20261028_180904_c415be",
+    "attempts": 3,
+    "same_session_committed_without_fallback": 2,
+    "diagnosis": "Old harness required a numbered completion log; current Hermes emitted structured committed-attempt telemetry instead.",
+    "summary_fidelity_reviewed": null
+  },
+  "turn_limit": {
+    "original_probe_passed": false,
+    "forced_interruption_observed": true,
+    "same_run_resumed": true,
+    "module_status": "partial",
+    "diagnosis": "Legible conflicting numerical claims were declared an ambiguous physical source-structure gap during extraction. The partial output has not been promoted."
+  },
+  "injected_module_failure": {
+    "original_probe_passed": false,
+    "fault_injected": false,
+    "diagnosis": "Evaluator-side submission lacked the non-secret vision provider/model environment selectors mirrored into the real Hermes terminal; the unchanged route guard stopped processing."
+  },
+  "scope": "Synthetic engineering diagnostics only; not a repeated paired medical qualification batch.",
+  "human_judgments": "blank_requires_independent_review",
+  "qualification": "not_qualified"
+}

@@ -1,0 +1,44 @@
+{
+  "protocol": "medical-methods-v1",
+  "corpus_id": "public-medical-articles-20261029",
+  "synthetic_only": false,
+  "independently_reviewed": false,
+  "cases": [
+    {
+      "case_id": "public-statistics",
+      "module": "statistics",
+      "file": "public-statistics.md",
+      "sha256": "2636a120e2caca2f9fa805ae3da40a63230b5dfe1fe70e00eecb52c3e10893d3"
+    },
+    {
+      "case_id": "public-qualitative",
+      "module": "qualitative-study",
+      "file": "public-qualitative.md",
+      "sha256": "46b3dcdb949f822309eb67b9c7f44102ef619e5e1959d3e0962ca322ff0ad3a0"
+    },
+    {
+      "case_id": "public-systematic",
+      "module": "systematic-review",
+      "file": "public-systematic.md",
+      "sha256": "5940966d434f76c3e3cc78d676c38c9d43f622f1d97348561c3e7a1d8403992d"
+    },
+    {
+      "case_id": "public-scoping",
+      "module": "scoping-review",
+      "file": "public-scoping.md",
+      "sha256": "01b2f78dcdc516578a91e65e61ea0d590693f743e77cb597af2c50e9653a4ac5"
+    },
+    {
+      "case_id": "public-narrative",
+      "module": "narrative-review",
+      "file": "public-narrative.md",
+      "sha256": "1260e70a27d1a49ccca2a837f145956fef1c34b2449e3f62a80633cdeb49ddb3"
+    },
+    {
+      "case_id": "public-logic",
+      "module": "logic",
+      "file": "public-logic.md",
+      "sha256": "f304aeb5ad2242fe4eb9f6385fa3fce0a47a4a5c7b18b7bdeac89077b1386b9d"
+    }
+  ]
+}

@@ -6,10 +6,26 @@ must:
 
 - serve `/v1/chat/completions` and `/v1/models`;
 - support tool calling, because Hermes runs the skill's commands through tools;
-- give the model a context window large enough for a manuscript and the conversation (64k tokens or
-  more is a sensible floor);
-- be reachable only from this computer or a private network. Never expose it to the internet:
-  Ollama, for example, has no authentication of its own.
+- provide an explicitly configured context of at least 65536 tokens for medical support;
+- be reachable only from this computer or a private network. Bind to the intended interface and
+  enforce host/network access controls; a private address is not authentication.
+
+These are eligibility requirements. They do not establish that a model follows the review
+workflow or meets its quality/time targets. Start with the [dedicated profile](install.md), require
+`creview hermes doctor --profile NAME --support`, then run the real Hermes module checks in
+[the support pilot protocol](support-pilot.md). Formal qualification needs independently approved
+medical cases, three paired repetitions, human finding/baseline audits and exact runtime/hardware
+evidence. The [legacy scan qualification](deployment.md) and `hermes smoke` do not qualify these
+modules. Test context sizes only when actually configured on the server. Do not buy hardware on
+the basis of a model name or advertised maximum context alone; the existing workstation evidence
+does not establish a portable memory minimum or qualify another server/model.
+
+For medical support, use `creview hermes setup-profile` as documented in the installation guide
+instead of copying only a main-model configuration. The managed profile explicitly uses the
+`custom` provider and pins compression, title generation, vision and disabled background review
+to the same trusted local gateway and allowlisted model. The context value supplied to profile
+setup must reflect the real server limit; it does not resize the server. A passing preflight is
+not an OS network sandbox or a scientific-quality result.
 
 Common setups (check your server's documentation for current flags):
 
@@ -27,8 +43,13 @@ server answers before going further:
 curl http://localhost:11434/v1/models
 ```
 
-Then select the same server as the main model in the Hermes profile you review from, with a named
-provider rather than `auto`. For Ollama:
+### Legacy/development configuration notes
+
+The following main-model-only examples describe compatibility, not a medical-support profile.
+For medical support use the managed setup above; in particular it requires `provider: custom`,
+not a different provider alias merely because legacy routing can resolve it.
+
+Select the same server as the main model, with a named provider rather than `auto`. For Ollama:
 
 ```yaml
 model:

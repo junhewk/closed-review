@@ -12,7 +12,7 @@ if checked.
 - Jayaram R, Cohen-Addad V. 2026. Analyzing technical documents with Deep Review. Google Research blog,
   14 October 2026. <https://research.google/blog/analyzing-technical-documents-with-deep-review/>
 
-The deep review's segment-based structure follows this work. The preprint describes the Paper
+The scan's segment-based structure follows this work. The preprint describes the Paper
 Assistant Tool (PAT), and the blog post presents Deep Review as its public successor; closed-review
 runs the structure on a self-hosted model and adds its own enforced checks.
 

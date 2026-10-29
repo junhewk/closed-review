@@ -91,11 +91,23 @@ def number_checks(
             continue
         expression = str(item.get("expression") or "").strip()
         stated_text = str(item.get("stated") or "").replace(",", "").strip().rstrip("%")
+        stated_text = number_word(stated_text) or stated_text
+        if re.fullmatch(r"\d+(?:\.\d+)?\s+(?:of|out of|/)\s+\d+(?:\.\d+)?", stated_text):
+            problems.append(
+                f'{label}: stated "{stated_text}" is a count out of a total, which the manuscript '
+                "states rather than computes; stated must be one figure the expression should "
+                "give (a percentage the manuscript reports, a sum, a difference), or leave the "
+                "check out"
+            )
+            continue
         try:
             computed = evaluate(expression)
             stated = float(stated_text)
         except (ValueError, SyntaxError, ZeroDivisionError) as exc:
-            problems.append(f"{label} needs an expression and a stated number: {exc}")
+            problems.append(
+                f"{label} needs an expression and a stated number, one figure such as 38 or "
+                f"thirty-eight with no other words: {exc}"
+            )
             continue
         if stated in numbers_in(expression):
             # "31 - 24" against a stated 31 checks nothing: stated is what the expression gives.
@@ -120,6 +132,52 @@ def number_checks(
             }
         )
     return results, problems
+
+
+_UNITS = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+]
+_TENS = ["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+
+
+def number_word(text: str) -> str | None:
+    """A whole number written in English words, as digits ("Thirty-eight" -> "38"), up to
+    9,999; None when the text is anything else."""
+    words = re.split(r"[\s-]+", text.strip().lower().replace(" and ", " "))
+    if not words or words == [""]:
+        return None
+    total = current = 0
+    for w in words:
+        if w in _UNITS:
+            current += _UNITS.index(w)
+        elif w in _TENS:
+            current += 20 + 10 * _TENS.index(w)
+        elif w == "hundred" and 0 < current < 10:
+            current *= 100
+        elif w == "thousand" and 0 < current < 10 and total == 0:
+            total, current = current * 1000, 0
+        else:
+            return None
+    return str(total + current)
 
 
 def numbers_in(text: str) -> set[float]:

@@ -17,9 +17,15 @@ import httpx
 import yaml
 
 from . import __version__
-from .cases import assert_private_store, now_iso
 from .errors import ReviewError
-from .io import atomic_write_json, ensure_private_dir, sha256_bytes, sha256_file
+from .io import (
+    assert_private_store,
+    atomic_write_json,
+    ensure_private_dir,
+    now_iso,
+    sha256_bytes,
+    sha256_file,
+)
 from .routes import VERIFIED_CONFIG_VERSIONS, check_routes, default_base_url, read_env_file
 from .routes import normalized_endpoint as _normalized_endpoint
 from .settings import NOT_CONFIGURED, trusted_gateway
@@ -578,6 +584,15 @@ def _transcript_problem(root: Path) -> str | None:
 def inspect_profile(
     profile: str | None, *, live: bool = True, timeout: float = 3.0
 ) -> dict[str, Any]:
+    from .deployment import profile_store
+
+    with profile_store(profile_root(profile)):
+        return _inspect_profile(profile, live=live, timeout=timeout)
+
+
+def _inspect_profile(
+    profile: str | None, *, live: bool = True, timeout: float = 3.0
+) -> dict[str, Any]:
     name = selected_profile(profile)
     root = profile_root(profile)
     config, problems = _load_config(root / "config.yaml")
@@ -638,6 +653,24 @@ def inspect_profile(
             f"MCP servers {', '.join(sorted(map(str, mcp_servers)))} are configured; any that "
             "reach outside services can receive manuscript text, which creview cannot check"
         )
+    display = config.get("display")
+    display = display if isinstance(display, dict) else {}
+    if display.get("inline_diffs") is not False:
+        warnings.append(
+            "Hermes inline file diffs can show draft scan answers before the findings are ready; "
+            "set display.inline_diffs: false in the review profile and restart Hermes to hide them"
+        )
+    tui_progress = os.environ.get("HERMES_TUI_TOOL_PROGRESS", "").strip().lower()
+    progress = (
+        tui_progress
+        if tui_progress in {"off", "new", "all", "verbose"}
+        else str(display.get("tool_progress") or "all").strip().lower()
+    )
+    if progress == "verbose":
+        warnings.append(
+            "Hermes verbose tool progress can show draft scan answers before the findings are "
+            "ready; use a non-verbose display.tool_progress setting for the review"
+        )
 
     destination, skill_source = _configured_skill(config, root)
     privacy_block: str | None = None
@@ -676,6 +709,17 @@ def inspect_profile(
             payload = response.json()
             ids = [item.get("id") for item in payload.get("data", []) if isinstance(item, dict)]
             gateway = {"checked": True, "at": started, "models": ids}
+            metadata = next(
+                (
+                    item
+                    for item in payload.get("data", [])
+                    if isinstance(item, dict) and item.get("id") == model
+                ),
+                {},
+            )
+            gateway["advertised_context_length"] = metadata.get(
+                "context_length", metadata.get("max_model_len")
+            )
             routed = {
                 route["model"]
                 for route in route_report["routes"]
@@ -688,8 +732,59 @@ def inspect_profile(
             gateway = {"checked": True, "error": str(exc)}
             problems.append(f"trusted gateway health check failed: {exc}")
 
+    managed = (root / "creview-profile.json").is_file()
+    deployment_problems: list[str] = []
+    if managed:
+        from .smoke import review_profile_problems
+
+        deployment_problems = review_profile_problems(config)
+    configured_context = (
+        config["model"].get("context_length") if isinstance(config.get("model"), dict) else None
+    )
+    known_limits = [
+        n
+        for n in (configured_context, gateway.get("advertised_context_length"))
+        if type(n) is int and n > 0
+    ]
+    effective_context = min(known_limits) if known_limits else None
+    if effective_context is not None and effective_context < 65536:
+        deployment_problems.append(
+            "known context limit is below the full-scan eligibility floor (65536)"
+        )
+    from .support.profile import readiness
+
+    support_readiness = readiness(
+        config,
+        root,
+        wanted_url,
+        allowed_models,
+        route_report,
+        effective_context,
+        deployment_problems,
+    )
+    if problems:
+        support_readiness["ready"] = False
+        support_readiness["problems"] = list(
+            dict.fromkeys([*problems, *support_readiness["problems"]])
+        )
     return {
         "ready": not problems,
+        "support_readiness": support_readiness,
+        "compatibility": {
+            "config_schema": schema,
+            "schema_checked": isinstance(schema, int) and low <= schema <= high,
+            "transcript_compatible": transcript_problem is None,
+            "managed_profile": managed,
+            "deployment_problems": deployment_problems,
+        },
+        "capability": {
+            "configured_context_length": configured_context,
+            "advertised_context_length": gateway.get("advertised_context_length"),
+            "known_context_ceiling": effective_context,
+            "workflow_smoke": "not_checked_by_doctor",
+            "review_quality": "not_assessed",
+            "network_isolation": "not_enforced",
+        },
         "profile": name,
         "profile_root": str(root),
         "model": model,

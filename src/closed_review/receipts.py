@@ -19,12 +19,12 @@ from urllib.parse import urlsplit
 from filelock import FileLock
 
 from . import __version__
-from .cases import now_iso
 from .errors import ReviewError
 from .io import (
     atomic_write_json,
     data_home,
     ensure_private_dir,
+    now_iso,
     read_json,
     secure_file,
     sha256_file,
@@ -38,7 +38,6 @@ SUBJECT_ROLES = {
     "comments-to-authors.md": "authors",
     "comments-to-editor.md": "editor",
     "review-development.md": "development",
-    "journal-review.md": "review",
 }
 
 

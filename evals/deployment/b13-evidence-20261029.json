@@ -1,0 +1,1083 @@
+{
+  "protocol": "medical-methods-v1",
+  "answer_contract": 9,
+  "persisted_schema": 1,
+  "version": "0.9.0b13",
+  "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+  "wheel_sha256": "9bbb442968c34f06b1a1b683b157d2e8dfbe8820f0b3a27c63422e899fc72b5e",
+  "package_files": 51,
+  "changed_package_files_since_b12": [
+    "__init__.py",
+    "support/calculators.py"
+  ],
+  "source_equals_wheel": true,
+  "independent_wheel_sums_equal_installed": true,
+  "bundle": "/tmp/creview-support-b13-candidate.7f6nx7tl",
+  "bundle_files": 40,
+  "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4",
+  "extra_numeric_fixture_source_sha256": "2fd50e2fae276ab560f07a6d80583a679f2c6b5fa98229cf33c2e6f7281b8990",
+  "keys_transferred": false,
+  "source_approval": false,
+  "qualification": "not_qualified",
+  "local_build": "/tmp/creview-support-b13-development.omi50M86",
+  "local_installed_tests": {
+    "passed": 868,
+    "seconds": 79.58,
+    "python": "3.11.15",
+    "locked_dependencies": 31,
+    "source_pythonpath_disabled": true,
+    "new_numeric_boundary_cases": 28,
+    "ruff": "passed",
+    "lock": "passed"
+  },
+  "remote_runtime": "/tmp/creview-support-runtime.t54as132",
+  "remote_python": "3.14.2",
+  "hash_pinned_runtime_dependencies": 25,
+  "dependency_install_offline": true,
+  "strict_live_preflight_without_generation": true,
+  "preflight_runtime_status": "not_in_hermes",
+  "controller": {
+    "controller_pid": 2612316,
+    "controller_start_ticks": "122454198",
+    "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+    "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+    "launched_at": "2026-10-28T17:19:21.058849+00:00",
+    "previous_suite_status_at_launch": "running",
+    "inference_started_by_launcher": false,
+    "qualification": "not_qualified"
+  },
+  "progress_snapshot": {
+    "queue": {
+      "status": "released",
+      "queued_at": "2026-10-28T17:19:21.122135+00:00",
+      "controller_pid": 2612316,
+      "controller_start_ticks": "122454198",
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4",
+      "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+      "previous_suite_state": "/tmp/creview-support-runtime.tm9ClpRZ/suite-state.json",
+      "qualification": "not_qualified",
+      "inference_started_by_queue": false,
+      "scope": "Six targeted engineering jobs, not full medical qualification",
+      "superseded_queue_cancellation_sha256": "c741c50309128425e97bb3342a4e72a903ec0c383a8e371eb53971070186f8ec",
+      "released_at": "2026-10-28T17:23:21.138250+00:00"
+    },
+    "process": {
+      "state": "S",
+      "start_ticks": "122454198",
+      "live": true
+    },
+    "suite_exists": true,
+    "suite": {
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "controller_pid": 2612316,
+      "started_at": "2026-10-28T17:23:21.156701+00:00",
+      "status": "running",
+      "qualification": "not_qualified",
+      "jobs": [
+        {
+          "name": "precision-regression",
+          "status": "finished",
+          "started_at": "2026-10-28T17:23:21.272733+00:00",
+          "driver_log": "precision-regression-driver.log",
+          "pid": 2616451,
+          "finished_at": "2026-10-28T17:26:21.919581+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 180.65
+        },
+        {
+          "name": "probe-bootstrap-turn-limit",
+          "status": "finished",
+          "started_at": "2026-10-28T17:26:21.926337+00:00",
+          "driver_log": "probe-bootstrap-turn-limit-driver.log",
+          "pid": 2620658,
+          "finished_at": "2026-10-28T17:29:49.366663+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 207.44
+        },
+        {
+          "name": "probe-compression",
+          "status": "running",
+          "started_at": "2026-10-28T17:29:49.376018+00:00",
+          "driver_log": "probe-compression-driver.log",
+          "pid": 2624775
+        }
+      ],
+      "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+      "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4"
+    },
+    "observed_at": "2026-10-28T17:33:33.183604+00:00",
+    "effective_status": "released"
+  },
+  "old_bug": {
+    "computed_p": 6.021255962234844e-13,
+    "reported": "1e-30",
+    "reported_rounding_tolerance": 5e-31,
+    "numerical_match": true,
+    "status": "conditional"
+  },
+  "first_two_jobs": {
+    "receipts_verified": 2,
+    "support_source_copies_verified": 2,
+    "baseline_source_copies_verified": 1,
+    "baseline_hashes_verified": 1,
+    "precision_target_replay_verified": true,
+    "precision_support_seconds": 143.83,
+    "baseline_seconds": 36.47,
+    "comparison_row": "| [statistics\\-c0001](#calculation-statistics-c0001) · p\\_from\\_z | p\\_value | = 1e\\-30 | 6\\.021255962234844e\\-13 | Differs on selected inputs | Conditional statistical comparison |",
+    "human_judgments": "blank",
+    "qualification": "not_qualified",
+    "bootstrap_probe": {
+      "mode": "bootstrap-turn-limit",
+      "probe_passed": true,
+      "forced_setting": {
+        "analysis_invocation_max_turns": 3,
+        "requires_issued_checkpoint": true
+      },
+      "observed": {
+        "forced_turn_limit_observed": true,
+        "compression_completed": false,
+        "expected_forced_exit_recovered": true,
+        "instrumented_invocation": 3
+      },
+      "case": {
+        "case_id": "case-02",
+        "module": "statistics",
+        "engineering_passed": true,
+        "turns": 4,
+        "requested_modules": [
+          "statistics"
+        ],
+        "checkpoint_completion_requests": 1,
+        "checkpoint_reached": true,
+        "manuscript_sha256": "874c8516d3dea2bc8c1e16a15ac4cf74e5a0220954670b0086d03592e3134133",
+        "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+        "initial_checkpoint_state": "unissued",
+        "checks": {
+          "runner_identity": true,
+          "new_protocol": true,
+          "same_run_resumed": true,
+          "requested_module_only": true,
+          "module_completed": true,
+          "source_unchanged": true,
+          "source_quotes_bound": true,
+          "no_invented_reviewer_decisions": true,
+          "no_legacy_scan": true,
+          "dossier_matches_saved_run": true,
+          "export_files_exist": true,
+          "receipt_integrity": true
+        },
+        "run_id": "support-d57f0eaf0f46aace37f92b536eeb8f3c",
+        "artifact_sha256": "e05b2cfd861e721c976e91e3aa4b98f0981c16f4b4bf0e14a0db98e65920eb54",
+        "dossier": "/tmp/creview-support-runtime.t54as132/probe-bootstrap-turn-limit/case-02/hermes/profiles/pilot/review-data/support/support-d57f0eaf0f46aace37f92b536eeb8f3c/exports/dossier-55de0c42",
+        "modules": {
+          "statistics": {
+            "status": "complete",
+            "observations": 1,
+            "calculations": 5,
+            "failures": []
+          }
+        },
+        "profile_root": "/tmp/creview-support-runtime.t54as132/probe-bootstrap-turn-limit/case-02/hermes/profiles/pilot",
+        "elapsed_seconds": 207.32,
+        "semantic_quality": "not_assessed_requires_human_review",
+        "qualification": "not_qualified"
+      },
+      "synthetic_only": true,
+      "semantic_quality": "not_assessed_requires_human_review",
+      "qualification": "not_qualified",
+      "note": "Event detection and workflow integrity do not prove summary/dossier meaning.",
+      "bootstrap": {
+        "start_only_prompt_used": true,
+        "actual_initial_checkpoint_state": "unissued",
+        "original_query": "/tmp/creview-support-runtime.t54as132/probe-bootstrap-turn-limit/case-02/hermes/profiles/pilot/work/query-0.txt",
+        "original_query_sha256": "2b5a7a164fbda8670da04b2c7d8bfffeae65fc90a942354fb28be959adef202f",
+        "bootstrap_query": "/tmp/creview-support-runtime.t54as132/probe-bootstrap-turn-limit/case-02/hermes/profiles/pilot/work/bootstrap-start-only-query.txt",
+        "bootstrap_query_sha256": "8323a274f0c7fcafae10554557c3233d6685eae35db5bfcbd4b3c5c9d3370e87"
+      },
+      "bootstrap_branch_executed": true,
+      "bootstrap_harness_sha256": "5b3bfdef2bc1a958c3d406a6cba30b7613d4685afbf273518c962076af81a8b3",
+      "protocol": "medical-methods-v1",
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "harness_sha256": "faa69952d814f15b7c77fb67d1551cb6f79941b84316e6a01a52c7fb1476d7a8"
+    },
+    "local": "/tmp/creview-support-b13-first-results.RnE2o3Ik",
+    "archive_sha256": "fdfada66f93f781491ac5367558dfa736076a1456ee70a0ce5baf19f247cec2b",
+    "regular_allowlisted_files": 56,
+    "unpacked_bytes": 604218,
+    "absolute_paths_parent_traversal_links": false,
+    "source_calculation_replay": {
+      "all_checks_passed": true,
+      "cases": 1,
+      "calculations_checked": 1,
+      "report": "precision-replay-checks.json"
+    }
+  },
+  "comparison_scope": "Exact integers and count ratios; statistical methods use saved-float decimal, not arbitrary-precision inference. Inequalities remain source-derived and statistical status conditional. Old records are not migrated.",
+  "superseded_b12_cancellation": {
+    "status": "cancelled_before_inference",
+    "controller_pid": 2513917,
+    "controller_start_ticks": "121944614",
+    "cancelled_at": "2026-10-28T16:53:59.443188+00:00",
+    "original_queue_state_sha256": "ae6e7c3514f4bb4a8729cf3a8ae2ea8f7abe97d9f7227295498ae6fae0f75a93",
+    "original_queue_state_preserved": true,
+    "inference_started": false,
+    "child_jobs_at_cancellation": [],
+    "reason": "Superseded after a deterministic fixed-epsilon arithmetic comparison bug was verified; use a new corrected candidate. B11 suite/services untouched.",
+    "qualification": "not_qualified"
+  },
+  "planned_jobs": [
+    "precision-regression",
+    "probe-bootstrap-turn-limit",
+    "probe-compression",
+    "probe-korean",
+    "probe-multi-module",
+    "ordinary-native-formats"
+  ],
+  "historical_progress_1742_utc": {
+    "queue": {
+      "status": "released",
+      "queued_at": "2026-10-28T17:19:21.122135+00:00",
+      "controller_pid": 2612316,
+      "controller_start_ticks": "122454198",
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4",
+      "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+      "previous_suite_state": "/tmp/creview-support-runtime.tm9ClpRZ/suite-state.json",
+      "qualification": "not_qualified",
+      "inference_started_by_queue": false,
+      "scope": "Six targeted engineering jobs, not full medical qualification",
+      "superseded_queue_cancellation_sha256": "c741c50309128425e97bb3342a4e72a903ec0c383a8e371eb53971070186f8ec",
+      "released_at": "2026-10-28T17:23:21.138250+00:00"
+    },
+    "process": {
+      "state": "S",
+      "start_ticks": "122454198",
+      "live": true
+    },
+    "suite_exists": true,
+    "suite": {
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "controller_pid": 2612316,
+      "started_at": "2026-10-28T17:23:21.156701+00:00",
+      "status": "running",
+      "qualification": "not_qualified",
+      "jobs": [
+        {
+          "name": "precision-regression",
+          "status": "finished",
+          "started_at": "2026-10-28T17:23:21.272733+00:00",
+          "driver_log": "precision-regression-driver.log",
+          "pid": 2616451,
+          "finished_at": "2026-10-28T17:26:21.919581+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 180.65
+        },
+        {
+          "name": "probe-bootstrap-turn-limit",
+          "status": "finished",
+          "started_at": "2026-10-28T17:26:21.926337+00:00",
+          "driver_log": "probe-bootstrap-turn-limit-driver.log",
+          "pid": 2620658,
+          "finished_at": "2026-10-28T17:29:49.366663+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 207.44
+        },
+        {
+          "name": "probe-compression",
+          "status": "finished",
+          "started_at": "2026-10-28T17:29:49.376018+00:00",
+          "driver_log": "probe-compression-driver.log",
+          "pid": 2624775,
+          "finished_at": "2026-10-28T17:34:16.892844+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 267.52
+        },
+        {
+          "name": "probe-korean",
+          "status": "finished",
+          "started_at": "2026-10-28T17:34:16.899494+00:00",
+          "driver_log": "probe-korean-driver.log",
+          "pid": 2628995,
+          "finished_at": "2026-10-28T17:37:22.574864+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 185.68
+        },
+        {
+          "name": "probe-multi-module",
+          "status": "finished",
+          "started_at": "2026-10-28T17:37:22.581650+00:00",
+          "driver_log": "probe-multi-module-driver.log",
+          "pid": 2632152,
+          "finished_at": "2026-10-28T17:41:52.161435+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 269.58
+        }
+      ],
+      "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+      "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4"
+    },
+    "observed_at": "2026-10-28T17:42:08.739664+00:00",
+    "effective_status": "released"
+  },
+  "completed_compression_korean_artifacts": {
+    "local": "/tmp/creview-support-b13-first-results.RnE2o3Ik",
+    "archive_sha256": "4caf33bab46da174d759896cb7b5550afe0bcc652a4c625667b65d0ce9d7e27c",
+    "regular_allowlisted_files": 42,
+    "unpacked_bytes": 668095,
+    "absolute_paths_parent_traversal_links": false,
+    "receipts_verified": 2,
+    "source_snapshots_reproduced": 2,
+    "calculations_reproduced": 6,
+    "verification_record_sha256": "499aebd0f1fae253fb91fb7b125debb03912e95c6bfec5d4ff48923cba4472a2",
+    "probes": [
+      {
+        "job": "probe-compression",
+        "run_id": "support-76b9c0b40997678910788957b9a66357",
+        "receipt_verified": true,
+        "source_snapshot_reproduced": true,
+        "calculations_reproduced": [
+          "statistics-c0001",
+          "statistics-c0002",
+          "statistics-c0003"
+        ],
+        "observations_unjudged": 1,
+        "seconds": 267.4,
+        "resolved_language": "en",
+        "probe": {
+          "mode": "compression",
+          "probe_passed": true,
+          "forced_setting": {
+            "compression.threshold_tokens": 20000,
+            "requires_issued_checkpoint": true
+          },
+          "observed": {
+            "forced_turn_limit_observed": false,
+            "compression_completed": true,
+            "expected_forced_exit_recovered": false,
+            "instrumented_invocation": 2
+          },
+          "case": {
+            "case_id": "case-02",
+            "module": "statistics",
+            "engineering_passed": true,
+            "turns": 2,
+            "requested_modules": [
+              "statistics"
+            ],
+            "checkpoint_completion_requests": 0,
+            "checkpoint_reached": true,
+            "manuscript_sha256": "874c8516d3dea2bc8c1e16a15ac4cf74e5a0220954670b0086d03592e3134133",
+            "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+            "initial_checkpoint_state": "issued",
+            "checks": {
+              "runner_identity": true,
+              "new_protocol": true,
+              "same_run_resumed": true,
+              "requested_module_only": true,
+              "module_completed": true,
+              "source_unchanged": true,
+              "source_quotes_bound": true,
+              "no_invented_reviewer_decisions": true,
+              "no_legacy_scan": true,
+              "dossier_matches_saved_run": true,
+              "export_files_exist": true,
+              "receipt_integrity": true
+            },
+            "run_id": "support-76b9c0b40997678910788957b9a66357",
+            "artifact_sha256": "5eb04dbbfc418062bee714c0d301ea2f7bbd5cc76f7141179e6319ee7a2372af",
+            "dossier": "/tmp/creview-support-runtime.t54as132/probe-compression/case-02/hermes/profiles/pilot/review-data/support/support-76b9c0b40997678910788957b9a66357/exports/dossier-aa66db61",
+            "modules": {
+              "statistics": {
+                "status": "complete",
+                "observations": 1,
+                "calculations": 3,
+                "failures": []
+              }
+            },
+            "profile_root": "/tmp/creview-support-runtime.t54as132/probe-compression/case-02/hermes/profiles/pilot",
+            "elapsed_seconds": 267.4,
+            "semantic_quality": "not_assessed_requires_human_review",
+            "qualification": "not_qualified"
+          },
+          "synthetic_only": true,
+          "semantic_quality": "not_assessed_requires_human_review",
+          "qualification": "not_qualified",
+          "note": "Event detection and workflow integrity do not prove summary/dossier meaning.",
+          "protocol": "medical-methods-v1",
+          "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+          "harness_sha256": "faa69952d814f15b7c77fb67d1551cb6f79941b84316e6a01a52c7fb1476d7a8"
+        }
+      },
+      {
+        "job": "probe-korean",
+        "run_id": "support-ac3b360b3951239f57bf81552ab465c5",
+        "receipt_verified": true,
+        "source_snapshot_reproduced": true,
+        "calculations_reproduced": [
+          "statistics-c0001",
+          "statistics-c0002",
+          "statistics-c0003"
+        ],
+        "observations_unjudged": 1,
+        "seconds": 185.53,
+        "resolved_language": "ko",
+        "probe": {
+          "mode": "korean",
+          "checks": {
+            "runner_identity": true,
+            "new_protocol": true,
+            "same_run_resumed": true,
+            "requested_module_only": true,
+            "module_completed": true,
+            "source_unchanged": true,
+            "source_quotes_bound": true,
+            "no_invented_reviewer_decisions": true,
+            "no_legacy_scan": true,
+            "dossier_matches_saved_run": true,
+            "export_files_exist": true,
+            "receipt_integrity": true,
+            "explicit_korean_language": true,
+            "korean_prose_smoke_signal": true
+          },
+          "probe_passed": true,
+          "case": {
+            "case_id": "case-02",
+            "module": "statistics",
+            "engineering_passed": true,
+            "turns": 2,
+            "requested_modules": [
+              "statistics"
+            ],
+            "checkpoint_completion_requests": 0,
+            "checkpoint_reached": true,
+            "manuscript_sha256": "874c8516d3dea2bc8c1e16a15ac4cf74e5a0220954670b0086d03592e3134133",
+            "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+            "initial_checkpoint_state": "issued",
+            "checks": {
+              "runner_identity": true,
+              "new_protocol": true,
+              "same_run_resumed": true,
+              "requested_module_only": true,
+              "module_completed": true,
+              "source_unchanged": true,
+              "source_quotes_bound": true,
+              "no_invented_reviewer_decisions": true,
+              "no_legacy_scan": true,
+              "dossier_matches_saved_run": true,
+              "export_files_exist": true,
+              "receipt_integrity": true
+            },
+            "run_id": "support-ac3b360b3951239f57bf81552ab465c5",
+            "artifact_sha256": "7d87f8ea05d409b68bdab75e31b5ef3fcdfec6dcac477cd0130a8412bea49ae0",
+            "dossier": "/tmp/creview-support-runtime.t54as132/probe-korean/case-02/hermes/profiles/pilot/review-data/support/support-ac3b360b3951239f57bf81552ab465c5/exports/dossier-50fd9c29",
+            "modules": {
+              "statistics": {
+                "status": "complete",
+                "observations": 1,
+                "calculations": 3,
+                "failures": []
+              }
+            },
+            "profile_root": "/tmp/creview-support-runtime.t54as132/probe-korean/case-02/hermes/profiles/pilot",
+            "elapsed_seconds": 185.53,
+            "semantic_quality": "not_assessed_requires_human_review",
+            "qualification": "not_qualified"
+          },
+          "synthetic_only": true,
+          "qualification": "not_qualified",
+          "semantic_quality": "not_assessed_requires_human_review",
+          "manual_audit": "Inspect module independence, original-quote fidelity, translation, attention and usefulness. Issued blocks and Korean characters do not prove those properties. This probe is not a realistic-corpus or medical-accuracy benchmark.",
+          "protocol": "medical-methods-v1",
+          "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+          "harness_sha256": "31a7158edd2d3778a30974a966d89beaf0feca89b7ca61358cef00c086045dab",
+          "pilot_harness_sha256": "8b682b7fee5df4557baa880c8aae8959a1feb9a20a9c20beffd1b87679dbd63f"
+        }
+      }
+    ],
+    "human_judgments": "blank"
+  },
+  "final_local_consistency": {
+    "source_equals_frozen_wheel": true,
+    "package_files": 51,
+    "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+    "release_gate_refused": "release blocked: no fully qualified configuration for this wheel's identity"
+  },
+  "checks_after_documentation": {
+    "ruff": "passed",
+    "lock": "passed",
+    "shell_syntax": "passed",
+    "diff": "passed",
+    "deployment_json_files_parsed": 25
+  },
+  "five_job_verification": {
+    "local": "/tmp/creview-support-b13-first-results.RnE2o3Ik",
+    "multi_module_archive": {
+      "archive_sha256": "ec3c53d4c43d38d278e0ed3ba0bc4ddf7e7d4710e62f8f5ffdcdcf191df5fc44",
+      "regular_allowlisted_files": 31,
+      "unpacked_bytes": 549359,
+      "absolute_paths_parent_traversal_links": false
+    },
+    "verification_record_sha256": "4e3134cf3d3ffca5544e614e72306dd82342a1f45ba493c8795f5860a0b05e9f",
+    "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+    "receipts_verified": 5,
+    "source_snapshots_reproduced": 5,
+    "module_records_checked": 6,
+    "calculations_reproduced": 15,
+    "rows": [
+      {
+        "job": "precision-regression",
+        "run_id": "support-96c0b0bb0574b96622bf9d5019d5f61d",
+        "receipt_verified": true,
+        "all_subject_byte_hashes_verified": true,
+        "source_snapshot_reproduced": true,
+        "runtime": {
+          "status": "verified",
+          "model": "qwen3.8-flash-next",
+          "provider": "custom",
+          "base_url": "http://100.122.169.13:8091/v1"
+        },
+        "modules": [
+          {
+            "module": "statistics",
+            "status": "complete",
+            "facts": 6,
+            "criteria": 6,
+            "calculations_reproduced": 1,
+            "unjudged_observations": 1,
+            "source_blocks": 8,
+            "provided_blocks": 8,
+            "context_ids_scoped": true,
+            "coverage_gaps": [],
+            "extraction_limits": []
+          }
+        ]
+      },
+      {
+        "job": "probe-bootstrap-turn-limit",
+        "run_id": "support-d57f0eaf0f46aace37f92b536eeb8f3c",
+        "receipt_verified": true,
+        "all_subject_byte_hashes_verified": true,
+        "source_snapshot_reproduced": true,
+        "runtime": {
+          "status": "verified",
+          "model": "qwen3.8-flash-next",
+          "provider": "custom",
+          "base_url": "http://100.122.169.13:8091/v1"
+        },
+        "modules": [
+          {
+            "module": "statistics",
+            "status": "complete",
+            "facts": 18,
+            "criteria": 6,
+            "calculations_reproduced": 5,
+            "unjudged_observations": 1,
+            "source_blocks": 27,
+            "provided_blocks": 27,
+            "context_ids_scoped": true,
+            "coverage_gaps": [],
+            "extraction_limits": []
+          }
+        ]
+      },
+      {
+        "job": "probe-compression",
+        "run_id": "support-76b9c0b40997678910788957b9a66357",
+        "receipt_verified": true,
+        "all_subject_byte_hashes_verified": true,
+        "source_snapshot_reproduced": true,
+        "runtime": {
+          "status": "verified",
+          "model": "qwen3.8-flash-next",
+          "provider": "custom",
+          "base_url": "http://100.122.169.13:8091/v1"
+        },
+        "modules": [
+          {
+            "module": "statistics",
+            "status": "complete",
+            "facts": 18,
+            "criteria": 6,
+            "calculations_reproduced": 3,
+            "unjudged_observations": 1,
+            "source_blocks": 27,
+            "provided_blocks": 27,
+            "context_ids_scoped": true,
+            "coverage_gaps": [],
+            "extraction_limits": []
+          }
+        ]
+      },
+      {
+        "job": "probe-korean",
+        "run_id": "support-ac3b360b3951239f57bf81552ab465c5",
+        "receipt_verified": true,
+        "all_subject_byte_hashes_verified": true,
+        "source_snapshot_reproduced": true,
+        "runtime": {
+          "status": "verified",
+          "model": "qwen3.8-flash-next",
+          "provider": "custom",
+          "base_url": "http://100.122.169.13:8091/v1"
+        },
+        "modules": [
+          {
+            "module": "statistics",
+            "status": "complete",
+            "facts": 12,
+            "criteria": 6,
+            "calculations_reproduced": 3,
+            "unjudged_observations": 1,
+            "source_blocks": 27,
+            "provided_blocks": 27,
+            "context_ids_scoped": true,
+            "coverage_gaps": [],
+            "extraction_limits": []
+          }
+        ]
+      },
+      {
+        "job": "probe-multi-module",
+        "run_id": "support-ba85dfcbfb68f8e1e60722485f548ee3",
+        "receipt_verified": true,
+        "all_subject_byte_hashes_verified": true,
+        "source_snapshot_reproduced": true,
+        "runtime": {
+          "status": "verified",
+          "model": "qwen3.8-flash-next",
+          "provider": "custom",
+          "base_url": "http://100.122.169.13:8091/v1"
+        },
+        "modules": [
+          {
+            "module": "statistics",
+            "status": "complete",
+            "facts": 13,
+            "criteria": 6,
+            "calculations_reproduced": 3,
+            "unjudged_observations": 1,
+            "source_blocks": 27,
+            "provided_blocks": 27,
+            "context_ids_scoped": true,
+            "coverage_gaps": [],
+            "extraction_limits": []
+          },
+          {
+            "module": "logic",
+            "status": "complete",
+            "facts": 13,
+            "criteria": 7,
+            "calculations_reproduced": 0,
+            "unjudged_observations": 1,
+            "source_blocks": 27,
+            "provided_blocks": 27,
+            "context_ids_scoped": true,
+            "coverage_gaps": [],
+            "extraction_limits": []
+          }
+        ]
+      }
+    ],
+    "audit_templates_or_private_keys_read": false,
+    "human_judgments_created": false,
+    "original_artifacts_changed": false,
+    "qualification": "not_qualified",
+    "word_fixture_readback": {
+      "source_docx_sha256": "0c18c14d72e62c03074e50f4504a61dd0d62270c3ee134b96e460ddac1126471",
+      "fresh_pandoc_ast_sha256": "78f55df353f744b1ba4d6fea8bc0906fece4feab45e34b5d23e0c2d77423f5e2",
+      "pandoc": "3.1.3",
+      "ast_equals_previously_interpreted_ast": true,
+      "previous_verified_comparison_sha256": "0aa1ec312ff1109b56fa7a336f80a012b99a02a622cbcd76d19d7e0e06672fde",
+      "paragraphs": 62,
+      "tables": 3,
+      "source_docx_unchanged": true,
+      "verification_scope": "Exact fixture and independent Pandoc readback only, not the running b13 extraction or model analysis",
+      "human_approval": false,
+      "qualification": "not_qualified",
+      "record_sha256": "97407c5d69b737fcdb8e570f37e8b9a71c62565f2b96854cddd575379feb48a0"
+    }
+  },
+  "first_finished_native_pair": {
+    "local": "/tmp/creview-support-b13-native-md-results.D0nWJq2c",
+    "archive_sha256": "028d562a83ed1db31e8612822d421146da9cbc45622ae2fe5be243376956e1de",
+    "regular_allowlisted_files": 34,
+    "unpacked_bytes": 1259168,
+    "absolute_paths_parent_traversal_links": false,
+    "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+    "case": "f00",
+    "format": "markdown",
+    "one_finished_pair_not_full_batch": true,
+    "support_seconds": 403.65,
+    "baseline_seconds": 70.48,
+    "receipt_verified": true,
+    "all_subject_byte_hashes_verified": true,
+    "source_copies_verified": 2,
+    "baseline_output_hash_verified": true,
+    "source_snapshot_reproduced": true,
+    "source_blocks": 154,
+    "provided_blocks": 154,
+    "facts": 58,
+    "appraisals": 6,
+    "tables": 3,
+    "calculations_reproduced": 19,
+    "methods": {
+      "percentage": 6,
+      "ratios_2x2": 1,
+      "pearson_2x2": 1,
+      "p_from_chi2": 1,
+      "welch_t": 1,
+      "p_from_t": 1,
+      "count_sum": 8
+    },
+    "unjudged_observations": 0,
+    "refused_tasks": 0,
+    "module_failures": 0,
+    "human_judgments_created": false,
+    "whole_native_batch_finished": false,
+    "original_artifacts_changed": false,
+    "qualification": "not_qualified",
+    "verification_record_sha256": "d821cc6174c0389cb72dd18e88dea9a2e35562afedfb29038a0dc9c63ef07d43",
+    "live_native_observation": {
+      "observed_at": "2026-10-28T17:55:31.315679+00:00",
+      "processes": [
+        {
+          "pid": 2638242,
+          "state": "S",
+          "start_ticks": "122598310",
+          "live": true
+        }
+      ],
+      "native": {
+        "finished_at": null,
+        "cases": [
+          {
+            "case": "f00",
+            "passed": true,
+            "seconds": 403.65
+          }
+        ],
+        "baselines": [
+          {
+            "case": "f00",
+            "passed": true,
+            "seconds": 70.48
+          }
+        ]
+      },
+      "module_progress": [
+        {
+          "artifact_id": "f00-r1",
+          "cursor": 8,
+          "tasks": 8,
+          "status": "complete",
+          "source_blocks": 154,
+          "provided_blocks": 154,
+          "facts": 58,
+          "criteria": 6,
+          "calculations": 19,
+          "refused_tasks": 0,
+          "failures": 0
+        },
+        {
+          "artifact_id": "f01-r1",
+          "cursor": 5,
+          "tasks": 8,
+          "status": "running",
+          "source_blocks": 151,
+          "provided_blocks": 151,
+          "facts": 63,
+          "criteria": 0,
+          "calculations": 0,
+          "refused_tasks": 0,
+          "failures": 0
+        }
+      ]
+    }
+  },
+  "second_finished_native_pair": {
+    "local": "/tmp/creview-support-b13-native-docx-results.9Beyo4dt",
+    "archive_sha256": "31f2c35f9d9c73fa00ad39e1245e5909ccf33a41bfe8c5d0f0ba4c6870589cf5",
+    "regular_allowlisted_files": 36,
+    "unpacked_bytes": 1326100,
+    "absolute_paths_parent_traversal_links": false,
+    "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+    "case": "f01",
+    "format": "docx",
+    "one_finished_pair_not_full_batch": true,
+    "support_seconds": 380.5,
+    "baseline_seconds": 91.65,
+    "receipt_verified": true,
+    "all_subject_byte_hashes_verified": true,
+    "source_copies_verified": 2,
+    "baseline_output_hash_verified": true,
+    "source_snapshot_reproduced": true,
+    "source_blocks": 151,
+    "provided_blocks": 151,
+    "facts": 63,
+    "appraisals": 6,
+    "tables": 3,
+    "calculations_reproduced": 19,
+    "methods": {
+      "percentage": 2,
+      "ratios_2x2": 1,
+      "pearson_2x2": 3,
+      "welch_t": 2,
+      "count_sum": 11
+    },
+    "unjudged_observations": 0,
+    "refused_tasks": 1,
+    "module_failures": 0,
+    "human_judgments_created": false,
+    "whole_native_batch_finished": false,
+    "original_artifacts_changed": false,
+    "qualification": "not_qualified",
+    "verification_record_sha256": "21bfa928dfa7adac28c218a46b89f35328763b50d8ad6f1292ccd785e9d9a52e",
+    "live_native_observation": {
+      "observed_at": "2026-10-28T18:04:10.406453+00:00",
+      "processes": [
+        {
+          "pid": 2638242,
+          "state": "S",
+          "start_ticks": "122598310",
+          "live": true
+        }
+      ],
+      "native": {
+        "finished_at": null,
+        "cases": [
+          {
+            "case": "f00",
+            "passed": true,
+            "seconds": 403.65
+          },
+          {
+            "case": "f01",
+            "passed": true,
+            "seconds": 380.5
+          }
+        ],
+        "baselines": [
+          {
+            "case": "f00",
+            "passed": true,
+            "seconds": 70.48
+          },
+          {
+            "case": "f01",
+            "passed": true,
+            "seconds": 91.65
+          }
+        ]
+      },
+      "module_progress": [
+        {
+          "artifact_id": "f00-r1",
+          "cursor": 8,
+          "tasks": 8,
+          "status": "complete",
+          "source_blocks": 154,
+          "provided_blocks": 154,
+          "facts": 58,
+          "criteria": 6,
+          "calculations": 19,
+          "refused_tasks": 0,
+          "failures": 0
+        },
+        {
+          "artifact_id": "f01-r1",
+          "cursor": 8,
+          "tasks": 8,
+          "status": "complete",
+          "source_blocks": 151,
+          "provided_blocks": 151,
+          "facts": 63,
+          "criteria": 6,
+          "calculations": 19,
+          "refused_tasks": 1,
+          "failures": 0
+        },
+        {
+          "artifact_id": "f02-r1",
+          "cursor": 6,
+          "tasks": 9,
+          "status": "running",
+          "source_blocks": 240,
+          "provided_blocks": 240,
+          "facts": 83,
+          "criteria": 0,
+          "calculations": 0,
+          "refused_tasks": 1,
+          "failures": 0
+        }
+      ]
+    }
+  },
+  "final_progress": {
+    "queue": {
+      "status": "released",
+      "queued_at": "2026-10-28T17:19:21.122135+00:00",
+      "controller_pid": 2612316,
+      "controller_start_ticks": "122454198",
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4",
+      "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+      "previous_suite_state": "/tmp/creview-support-runtime.tm9ClpRZ/suite-state.json",
+      "qualification": "not_qualified",
+      "inference_started_by_queue": false,
+      "scope": "Six targeted engineering jobs, not full medical qualification",
+      "superseded_queue_cancellation_sha256": "c741c50309128425e97bb3342a4e72a903ec0c383a8e371eb53971070186f8ec",
+      "released_at": "2026-10-28T17:23:21.138250+00:00"
+    },
+    "process": {
+      "live": false
+    },
+    "suite_exists": true,
+    "suite": {
+      "identity": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "controller_pid": 2612316,
+      "started_at": "2026-10-28T17:23:21.156701+00:00",
+      "status": "finished",
+      "qualification": "not_qualified",
+      "jobs": [
+        {
+          "name": "precision-regression",
+          "status": "finished",
+          "started_at": "2026-10-28T17:23:21.272733+00:00",
+          "driver_log": "precision-regression-driver.log",
+          "pid": 2616451,
+          "finished_at": "2026-10-28T17:26:21.919581+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 180.65
+        },
+        {
+          "name": "probe-bootstrap-turn-limit",
+          "status": "finished",
+          "started_at": "2026-10-28T17:26:21.926337+00:00",
+          "driver_log": "probe-bootstrap-turn-limit-driver.log",
+          "pid": 2620658,
+          "finished_at": "2026-10-28T17:29:49.366663+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 207.44
+        },
+        {
+          "name": "probe-compression",
+          "status": "finished",
+          "started_at": "2026-10-28T17:29:49.376018+00:00",
+          "driver_log": "probe-compression-driver.log",
+          "pid": 2624775,
+          "finished_at": "2026-10-28T17:34:16.892844+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 267.52
+        },
+        {
+          "name": "probe-korean",
+          "status": "finished",
+          "started_at": "2026-10-28T17:34:16.899494+00:00",
+          "driver_log": "probe-korean-driver.log",
+          "pid": 2628995,
+          "finished_at": "2026-10-28T17:37:22.574864+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 185.68
+        },
+        {
+          "name": "probe-multi-module",
+          "status": "finished",
+          "started_at": "2026-10-28T17:37:22.581650+00:00",
+          "driver_log": "probe-multi-module-driver.log",
+          "pid": 2632152,
+          "finished_at": "2026-10-28T17:41:52.161435+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 269.58
+        },
+        {
+          "name": "ordinary-native-formats",
+          "status": "finished",
+          "started_at": "2026-10-28T17:43:22.179786+00:00",
+          "driver_log": "ordinary-native-formats-driver.log",
+          "pid": 2638242,
+          "finished_at": "2026-10-28T18:08:09.415815+00:00",
+          "exit_code": 0,
+          "wall_elapsed_seconds": 1487.24
+        }
+      ],
+      "controller_sha256": "2a0bea12e66a1b7ec4413f8bbcc6efe0bf1ed3f3af6940855f5f42f3af34eae7",
+      "bundle_manifest_sha256": "30f62591fd8198ecd33886c38d1d2a10a122e354bacaa985b9ffbacf9e1935b4",
+      "finished_at": "2026-10-28T18:08:09.418406+00:00",
+      "engineering_passed": true
+    },
+    "observed_at": "2026-10-28T18:08:43.958958+00:00",
+    "effective_status": "released"
+  },
+  "final_suite_evidence": {
+    "local": "/tmp/creview-support-b13-suite-results.B9NEpb5E",
+    "archive_sha256": "95f7316af828455714fd74d4f4e01452a68fab9f998c384c559f35076bb8dd62",
+    "regular_allowlisted_files": 261,
+    "unpacked_bytes": 6205161,
+    "absolute_paths_parent_traversal_links": false,
+    "status": "finished",
+    "engineering_passed": true,
+    "finished_jobs": 6,
+    "finished_at": "2026-10-28T18:08:09.418406+00:00",
+    "receipts_verified": 8,
+    "all_subject_byte_hashes_verified": true,
+    "support_source_copies_verified": 8,
+    "baseline_source_copies_verified": 4,
+    "baseline_output_hashes_verified": 4,
+    "saved_source_snapshots_reproduced": 8,
+    "saved_calculations_reproduced": 68,
+    "earlier_five_job_exports_byte_identical": true,
+    "suite_verification_record_sha256": "af5be31b36ea643b59549bce8871be47ea7860825eec73fe88994e13b50ea19a",
+    "native_evidence": "b13-native-evidence-20261029.json",
+    "native_replay_record_sha256": "5bb5a81a79123eb4a15dc02dff822d838536b7ad2c7dff0f09dbe51b5409de71",
+    "native_verification_record_sha256": "40b6bef2abc2e550c14af3cff141577620e3c8b92680fcc11a3038565607378a",
+    "terminal_controller_jobs_sampler_confirmed_before_archive": true,
+    "memory": {
+      "runner": "60995d277fb664ea7d27eeec00c0d300210a9721486e1d46639c723c2a18c119",
+      "started_at": "2026-10-28T17:23:21.156732+00:00",
+      "status": "finished",
+      "model_pid": 1598609,
+      "model_start_ticks": "115961779",
+      "sample_interval_seconds": 10,
+      "partial_suite_window": false,
+      "script_sha256": "abddd74cf7b0fe81f9251eb039555573732e5f51b857af90f9673bab1cc17e73",
+      "runtime_identity_record": "/tmp/creview-support-b9-runtime-identity.6QEVVf1C/identity.json",
+      "runtime_process_start_ticks": {
+        "1598598": "115961716",
+        "1598609": "115961779",
+        "1598833": "115963751"
+      },
+      "qualification": "not_qualified",
+      "caveats": [
+        "Warm existing shared service, not a cold-start or exclusive-workload benchmark.",
+        "Sampled per-model-process peaks are not instantaneous peaks or hardware minimums."
+      ],
+      "sampler_pid": 2616440,
+      "finished_at": "2026-10-28T18:08:16.499106+00:00",
+      "sampler_exit": 0,
+      "gpu_samples": 268,
+      "rss_samples": 268,
+      "sampled_peak_gpu_mib": 23682,
+      "sampled_peak_rss_kib": 60910832,
+      "cold_exclusive_or_minimum_hardware_claim": false,
+      "final_controller_runtime_stat_process_continuity_passed": true
+    },
+    "human_judgments": "blank",
+    "independent_medical_source_approval": false,
+    "formal_three_paired_repetitions_completed": false,
+    "qualification": "not_qualified"
+  },
+  "whole_targeted_engineering_suite_finished": true,
+  "formal_medical_qualification": false,
+  "regular_profiles_or_services_changed": false,
+  "private_keys_read_or_transferred": false,
+  "human_judgments": "blank",
+  "new_tailscale_server_started": false,
+  "release_gate": "closed_empty_configuration_list_correctly_refused",
+  "required_remaining": [
+    "independently approved all-six-branch exact-build medical evaluation",
+    "independent source/test-role approval before formal runs",
+    "three paired repetitions",
+    "human precision/recall, coverage, fidelity, usefulness, translation, checking times and hardware audit"
+  ]
+}

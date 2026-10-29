@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from closed_review import findings, pipeline
-from closed_review.sidecar import Sidecar, handle
+from closed_review.segments import draft_plan
 
 PAPER = (
     "# Abstract\n\nWe show that the tool reduces delay in all wards.\n\n"
@@ -31,9 +31,7 @@ def document(tmp_path: Path) -> dict:
 @pytest.fixture
 def review(document) -> dict:
     """A review after orientation: one unit per section, the Abstract last."""
-    sidecar = Sidecar()
-    sidecar.documents["d"] = document
-    plan = sidecar.plan("d")["segments"]
+    plan = draft_plan([{"source_id": "manuscript", "segments": document["segments"]}])["segments"]
     ids = [s["id"] for s in plan]
     roles = ["abstract", "introduction", "methods", "results"]
     proposed = [{"role": r, "parts": [[i]]} for r, i in zip(roles, ids, strict=False)]
@@ -94,12 +92,43 @@ def test_parts_are_consecutive_and_sized() -> None:
         return pipeline.unit_problems(plan, units, words)
 
     assert problems(["s0"], ["s1"], ["s2", "s3"], ["s4"], ["s5"]) == [
-        "part s5 has 50 words, fewer than 300: join it with the part before or after it in the "
-        "results unit, whichever it belongs with"
+        "part s5 has 50 words, fewer than 300: join it with the part s4 in the results unit, "
+        "whichever it belongs with"
     ]
     assert any("more than 800" in p for p in problems(["s0"], ["s1"], ["s2", "s3", "s4"], ["s5"]))
     assert any("not consecutive" in p for p in problems(["s0"], ["s1"], ["s2", "s4"], ["s3", "s5"]))
     assert "segments in no unit: s5" in problems(["s0"], ["s1"], ["s2", "s3"], ["s4"])
+
+
+def test_a_different_from_in_the_wrong_shape_is_refused_not_a_crash(document, review) -> None:
+    """Live TUI run, 2026-10-27: a string different_from on an otherwise accepted answer raised
+    AttributeError, and the traceback sent the model to undo a correct fix elsewhere."""
+    discussion = part(review, "discussion")
+    answer = {
+        "concerns": [new_concern(different_from="F1: a different problem")],
+        "flaws_to_check": [],
+        "number_checks": [],
+    }
+    refused = pipeline.read_answer(document, review, discussion, FLAWS, answer)
+    assert len(refused["problems"]) == 1
+    assert "concern 1 different_from must be one object {id:" in refused["problems"][0]
+    fixed = {"id": "F1", "reason": "A different problem."}
+    answer["concerns"][0]["different_from"] = fixed
+    assert pipeline.read_answer(document, review, discussion, FLAWS, answer)["problems"] == []
+
+
+def test_a_declaration_with_the_methods_may_stay_a_short_part() -> None:
+    """The task puts declarations with the methods; joining one to a methods part could never be
+    consecutive, so creview must not ask for it (live ms5, 2026-10-27)."""
+    plan = [{"id": f"s{n}", "title": str(n), "block_ids": []} for n in range(7)]
+    words = {"s0": 400, "s1": 400, "s2": 350, "s3": 350, "s4": 350, "s5": 350, "s6": 51}
+    units = [
+        {"role": "introduction", "parts": [["s0"]]},
+        {"role": "methods", "parts": [["s1"], ["s6"]]},
+        {"role": "results", "parts": [["s2"], ["s3"]]},
+        {"role": "discussion", "parts": [["s4"], ["s5"]]},
+    ]
+    assert pipeline.unit_problems(plan, units, words) == []
 
 
 def test_a_read_links_known_concerns_and_raises_new_ones_with_a_target(document, review) -> None:
@@ -142,7 +171,10 @@ def test_a_read_links_known_concerns_and_raises_new_ones_with_a_target(document,
     assert "links to F1 with quotes from outside this unit" in text
     assert "concern 2 links to F9, which is not a concern found so far" in text
     assert "concern 2 has no quote" in text
-    assert "concern 3 is about the same passage as F1" in text
+    assert (
+        'concern 3 ("Generalisation beyond one ward") is about the same passage as F1 '
+        '("Generalisation beyond one ward")' in text
+    )
     assert 'number check "120" has no arithmetic' in text
     assert "flaws_to_check names unlisted flaws: general/none" in text
 
@@ -203,6 +235,153 @@ def test_a_check_names_its_concern_or_a_passage_no_concern_is_about(document, re
     attached = pipeline.attach_checks(review, [on["answer"], no["answer"]])
     assert [a["model"] for a in attached["findings"][0]["flaw_checks"]] == ["m", "n"]
     assert findings.severity(attached["findings"][0])["basis"] == "evidence"
+
+
+@pytest.mark.parametrize("flaw", ["general/misread-source", "legal-analysis/misread-provision"])
+def test_misread_source_checks_need_the_source_words_as_well_as_the_claim(tmp_path, flaw) -> None:
+    paper = tmp_path / "source-claim.md"
+    paper.write_text(
+        "# Claim\n\nThe authors say the guideline prohibits treatment.\n\n"
+        '# Source quotation\n\nThe manuscript quotes the guideline: "Treatment may be offered."\n'
+    )
+    document = findings.open_document(paper)
+    review = {"findings": [{"id": "F1"}]}
+    answer = {
+        "shown": True,
+        "quotes": ["The authors say the guideline prohibits treatment."],
+        "concern": "F1",
+        "reason": "The quoted guideline permits what the authors say it prohibits.",
+    }
+    refused = pipeline.check_answer(document, review, flaw, "m", answer)
+    assert "source_quote" in refused["problems"][0]
+    refused_confirm = pipeline.confirm_answer(document, "F1", flaw, "m", answer)
+    assert "source_quote" in refused_confirm["problems"][0]
+
+    same = {**answer, "source_quote": answer["quotes"][0]}
+    assert (
+        "separate quote" in pipeline.check_answer(document, review, flaw, "m", same)["problems"][0]
+    )
+    subset = {**answer, "source_quote": "guideline prohibits treatment"}
+    assert (
+        "separate quote"
+        in pipeline.check_answer(document, review, flaw, "m", subset)["problems"][0]
+    )
+    invented = {**answer, "source_quote": "Treatment is always forbidden."}
+    assert (
+        "not verbatim"
+        in pipeline.check_answer(document, review, flaw, "m", invented)["problems"][0]
+    )
+
+    source = {**answer, "source_quote": {"quote": "Treatment may be offered."}}
+    checked = pipeline.check_answer(document, review, flaw, "m", source)
+    assert checked["problems"] == []
+    assert checked["answer"]["source_quote"]["quote"] == "Treatment may be offered."
+    assert pipeline.confirm_answer(document, "F1", flaw, "m", source)["problems"] == []
+    assert pipeline.check_answer(document, review, flaw, "m", {"shown": False})["problems"] == []
+
+
+def test_a_target_wrapped_in_a_list_is_read_as_its_passage(document, review) -> None:
+    """Live run, 2026-10-27: a verbatim target given as ["..."] was refused four times as not
+    verbatim, because it was checked as its printed list."""
+    review = pipeline.read_answer(
+        document, review, part(review, "discussion"), FLAWS, {"concerns": [new_concern()]}
+    )["review"]
+    flaw = "quantitative/causal-from-association"
+    shown = {"shown": True, "quotes": ["The tool reduces delay in all wards"], "concern": "none"}
+    one = {**shown, "target": ["should be adopted everywhere"]}
+    assert (
+        "F1 is about this passage"
+        in pipeline.check_answer(document, review, flaw, "m", one)["problems"][0]
+    )
+    two = {**shown, "target": ["should be adopted everywhere", "in all wards"]}
+    assert pipeline.check_answer(document, review, flaw, "m", two)["problems"] == [
+        "with no concern, give target: the passage the flaw is about"
+    ]
+
+
+def test_target_object_preserves_a_locator_in_reads_checks_and_sweep(document, review) -> None:
+    """Live TUI run: a correct {quote, locator} target was stringified and repeatedly refused."""
+    quote = "tool reduces delay in all wards"
+    matching = [s for s in document["segments"] if quote in s["text"]]
+    assert len(matching) == 2
+    discussion = next(s for s in matching if "Discussion" in s["locator"])
+    target = {"quote": quote, "locator": discussion["locator"]}
+    read = pipeline.read_answer(
+        document,
+        review,
+        part(review, "discussion"),
+        FLAWS,
+        {"concerns": [new_concern(target=target)]},
+    )
+    assert read["problems"] == []
+    assert read["review"]["findings"][0]["target"]["locator"] == target["locator"]
+
+    flaw = "quantitative/causal-from-association"
+    check = pipeline.check_answer(
+        document,
+        review,
+        flaw,
+        "m",
+        {"shown": True, "quotes": ["should be adopted everywhere"], "target": [target]},
+    )
+    assert check["problems"] == []
+    assert check["answer"]["target"]["locator"] == target["locator"]
+
+    swept = pipeline.sweep_answer(
+        document,
+        read["review"],
+        FLAWS,
+        [],
+        [],
+        {
+            "concerns": [
+                {
+                    "concern": "Generalisation",
+                    "target": target,
+                    "severity": "major",
+                    "items": ["F1"],
+                }
+            ]
+        },
+    )
+    assert swept["problems"] == []
+    assert swept["review"]["findings"][0]["target"]["locator"] == target["locator"]
+
+    ambiguous = pipeline.read_answer(
+        document,
+        review,
+        part(review, "discussion"),
+        FLAWS,
+        {"concerns": [new_concern(target={"quote": quote})]},
+    )
+    assert any("appears at 2 locators" in problem for problem in ambiguous["problems"])
+    fabricated = pipeline.read_answer(
+        document,
+        review,
+        part(review, "discussion"),
+        FLAWS,
+        {
+            "concerns": [
+                new_concern(target={"quote": "not in the manuscript", "locator": target["locator"]})
+            ]
+        },
+    )
+    assert any("not verbatim" in problem for problem in fabricated["problems"])
+
+
+def test_sweep_refuses_missing_or_invalid_severity(document, review) -> None:
+    review = pipeline.read_answer(
+        document, review, part(review, "discussion"), FLAWS, {"concerns": [new_concern()]}
+    )["review"]
+    concern = {
+        "concern": "Generalisation",
+        "target": "should be adopted everywhere",
+        "items": ["F1"],
+    }
+    for severity in (None, "critical"):
+        answer = {"concerns": [{**concern, "severity": severity}]}
+        result = pipeline.sweep_answer(document, review, FLAWS, [], [], answer)
+        assert "concern 1 needs severity: major or minor" in result["problems"]
 
 
 def test_the_sweep_places_every_item_once_and_folds_each_concern(document, review) -> None:
@@ -316,25 +495,3 @@ def test_screening_sets_aside_only_what_code_can_check(document, review) -> None
     assert pipeline.screen_answer(document, ["F1"], alarms, {"answers": []})["problems"] == [
         "not answered: F1"
     ]
-
-
-def test_the_sidecar_serves_the_pipeline_with_the_open_document(tmp_path: Path) -> None:
-    path = tmp_path / "paper.md"
-    path.write_text(PAPER)
-    sidecar = Sidecar()
-    doc_id = sidecar.open(str(path))["doc_id"]
-    reading = sidecar.reading_plan(doc_id)
-    assert sum(reading["words"].values()) > 50
-    reply = handle(
-        sidecar,
-        '{"id": 1, "method": "orient_task", "params": {"plan": [], "words": {}}}',
-    )
-    assert reply["result"].startswith("Task: read the whole manuscript")
-    refused = handle(
-        sidecar,
-        '{"id": 2, "method": "orient_answer", "params": {"doc_id": "'
-        + doc_id
-        + '", "plan": [], "available": [], "params": {"units": []}}}',
-    )
-    assert "reading units besides the Abstract" in "; ".join(refused["result"]["problems"])
-    assert [f["id"] for f in sidecar.flaws(["quantitative"])][-1].startswith("quantitative/")

@@ -1,0 +1,47 @@
+{
+  "purpose": "read_only_structural_diagnostic_not_model_or_medical_qualification",
+  "old_runner": "02d047cef7658cb5c1290723743f8e0b6b68344a9cc546e6f35a4f3603f7f3b8",
+  "source_case": "r17",
+  "source_sha256": "4795b5dc483dd01ce8b75702327df3f2a13ffea216dab35f3b5c6e3d140ff40d",
+  "historical_run_sha256": "81c359c4575e43742b750f4a2dff61dce695a8a549e3d051dfedbbceadda2f4a",
+  "historical_status": "failed",
+  "historical_run_unchanged": true,
+  "source_blocks": 154,
+  "provided_blocks": 154,
+  "facts": 65,
+  "assessments": 6,
+  "calculations": 14,
+  "eligible_references": {
+    "criteria": [],
+    "calculations": []
+  },
+  "new_array_constraints": {
+    "groups": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "withdrawn": {
+      "type": "array",
+      "maxItems": 0
+    },
+    "priority": {
+      "type": "array",
+      "maxItems": 0
+    }
+  },
+  "rejected_payloads": [
+    {
+      "file": "task-0008-rejected-1.json",
+      "new_diagnostics": "answer format errors:\ngroups: must be []: this task has no candidate criteria or mismatch calculations; put positive checks and ordinary limits in summary, not observation groups\npriority: must be []: this task has no candidate criteria or mismatch calculations; put positive checks and ordinary limits in summary, not observation groups"
+    },
+    {
+      "file": "task-0008-rejected-2.json",
+      "new_diagnostics": "answer format errors:\ngroups: must be []: this task has no candidate criteria or mismatch calculations; put positive checks and ordinary limits in summary, not observation groups\npriority: must be []: this task has no candidate criteria or mismatch calculations; put positive checks and ordinary limits in summary, not observation groups"
+    }
+  ],
+  "new_runner": "bed5cfcee482492f4b44e5fe98313235bce787ce46d03790e3e3dd94bcd73f46",
+  "new_contract_version": 8,
+  "new_live_model_result": null,
+  "human_judgments_filled": false,
+  "qualification": "not_qualified"
+}

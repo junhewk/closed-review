@@ -1,0 +1,340 @@
+{
+  "boot_id": "9abf0082-4cfe-4b35-8bbd-a1dea5722ace",
+  "files": [
+    {
+      "path": "/home/jk/Strata-data/models/IQ3_S/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf",
+      "stat": {
+        "device": 64512,
+        "inode": 58069395,
+        "bytes": 54817524224,
+        "mtime_ns": 1793104657112237970,
+        "ctime_ns": 1793104657112237970
+      },
+      "sha256": "4c1eb2ceb4915e1192f4f386021897bde56a97f40a0bb78bb86465e0f7d2aca3",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/models/IQ3_S/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf",
+      "stat": {
+        "device": 64512,
+        "inode": 43927852,
+        "bytes": 28800138432,
+        "mtime_ns": 1791354407593852752,
+        "ctime_ns": 1793100888504211584
+      },
+      "sha256": "316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/mtp/mtp-manifest.json",
+      "stat": {
+        "device": 64512,
+        "inode": 58064946,
+        "bytes": 11643,
+        "mtime_ns": 1791354832277137869,
+        "ctime_ns": 1791354832277137869
+      },
+      "sha256": "1ad281ed87ad9cd42f9c048e9c49172165ea714a600d15f1d80cd0a02db12328",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/mtp/tensors/verified.json",
+      "stat": {
+        "device": 64512,
+        "inode": 58065272,
+        "bytes": 4874,
+        "mtime_ns": 1792221748750782888,
+        "ctime_ns": 1792221748750782888
+      },
+      "sha256": "1ee1f93438472523785ac7f6ba71603098a25592cde9d92ec3f6656bb2e7e597",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/conversions.json",
+      "stat": {
+        "device": 64512,
+        "inode": 62017732,
+        "bytes": 306,
+        "mtime_ns": 1793104718033113041,
+        "ctime_ns": 1793104718033113041
+      },
+      "sha256": "51df3cd6ffd0d38c2da8e2d3a95a604b4a96c20b06fc639a9bf477282a42b86a",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/dense.bin",
+      "stat": {
+        "device": 64512,
+        "inode": 62017725,
+        "bytes": 1538035200,
+        "mtime_ns": 1793104718021112868,
+        "ctime_ns": 1793104718033113041
+      },
+      "sha256": "d2af3d8331e5c7a1985d1d589747230f9d56719a6d33c7cddc9ee6b81cde6b13",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/index.txt",
+      "stat": {
+        "device": 64512,
+        "inode": 62017729,
+        "bytes": 93685,
+        "mtime_ns": 1793104718033113041,
+        "ctime_ns": 1793104718033113041
+      },
+      "sha256": "b2a014878c3b61d6a6f915e194055a5e68ede34f9465dd1cb13249d902f008ac",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/native_experts.txt",
+      "stat": {
+        "device": 64512,
+        "inode": 62017740,
+        "bytes": 3304,
+        "mtime_ns": 1793104718769123666,
+        "ctime_ns": 1793104718769123666
+      },
+      "sha256": "d9ac2dfa3ee63c55c9c6a6db26f72da0cec0ee41733f007e5cbbbba71617aa5d",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/tokenizer/chat_template.jinja",
+      "stat": {
+        "device": 64512,
+        "inode": 62017739,
+        "bytes": 9993,
+        "mtime_ns": 1793104718741123261,
+        "ctime_ns": 1793104718741123261
+      },
+      "sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/tokenizer/merges.txt",
+      "stat": {
+        "device": 64512,
+        "inode": 62017736,
+        "bytes": 3353258,
+        "mtime_ns": 1793104718567120750,
+        "ctime_ns": 1793104718567120750
+      },
+      "sha256": "4ba698529766c7a2f5052083ea10cdf2485577f5237a332ee291054eb11e3332",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/tokenizer/token_type.json",
+      "stat": {
+        "device": 64512,
+        "inode": 62017737,
+        "bytes": 744960,
+        "mtime_ns": 1793104718579120923,
+        "ctime_ns": 1793104718579120923
+      },
+      "sha256": "5088c8c298fc06af8382ddb3b76c888703ac2634e82263b97eedcc2ad202738b",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/tokenizer/tokenizer.json",
+      "stat": {
+        "device": 64512,
+        "inode": 62017738,
+        "bytes": 541,
+        "mtime_ns": 1793104718579120923,
+        "ctime_ns": 1793104718579120923
+      },
+      "sha256": "c0bd435efbc6c3b28964b47999afe16c4ad268c7c7c4e8cb3af410796a6f30bf",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/packs/iq3_s/tokenizer/vocab.json",
+      "stat": {
+        "device": 64512,
+        "inode": 62017735,
+        "bytes": 5737005,
+        "mtime_ns": 1793104718491119652,
+        "ctime_ns": 1793104718491119652
+      },
+      "sha256": "4ba64f0332abcfb0b600b7df1537d1e836e68009d5fb7cdb77339738dc6365c4",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/mtp/rt/dense.bin",
+      "stat": {
+        "device": 64512,
+        "inode": 58064952,
+        "bytes": 116099072,
+        "mtime_ns": 1791354926154887444,
+        "ctime_ns": 1791354926154887444
+      },
+      "sha256": "c724dc0b0822ada5d2977bf5bde821605feabaa64ea2e0045b67ca656329070a",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/mtp/rt/dense.txt",
+      "stat": {
+        "device": 64512,
+        "inode": 58064953,
+        "bytes": 1851,
+        "mtime_ns": 1791354926154887444,
+        "ctime_ns": 1791354926154887444
+      },
+      "sha256": "991456cf4eb266eb8a888c349e548d11bc640f5dbd9149439aa9786af0f732fd",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/mtp/rt/draft_vocab.bin",
+      "stat": {
+        "device": 64512,
+        "inode": 58064954,
+        "bytes": 425196,
+        "mtime_ns": 1791354926201888315,
+        "ctime_ns": 1791354926201888315
+      },
+      "sha256": "b1e1d3a7a9e4bf862dcd5923ce661fb59bbd07907e594df5cf86a62ac235cb91",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata-data/mtp/rt/experts.bin",
+      "stat": {
+        "device": 64512,
+        "inode": 58064951,
+        "bytes": 707788800,
+        "mtime_ns": 1791354925530875883,
+        "ctime_ns": 1791354925530875883
+      },
+      "sha256": "09398406be61f1f54c93861f449e48b8df0bfccbc9ec9b2b7636775a6ea9244f",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata/engine/strata",
+      "stat": {
+        "device": 64512,
+        "inode": 62016865,
+        "bytes": 139987872,
+        "mtime_ns": 1793089785227737166,
+        "ctime_ns": 1793089785271737879
+      },
+      "sha256": "b79c8622de6e30f514383017744e6359a16e0439f81696c923eab5a89a3f48a6",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata/serve/server.py",
+      "stat": {
+        "device": 64512,
+        "inode": 43927967,
+        "bytes": 528512,
+        "mtime_ns": 1793089433600017717,
+        "ctime_ns": 1793089433600017717
+      },
+      "sha256": "7ae13fdf626d961ee67465fd3796a1ada061d046ccf050297e980894a9e057f0",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/llama-eval/llm-gateway.py",
+      "stat": {
+        "device": 64512,
+        "inode": 6555269,
+        "bytes": 54281,
+        "mtime_ns": 1791363159894409631,
+        "ctime_ns": 1791363159894409631
+      },
+      "sha256": "887e70b934c9f65d604e8bb79a19126cc16b1482e70c60ea366bc03dccbbac17",
+      "verification": "prior_hash_with_unchanged_stat"
+    },
+    {
+      "path": "/home/jk/Strata/data/expert-profile.bin",
+      "stat": {
+        "device": 64512,
+        "inode": 43925669,
+        "bytes": 196632,
+        "mtime_ns": 1791351168099332355,
+        "ctime_ns": 1791351168099332355
+      },
+      "sha256": "8f59b4aa8873209dff11c11e37bcda9529a1335b724a1afeea37bf6388975baf",
+      "verification": "prior_hash_with_unchanged_stat"
+    }
+  ],
+  "processes": {
+    "native": {
+      "pid": 3746,
+      "start_ticks": "17832"
+    },
+    "server": {
+      "pid": 3353,
+      "start_ticks": "17763"
+    },
+    "gateway": {
+      "pid": 4576,
+      "start_ticks": "20270"
+    }
+  },
+  "native_flags": {
+    "--pack": "/home/jk/Strata-data/packs/iq3_s",
+    "--native": "/home/jk/Strata-data/models/IQ3_S/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf",
+    "--expert-profile": "/home/jk/Strata/data/expert-profile.bin",
+    "--prefill": "auto",
+    "--mtp": "/home/jk/Strata-data/mtp/rt",
+    "--max-context": "262144"
+  },
+  "prior_identity_sha256": "496f43a38f6d6c76cbb469fe7c0d1a6bb7e97ef8763af129429da1953fc4d8af",
+  "caveat": "File/stat/argv checks, not loaded-memory or OS network-isolation attestation.",
+  "hermes_head": "ebadb5462e46c168a7eb097895faa647493e0a26",
+  "hermes_wrapper_sha256": "035b1ac25382014ad6233b408c5816a9fdcb0d9febb4f2121e4021d294706ab8",
+  "hermes_files": [
+    {
+      "path": "/home/jk/.local/bin/hermes",
+      "stat": {
+        "device": 64512,
+        "inode": 2120710,
+        "bytes": 69,
+        "mtime_ns": 1790584239503486489,
+        "ctime_ns": 1790584239503486489
+      },
+      "sha256": "035b1ac25382014ad6233b408c5816a9fdcb0d9febb4f2121e4021d294706ab8"
+    },
+    {
+      "path": "/home/jk/.hermes/hermes-agent/.hermes/bin/hermes",
+      "stat": {
+        "device": 64512,
+        "inode": 43922132,
+        "bytes": 1199,
+        "mtime_ns": 1790584217284099328,
+        "ctime_ns": 1790584217284099328
+      },
+      "sha256": "302394caa541aca2086d2cfaba33701c36fadf8ff67017607b81cbc42c0bb382"
+    },
+    {
+      "path": "/home/jk/.hermes/hermes-agent/agent/conversation_loop.py",
+      "stat": {
+        "device": 64512,
+        "inode": 43802764,
+        "bytes": 93145,
+        "mtime_ns": 1791244596205630363,
+        "ctime_ns": 1791244596205630363
+      },
+      "sha256": "8b8768c965579121d836d736134661433b1e672f352971fe72b950986d9baca7"
+    },
+    {
+      "path": "/home/jk/.hermes/hermes-agent/agent/conversation_compression.py",
+      "stat": {
+        "device": 64512,
+        "inode": 43802760,
+        "bytes": 256388,
+        "mtime_ns": 1791244596204630348,
+        "ctime_ns": 1791244596204630348
+      },
+      "sha256": "91ddefda0b799eb7c5f6ef4b0ce51d6a73a39ae35323400447201e9051d8d477"
+    },
+    {
+      "path": "/home/jk/.hermes/hermes-agent/tools/file_tools_write_guards.py",
+      "stat": {
+        "device": 64512,
+        "inode": 43913862,
+        "bytes": 32624,
+        "mtime_ns": 1791244596455634163,
+        "ctime_ns": 1791244596455634163
+      },
+      "sha256": "81df0dd7e0415a3c95870ce0935c132a6535e4be2ca44d3001638a0a1dcfad2c"
+    }
+  ]
+}

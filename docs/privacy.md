@@ -1,5 +1,23 @@
 # Privacy checks
 
+## Medical support uses the strict gate
+
+The redesigned workflow requires `creview hermes doctor --profile NAME --support` and, inside
+the actual Hermes session, `creview session start --support` before opening a manuscript.
+The default doctor's legacy `ready` field alone is not sufficient. Strict support checks require
+a dedicated managed profile, the explicit `custom` private-gateway provider, at least 65536
+configured context tokens, pinned main and auxiliary routes, managed local terminal/work directory
+and capture limits, disabled external login adoption and shared telemetry, and a verifiable live
+session route. Unknown route schemas, cloud credentials, unbypassed proxies, unsafe toolsets,
+configured MCP servers, enabled user plugins and external skill directories are refusals, not
+merely warnings. See [installation](install.md) and [the support workflow](support.md).
+
+The compatibility behavior below describes the default legacy checks. For example, a missing
+vision pin or an unfamiliar config schema can be a legacy warning while still blocking medical
+support. Neither mode is an OS/network sandbox, an audit of all bundled Hermes backend code, a
+verification that a private gateway never forwards elsewhere, or medical-quality qualification.
+Exact-build module evaluations and independent human review remain separate requirements.
+
 ## What the profile check covers
 
 Hermes sends conversation content to more than the main model. `creview hermes doctor` and
@@ -42,11 +60,18 @@ listed as warnings. Only the privacy rules keep the agent from using them on a m
 the toolsets in the review profile (`agent.disabled_toolsets: [web, browser]`) to make that a
 setting rather than an instruction.
 
+The managed profile's empty `plugins.enabled` prevents explicit user-plugin opt-ins but does not
+prove that Hermes loads no plugins. In the tested Hermes 0.21.5 build, bundled backend plugins can
+auto-load and the log reports enabled bundled plugins. Registration alone does not show that a
+plugin sent data; it also is not proof that all plugin code is inert. The doctor does not audit
+every bundled module. OS-level controls remain the boundary for network access.
+
 ## Skill self-improvement and the privacy block
 
-Hermes improves skills from experience: after a task it may patch `SKILL.md` or add reference
-files. That is expected, and `creview` does not try to stop it. Nothing in Hermes can make a skill
-read-only, so this project does not claim the skill text stays as shipped.
+Hermes can improve skills from experience: after a task it may patch `SKILL.md` or add reference
+files. The dedicated deployment profile disables background review and skill-creation nudges,
+but its terminal and file tools can still modify files. This project does not claim the skill
+text stays as shipped. Deployment smoke tests refuse drift from the packaged skill.
 
 What `creview` does instead:
 
@@ -61,14 +86,7 @@ What `creview` does instead:
   edits.
 - **Receipts record whether the check ran.** `creview session start` records a preflight for the
   Hermes session (`HERMES_SESSION_ID`, stored hashed). An export receipt states `passed`, `failed`,
-  or `none`. Audited cases record `audited_case`, because `review start` refuses to run without a
-  passing check.
-
-Upgrading from 0.6.0 or earlier: run `creview hermes install --apply` (or the Windows script) once.
-Those releases kept no baseline, so an edited `SKILL.md` cannot be merged that first time: the
-update keeps Hermes's version, replaces its old privacy section with the new block, and saves the
-full new `SKILL.md` to `creview-skill-updates/` in the profile for you to compare. Later updates
-merge automatically.
+  or `none`.
 
 The limits: these checks run only when `creview` runs. A session that never calls `creview`, and
 never exports through it, leaves no trace, and the privacy rules are instructions to the agent,

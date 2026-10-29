@@ -1,10 +1,8 @@
-import json
 from pathlib import Path
 
 import pytest
 
 from closed_review import findings
-from closed_review.sidecar import Sidecar, handle
 
 PAPER = (
     "# Methods\n\nOf 1,486 records, 283 were duplicates and 1,203 were screened.\n\n"
@@ -12,7 +10,6 @@ PAPER = (
     "We screened 1,203 records.\n\nAll 1,203 records were coded.\n\n"
     "# Discussion\n\nThe intervention reduces mortality.\n"
 )
-SESSION = "0123456789abcdef0123456789abcdef"
 
 
 @pytest.fixture
@@ -62,6 +59,36 @@ def test_arithmetic_is_computed_and_a_reused_figure_recurs(document) -> None:
     assert findings.recurring_figure(document, "1,203")
 
 
+def test_a_figure_written_in_words_is_read_as_digits(document) -> None:
+    checked = findings.number_checks(
+        document,
+        [
+            {
+                "expression": "1486 - 283",
+                "stated": "One thousand two hundred and three",
+                "quote": "1,203 were screened",
+            }
+        ],
+    )
+    assert checked["problems"] == [] and checked["checks"][0]["matches"]
+    assert checked["checks"][0]["stated"] == "1203"
+
+
+def test_a_count_out_of_a_total_is_explained_not_parsed(document) -> None:
+    refused = findings.number_checks(
+        document,
+        [
+            {
+                "expression": "1203 / 1486 * 100",
+                "stated": "1,203 of 1,486",
+                "quote": "1,203 were screened",
+            }
+        ],
+    )
+    assert refused["checks"] == []
+    assert "is a count out of a total" in refused["problems"][0]
+
+
 def test_severity_follows_the_evidence() -> None:
     confirmed = {
         "flaw_checks": [
@@ -96,6 +123,21 @@ def test_severity_follows_the_evidence() -> None:
     assert findings.severity(once)["severity"] == "minor"
 
 
+@pytest.mark.parametrize("flaw", ["general/misread-source", "legal-analysis/misread-provision"])
+def test_source_misreading_is_not_confirmed_by_a_claim_quote_alone(flaw) -> None:
+    old_check = {"flaw": flaw, "shown": True, "quotes_verified": True}
+    finding = {"model_severity": "minor", "flaw_checks": [old_check]}
+    assert findings.severity(finding)["basis"] == "judgement"
+    assert not findings.confirmed_check(old_check)
+
+    qualified = {
+        **old_check,
+        "source_quote": {"quote": "the source's reported words", "locator": "heading:Source"},
+    }
+    assert findings.confirmed_check(qualified)
+    assert findings.severity({**finding, "flaw_checks": [qualified]})["basis"] == "evidence"
+
+
 def test_one_mismatch_written_two_ways_is_one_group() -> None:
     check = lambda e, c: {"number_check": {"expression": e, "stated": "9", "computed": c}}  # noqa: E731
     groups = findings.merge_number_checks(
@@ -119,84 +161,3 @@ def test_order_puts_evidence_first_and_holds_a_reserve() -> None:
     ids = [o["id"] for o in ordered["order"]]
     assert ids[:3] == ["evidence", "judged", "computed"]
     assert len(ordered["order"]) == 2 + 9 and len(ordered["reserve"]) == 2
-
-
-def test_sidecar_protocol_lookup_and_export(isolated_env: Path, monkeypatch) -> None:
-    paper = isolated_env / "paper.md"
-    paper.write_text(PAPER)
-    sidecar = Sidecar()
-    opened = handle(
-        sidecar, json.dumps({"id": 1, "method": "open", "params": {"path": str(paper)}})
-    )
-    doc_id = opened["result"]["doc_id"]
-    quoted = handle(
-        sidecar,
-        json.dumps(
-            {
-                "id": 2,
-                "method": "check_quotes",
-                "params": {"doc_id": doc_id, "quotes": ["reduces mortality"]},
-            }
-        ),
-    )
-    assert quoted["result"]["verified"][0]["quote"] == "reduces mortality"
-    assert "error" in handle(
-        sidecar,
-        json.dumps({"id": 3, "method": "check_quotes", "params": {"doc_id": "nope", "quotes": []}}),
-    )
-
-    class Reply:
-        def raise_for_status(self) -> None:
-            return None
-
-        def json(self):
-            return {"message": {"items": [{"DOI": "10.1/x", "title": ["Example"]}]}}
-
-    monkeypatch.setattr("closed_review.sidecar.httpx.get", lambda *a, **k: Reply())
-    with pytest.raises(Exception, match="approval"):
-        sidecar.lookup(SESSION, "crossref", "Braun Clarke 2006", "")
-    shown = sidecar.lookup_url("crossref", "Braun Clarke 2006")
-    record = sidecar.lookup(SESSION, "crossref", "Braun Clarke 2006", "2026-10-19T00:00:00+00:00")
-    assert record["url"] == shown["url"]
-    assert record["result"][0]["doi"] == "10.1/x" and record["url"].startswith(
-        "https://api.crossref"
-    )
-
-    exported = sidecar.export(
-        SESSION,
-        {"authors": "Define the sample.", "development": "R1 accepted."},
-        ["qwen3.8-flash-next", "gemma-4-31b"],
-        "http://127.0.0.1:8091/v1",
-    )
-    receipt = json.loads(Path(exported["receipt_path"]).read_text())
-    assert receipt["environment"]["host"] == "pi"
-    assert receipt["environment"]["model"] == "qwen3.8-flash-next, gemma-4-31b"
-    assert {s["role"] for s in receipt["subjects"]} == {"authors", "development"}
-    with pytest.raises(Exception, match="authors"):
-        sidecar.export(SESSION, {"editor": "x"}, ["m"], "u")
-
-
-def test_sidecar_serves_the_review_knowledge() -> None:
-    known = Sidecar().knowledge(["qualitative", "normative-argument"])
-    assert {a["id"] for a in known["available"]} >= {
-        "qualitative",
-        "quantitative",
-        "legal-analysis",
-    }
-    assert "Candidate presentation" in known["contract"]
-    assert "Major flaws in any design" in known["rubric"]
-    assert [p["id"] for p in known["profiles"]] == ["qualitative", "normative-argument"]
-    profile = known["profiles"][0]
-    assert profile["monitoring_areas"] and profile["false_alarms"] and profile["major_flaws"]
-    assert "Monitoring areas" in profile["text"]
-    with pytest.raises(Exception, match="unknown design profile"):
-        Sidecar().knowledge(["ethnography"])
-
-
-def test_sidecar_drafts_a_plan_from_headings(tmp_path: Path) -> None:
-    paper = tmp_path / "paper.md"
-    paper.write_text(PAPER)
-    sidecar = Sidecar()
-    doc_id = sidecar.open(str(paper))["doc_id"]
-    titles = [s["title"] for s in sidecar.plan(doc_id)["segments"]]
-    assert titles == ["Methods", "Results", "Discussion"]

@@ -10,14 +10,14 @@ from urllib.parse import quote, urlencode
 import httpx
 from filelock import FileLock
 
-from .cases import append_event, load_source, now_iso, read_statement
 from .errors import ReviewError
 from .io import (
     atomic_write_json,
-    case_root,
     data_home,
     ensure_private_dir,
+    now_iso,
     read_json,
+    read_statement,
     sha256_bytes,
     sha256_file,
 )
@@ -103,34 +103,12 @@ def _repair_doi_spacing(value: str) -> tuple[str, int]:
     return repaired, repair_count
 
 
-def _report_root(case_id: str | None) -> Path:
-    if case_id:
-        root = case_root(case_id)
-        if not root.is_dir():
-            raise ReviewError(f"unknown case: {case_id}")
-        return ensure_private_dir(root / "reference-checks")
-    return ensure_private_dir(data_home() / "reference-checks")
-
-
-def _segments_from_input(
-    manuscript: Path | None, case_id: str | None, source_id: str
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    if bool(manuscript) == bool(case_id):
-        raise ReviewError("provide either a manuscript path or --case, but not both")
-    if case_id:
-        source = load_source(case_id, source_id)
-        return source["segments"], {
-            "case_id": case_id,
-            "source_id": source_id,
-            "source_sha256": source.get("sha256"),
-        }
-    assert manuscript is not None
+def _segments_from_input(manuscript: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     path = manuscript.expanduser().resolve()
     if not path.is_file():
         raise ReviewError(f"input is not a file: {path}")
     parsed = parse_document(path)
     return parsed.segments, {
-        "case_id": None,
         "source_id": "manuscript",
         "source_path": str(path),
         "source_sha256": sha256_file(path),
@@ -148,6 +126,9 @@ def _partition_segments(
         text = segment["text"]
         if not found:
             match = REFERENCE_HEADING.search(text)
+            if text.strip().strip(":： ").casefold() in ("참고문헌", "참고 문헌"):
+                found = True
+                continue
             if match:
                 found = True
                 before = text[: match.start()].strip()
@@ -423,10 +404,8 @@ def _local_report(segments: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def check_references(
-    manuscript: Path | None = None, *, case_id: str | None = None, source_id: str = "manuscript"
-) -> dict[str, Any]:
-    segments, source = _segments_from_input(manuscript, case_id, source_id)
+def check_references(manuscript: Path) -> dict[str, Any]:
+    segments, source = _segments_from_input(manuscript)
     report = {
         "schema_version": "2",
         "check_id": f"refcheck-{secrets.token_hex(5)}",
@@ -435,28 +414,18 @@ def check_references(
         **_local_report(segments),
         "metadata_requests": [],
     }
-    root = _report_root(case_id)
+    root = ensure_private_dir(data_home() / "reference-checks")
     atomic_write_json(root / f"{report['check_id']}.json", report)
-    if case_id:
-        append_event(
-            case_root(case_id),
-            "reference_check_completed",
-            {"check_id": report["check_id"], "issue_count": len(report["issues"])},
-        )
     return report
 
 
 def _find_check(check_id: str) -> Path:
     if not re.fullmatch(r"refcheck-[a-f0-9]{10}", check_id):
         raise ReviewError("invalid reference check id")
-    direct = data_home() / "reference-checks" / f"{check_id}.json"
-    if direct.is_file():
-        return direct
-    cases = data_home() / "cases"
-    matches = list(cases.glob(f"*/reference-checks/{check_id}.json")) if cases.is_dir() else []
-    if len(matches) != 1:
+    path = data_home() / "reference-checks" / f"{check_id}.json"
+    if not path.is_file():
         raise ReviewError(f"unknown reference check id: {check_id}")
-    return matches[0]
+    return path
 
 
 def show_reference_check(check_id: str) -> dict[str, Any]:

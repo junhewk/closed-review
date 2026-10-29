@@ -1,0 +1,143 @@
+{
+  "protocol": "medical-methods-v1",
+  "synthetic_only": true,
+  "independently_reviewed": false,
+  "article_count": 1,
+  "format_count": 3,
+  "source_words": 3777,
+  "evaluator_directory": "/tmp/creview-support-ordinary-native-v2.VPwlOef2",
+  "builder": {
+    "script": "scripts/build-support-format-fixture.cjs",
+    "sha256": "19ab1d23ebe671b7adf0d89064ba3763ee859e4304ec468cdb65bc849b37e41b",
+    "node": "22.22.2",
+    "docx": "9.15.0",
+    "temporary_dependency_lock_sha256": "8b58183434ab3aacc68c257e8a0c7ee0bc58092c9f9053a3a6e3b03a7f19df96"
+  },
+  "render": {
+    "libreoffice": "24.2.7.2 420(Build:2)",
+    "pages": 8,
+    "agent_visual_layout_inspection": true,
+    "all_pages_inspected": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "independent_human_review": null,
+    "page_image_sha256": [
+      "51f5de59c1b3243f3b787f57570dd22c44d771e20f3ed7c8a6d551c40316d596",
+      "45b005ff79e1d3bece65fa212dd554f8ef7501297df4ebd1572f7f3394ccd420",
+      "a876479f79676cf65ec05425d0f6cfb1d24ca703fe6125403c358a927a082a1d",
+      "2a29a463eb01a7a74add1a6c1a7234a3b4adf5674341e1b32b07ca97b94d6068",
+      "5edd14ddb52e9e4dd08f7d930d94b7441c8ad8f1d2e74b376a9bf93c940cc0bd",
+      "0a87564b5bead82ebb2bbdfa86ca76b6804dde93a6d93c872c170e4b5b2e54b7",
+      "abd526b680decc09c8c8b3d579fd8bbb4df61ecaed70893efad53889ffd37163",
+      "184ef9b7e656d90adfc770250fb992fbcffc88ef687e3a3af559cb9e79d65ec1"
+    ]
+  },
+  "sources": {
+    "f00.md": "4795b5dc483dd01ce8b75702327df3f2a13ffea216dab35f3b5c6e3d140ff40d",
+    "f01.docx": "0c18c14d72e62c03074e50f4504a61dd0d62270c3ee134b96e460ddac1126471",
+    "f01.pdf": "2cecdaf3b9a2dd9c5553122816a540f5109ad073ef2bc58c9c10f1a421142d0d"
+  },
+  "key_free_manifest_sha256": "902fa05904b98d3edf618ba22180485ec517529d6c89272f05226f14912caa67",
+  "inspection": {
+    "script": "scripts/check-support-format-fixtures.py",
+    "sha256": "238c145bf7a5644ec3cd33ec16197419ad89d6e105fcc9f798ae933b474fcd77",
+    "runner": "5a37d154ee4efa99b6d7fdbe995507de45df142dc1a8ccad27a09371411e55da",
+    "report_sha256": "6878aa42c3870677802b37fe4f45f332c31df17c3c8ab67532027eee9cdb6951",
+    "comparison_policy": "fixture-pdf-retained-hyphen-layout-v1",
+    "format_probe_ready": true,
+    "inputs": [
+      {
+        "case_id": "f00",
+        "format": "markdown",
+        "sha256": "4795b5dc483dd01ce8b75702327df3f2a13ffea216dab35f3b5c6e3d140ff40d",
+        "checks": {
+          "all_expected_paragraphs_present": true,
+          "expected_paragraphs_in_order": true,
+          "table_grids_equal": true,
+          "no_detected_geometry_ambiguity": true,
+          "original_bytes_unchanged": true
+        },
+        "strict_whitespace_only_checks": {
+          "all_expected_paragraphs_present": true,
+          "expected_paragraphs_in_order": true,
+          "table_grids_equal": true,
+          "no_detected_geometry_ambiguity": true
+        },
+        "blocks": 154,
+        "tables": 3,
+        "warnings": [],
+        "scope_limits": []
+      },
+      {
+        "case_id": "f01",
+        "format": "docx",
+        "sha256": "0c18c14d72e62c03074e50f4504a61dd0d62270c3ee134b96e460ddac1126471",
+        "checks": {
+          "all_expected_paragraphs_present": true,
+          "expected_paragraphs_in_order": true,
+          "table_grids_equal": true,
+          "no_detected_geometry_ambiguity": true
+        },
+        "strict_whitespace_only_checks": {
+          "all_expected_paragraphs_present": true,
+          "expected_paragraphs_in_order": true,
+          "table_grids_equal": true,
+          "no_detected_geometry_ambiguity": true
+        },
+        "blocks": 151,
+        "tables": 3,
+        "warnings": [],
+        "scope_limits": []
+      },
+      {
+        "case_id": "f02",
+        "format": "pdf",
+        "sha256": "2cecdaf3b9a2dd9c5553122816a540f5109ad073ef2bc58c9c10f1a421142d0d",
+        "checks": {
+          "all_expected_paragraphs_present": true,
+          "expected_paragraphs_in_order": true,
+          "table_grids_equal": true,
+          "no_detected_geometry_ambiguity": true
+        },
+        "strict_whitespace_only_checks": {
+          "all_expected_paragraphs_present": false,
+          "expected_paragraphs_in_order": false,
+          "table_grids_equal": false,
+          "no_detected_geometry_ambiguity": true
+        },
+        "blocks": 240,
+        "tables": 3,
+        "warnings": [],
+        "scope_limits": [
+          "Automatic PDF table geometry uses visible ruled grids only. Borderless tables remain in extracted text and require human layout review; table detection may miss tables. Figures/scans have not been read. No OCR."
+        ]
+      }
+    ],
+    "clinical_quality": "not_assessed"
+  },
+  "preserved_failures": [
+    {
+      "directory": "/tmp/creview-support-ordinary-native.5swiHOqB",
+      "inspection_sha256": "10d93d7c0c863af96f7e6f94e3de13707374a314b5c5f021140b2b9bcb95a8e7",
+      "problem": "Original 8-page render had orphan headings. B10 inferred five prose tables in addition to three actual ruled tables; strict PDF paragraph/grid comparison failed."
+    },
+    {
+      "directory": "/tmp/creview-support-ordinary-native-v2.VPwlOef2",
+      "inspection": "inspection-b11.json",
+      "sha256": "b399738a8368619536aefa0ba260ac2c9c87dedb0894d0dbbcf026a97e22088b",
+      "problem": "B11 found the three actual ruled tables; strict whitespace-only comparison still failed on retained-hyphen line wraps. The original report remains false and unchanged."
+    }
+  ],
+  "model_inference_on_new_native_fixtures": "queued_not_started",
+  "b11_runtime": "/tmp/creview-support-runtime.qr67IZVN",
+  "b11_controller_pid": 2389253,
+  "qualification": "not_qualified",
+  "note": "One invented source rendered three ways. The evaluator comparison joins raw layout whitespace after retained hyphens between letters only; strict comparison failures remain visible. No source/answer/number repair, independent medical approval, hidden-content guarantee or clinical recommendation."
+}

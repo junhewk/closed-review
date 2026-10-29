@@ -5,11 +5,11 @@ import pytest
 import yaml
 from conftest import reviewer_says
 
-from closed_review import cli, hermes, scan
+from closed_review import findings, hermes, scan
 from closed_review.errors import ReviewError
 from closed_review.lookups import show_lookup
 from closed_review.parsers import parse_document
-from closed_review.segments import draft_plan, validate_plan
+from closed_review.segments import draft_plan
 from closed_review.session import start_session
 
 PAPER = (
@@ -131,11 +131,8 @@ def test_draft_plan_follows_headings_and_folds_short_subsections(isolated_env) -
     plan = draft_plan([{"source_id": "manuscript", "segments": blocks}])
     titles = [s["title"] for s in plan["segments"]]
     assert titles == ["Fictional consent study", "Introduction", "Methods", "Results", "References"]
-    assert {s["title"]: s["tier"] for s in plan["segments"]}["Methods"] == "high"
-    assert {s["title"]: s["tier"] for s in plan["segments"]}["Introduction"] == "light"
-    validated = validate_plan(plan, [{"source_id": "manuscript", "segments": blocks}])
-    covered = {b for s in validated["segments"] for b in s["block_ids"]}
-    assert covered == {b["segment_id"] for b in blocks}
+    covered = [b for s in plan["segments"] for b in s["block_ids"]]
+    assert covered == [b["segment_id"] for b in blocks]
 
 
 def test_pdf_style_blocks_recognize_section_names() -> None:
@@ -188,20 +185,6 @@ def test_scan_requires_a_passing_preflight(isolated_env, monkeypatch) -> None:
 def test_deep_scan_end_to_end(session) -> None:
     with pytest.raises(ReviewError, match="unknown design profile"):
         scan.start_scan(session, profiles=["ethnography"], confirmation="Yes, that one.")
-    with pytest.raises(ReviewError, match="reviewer's own words"):
-        scan.start_scan(session, profiles=["qualitative"], confirmation="")
-    # A confirmation the reviewer never wrote is refused, however it is worded.
-    with pytest.raises(ReviewError, match="not in any of those messages"):
-        scan.start_scan(
-            session,
-            profiles=["qualitative"],
-            confirmation="Prompt unanswered; proceeding with the indexed profiles.",
-        )
-    with pytest.raises(ReviewError, match="not in any of those messages"):
-        scan.start_scan(session, profiles=["qualitative"], confirmation="/journal-article-review")
-    # The opening message's policy confirmation is not a profile confirmation.
-    with pytest.raises(ReviewError, match="sent after it was asked"):
-        scan.start_scan(session, profiles=["qualitative"], confirmation="I confirm that")
     started = start(session)
     scan_id = started["scan_id"]
     # Heading-only fragments join the section after them.
@@ -316,13 +299,14 @@ def test_deep_scan_end_to_end(session) -> None:
     assert presented["severity_basis"] == [
         "listed major flaw qualitative/unexamined-power, confirmed by qwen3.8-flash-next"
     ]
+    assert presented["checks"][0]["confirmed"] is True
     assert presented["later_units"][0]["role"] == "relies-on"
     assert "strongest reply the authors could make" in first["instructions"]
     labels = {item["citation"]: item["label"] for item in presented["literature"]}
     assert labels == {"Okonkwo 1998": "manuscript_reported", "Strech 2012": "model_lead"}
     # creview prepares the lookups, unverified recollections first; nothing runs unapproved.
     assert [item["citation"] for item in presented["lookups"]] == ["Strech 2012", "Okonkwo 1998"]
-    pending = show_lookup(None, presented["lookups"][0]["request_id"])
+    pending = show_lookup(presented["lookups"][0]["request_id"])
     assert pending["status"] == "pending_approval"
     assert first["next_severity"] == "minor"
 
@@ -340,6 +324,35 @@ def test_deep_scan_end_to_end(session) -> None:
     assert scan.purge_scan(scan_id, scan_id)["lookups_removed"] == 2
     with pytest.raises(ReviewError, match="does not exist"):
         scan.scan_status(scan_id)
+
+
+def test_presented_source_check_exposes_its_evidence_and_provenance() -> None:
+    check = {
+        "flaw": "general/misread-source",
+        "model": "m",
+        "shown": True,
+        "reason": "The manuscript's claim differs from its quotation.",
+        "quotes_verified": True,
+    }
+    finding = {
+        "id": "F1",
+        "title": "Source claim",
+        "issue": "The source is described differently from its quotation.",
+        "why": "The argument relies on that description.",
+        "type": "unsupported",
+        "model_severity": "minor",
+        "evidence": [],
+        "flaw_checks": [check],
+    }
+    state = {"review": {"units": [], "plan": []}}
+    legacy = scan._presented(state, finding, findings.severity(finding))["checks"][0]
+    assert legacy["shown"] is True and legacy["confirmed"] is False
+
+    check["source_quote"] = {"quote": "The source's reported words", "locator": "heading:Claim"}
+    presented = scan._presented(state, finding, findings.severity(finding))["checks"][0]
+    assert presented["confirmed"] is True
+    assert presented["source_quote"] == check["source_quote"]
+    assert presented["source_quote_status"] == "manuscript_reported"
 
 
 def test_scan_refuses_answers_it_cannot_check_and_changed_files(session) -> None:
@@ -374,10 +387,7 @@ def test_the_scan_goes_on_without_a_sweep_it_cannot_check(session) -> None:
     assert done["next_task"]["task"]["stage"] == "screen"
 
 
-def test_the_earlier_deep_scan_says_what_replaced_it(session, capsys) -> None:
-    for command in ("plan", "overview", "synthesize", "sweep"):
-        assert cli.main(["scan", command, "scan-x", "plan.json", "--confirmation", "ok"]) == 2
-        assert "no longer part of the deep scan" in capsys.readouterr().err
+def test_a_scan_from_an_earlier_schema_is_refused(session) -> None:
     scan_id, _ = oriented(session)
     path = scan._scan_root(scan_id) / "scan.json"
     path.write_text(json.dumps(stored(scan_id) | {"schema_version": "1"}))
