@@ -1,4 +1,5 @@
 import json
+import os
 import sqlite3
 from pathlib import Path
 
@@ -106,7 +107,10 @@ def test_every_auxiliary_lane_requires_an_explicit_pin(managed, task):
         lambda c: c["model"].pop("context_length"),
         lambda c: c["platform_toolsets"].update(tui=["terminal", "file", "skills", "browser"]),
         lambda c: c["terminal"].update(backend="docker"),
-        lambda c: c["terminal"].update(auto_source_bashrc=True),
+        pytest.param(
+            lambda c: c["terminal"].update(auto_source_bashrc=True),
+            marks=pytest.mark.skipif(os.name == "nt", reason="Bash initialization is Unix-only"),
+        ),
         lambda c: c["auth"].update(adopt_external_logins=True),
         lambda c: c["telemetry"]["shared_metrics"].update(send=True),
     ],
@@ -196,6 +200,7 @@ def test_missing_live_route_metadata_is_not_treated_as_config_verified(managed, 
     assert report["support_readiness"]["runtime"]["status"] == "unverifiable"
 
 
+@pytest.mark.skipif(os.name == "nt", reason="The managed shell launcher is Unix-only")
 def test_managed_launcher_tampering_stops_support_without_modifying_it(managed):
     launcher = managed / "review-bin/creview"
     launcher.write_text("edited launcher")

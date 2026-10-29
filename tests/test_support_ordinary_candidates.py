@@ -41,7 +41,7 @@ def test_each_candidate_is_source_only_parseable_and_fully_deliverable(case_id):
     _, rows = load_manifest(ROOT / "manifest.json", ROOT / "manuscripts")
     row = next(row for row in rows if row["case_id"] == case_id)
     source = snapshot(row["path"])
-    assert len(row["path"].read_text().split()) >= 3000
+    assert len(row["path"].read_text(encoding="utf-8").split()) >= 3000
     assert len(source["tables"]) == 3 and not source["warnings"]
     chunks = _chunks(source["blocks"])
     assert len(chunks) > 1

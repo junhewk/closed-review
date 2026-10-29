@@ -58,7 +58,7 @@ def test_fixture_corpus_covers_all_six_branches_with_pairs():
     for case in pilot.CASES:
         source = snapshot(CORPUS / f"{case}.md")
         assert source["blocks"] and not source["warnings"]
-        assert "Synthetic" in (CORPUS / f"{case}.md").read_text()
+        assert "Synthetic" in (CORPUS / f"{case}.md").read_text(encoding="utf-8")
 
 
 def test_saved_run_rejects_restarts(tmp_path):
@@ -386,12 +386,12 @@ def test_two_turn_adapter_checks_actual_workflow_and_export(
                             "reason=max_iterations_reached(150/150) model=qwen3.8-flash-next "
                             "api_calls=150/150 budget=150/150 tool_turns=37 "
                             "last_msg_role=assistant response_len=100 session=pilot-test-session\n"
-                        )
+                        , encoding="utf-8")
                     log.write_text(
                         "File-mutation verifier: 1 file edit(s) FAILED"
                         if pause == "edit-error"
                         else "Model claims an iteration limit."
-                    )
+                    , encoding="utf-8")
                     raise ReviewError("Hermes exited with status 1; inspect turn-1.log with --keep")
             export(run_id)
 

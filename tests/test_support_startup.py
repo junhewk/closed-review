@@ -58,7 +58,9 @@ def pristine(isolated_env):
     root = Path(setup["profile_root"])
     env.update(HERMES_HOME=str(root), CREVIEW_HOME=str(root / "review-data"))
     paper = root / "work/manuscript.md"
-    paper.write_text("# Synthetic startup fixture\n\nNo medical assessment is made.\n")
+    paper.write_text(
+        "# Synthetic startup fixture\n\nNo medical assessment is made.\n", encoding="utf-8"
+    )
     pins = pilot.startup_pins(root)
     with pilot.environment(dict(env, HERMES_SESSION_ID=SESSION)):
         setup_session(root, paper.parent)
@@ -135,13 +137,13 @@ def test_unsafe_or_unverifiable_startup_is_not_recovered(pristine, problem):
             if problem == "host-error" else "Tool terminal returned error\n"
         )
     elif problem == "source-change":
-        kwargs["paper"].write_text("Changed source")
+        kwargs["paper"].write_text("Changed source", encoding="utf-8")
     elif problem == "source-symlink":
         link = root / "work/link.md"
         link.symlink_to(kwargs["paper"])
         kwargs["paper"] = link
     elif problem == "config-change":
-        with (root / "config.yaml").open("a") as stream:
+        with (root / "config.yaml").open("a", encoding="utf-8") as stream:
             stream.write("\n# changed configuration\n")
     elif problem == "runner-probe":
         atomic_write_json(root / "work/runner.json", {"sums_sha256": "f" * 64})
@@ -192,7 +194,9 @@ def test_repeated_stop_and_session_drift_fail_and_existing_checkpoint_stays_boun
 def run_adapter(root, monkeypatch, module, problem=None):
     """Deterministic adapter, not local-model or medical-quality evidence."""
     paper = root / "synthetic.md"
-    paper.write_text("# Synthetic fixture\n\nParticipants described a test process.\n")
+    paper.write_text(
+        "# Synthetic fixture\n\nParticipants described a test process.\n", encoding="utf-8"
+    )
     args = SimpleNamespace(output=root / "results", paper_override=paper, corpus=root,
                            hermes="fake-hermes", language="en", synthetic_only=True)
     calls = []
@@ -207,9 +211,11 @@ def run_adapter(root, monkeypatch, module, problem=None):
                 atomic_write_json(profile / "fixture-only.json", {"not_model_evidence": True})
                 agent_log = profile / "logs/agent.log"
                 agent_log.parent.mkdir(exist_ok=True)
-                with agent_log.open("a") as stream:
+                with agent_log.open("a", encoding="utf-8") as stream:
                     stream.write(host_event())
-                log.write_text("Synthetic adapter clean stop; no model inference.")
+                log.write_text(
+                    "Synthetic adapter clean stop; no model inference.", encoding="utf-8"
+                )
                 return
             if problem == "changed-session":
                 with sqlite3.connect(profile / "state.db") as db:

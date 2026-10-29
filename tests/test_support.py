@@ -300,11 +300,11 @@ def test_source_mutation_and_route_changes_block_resume(support_env, monkeypatch
 
     run_id = begin(support_env)
     paper, _ = support_env
-    original = paper.read_text()
-    paper.write_text(original + "\nChanged")
+    original = paper.read_text(encoding="utf-8")
+    paper.write_text(original + "\nChanged", encoding="utf-8")
     with pytest.raises(ReviewError, match="manuscript changed"):
         next_task(run_id)
-    paper.write_text(original)
+    paper.write_text(original, encoding="utf-8")
     monkeypatch.setattr(workflow, "_profile", lambda: {"ready": True, "model": "cloud"})
     with pytest.raises(ReviewError, match="routes changed"):
         next_task(run_id)
@@ -376,17 +376,17 @@ def test_docx_merged_headers_and_vertical_merge_are_preserved(tmp_path):
 
 def test_markdown_table_keeps_empty_cells_and_marks_ragged_rows(tmp_path):
     path = tmp_path / "table.md"
-    path.write_text("| A | B | C |\n|---|---|---|\n| a | | 20 |\n")
+    path.write_text("| A | B | C |\n|---|---|---|\n| a | | 20 |\n", encoding="utf-8")
     table = snapshot(path)["tables"][0]
     assert table["cells"][4]["text"] == ""
     assert not table["ambiguous"]
-    path.write_text("| A | B | C |\n|---|---|---|\n| a | 20 |\n")
+    path.write_text("| A | B | C |\n|---|---|---|\n| a | 20 |\n", encoding="utf-8")
     assert snapshot(path)["tables"][0]["ambiguous"]
 
 
 def test_unsupported_raw_data_format_is_refused(tmp_path):
     path = tmp_path / "data.xlsx"
-    path.write_text("not a manuscript")
+    path.write_text("not a manuscript", encoding="utf-8")
     with pytest.raises(ReviewError, match="one manuscript"):
         snapshot(path)
 
@@ -520,12 +520,15 @@ def test_registered_calculators_against_known_values(method, inputs, params, out
 
 def test_dossier_is_readable_inert_private_and_receipted(support_env, tmp_path):
     paper, _ = support_env
-    paper.write_text(paper.read_text() + '\n\n<script>alert("secret")</script>\n')
+    paper.write_text(
+        paper.read_text(encoding="utf-8") + '\n\n<script>alert("secret")</script>\n',
+        encoding="utf-8",
+    )
     run_id = begin(support_env, ["statistics", "logic"])
     finish(run_id, concern=True, language="ko")
     record(run_id, "run", "note", "My actual reviewer note.")
     result = export(run_id)
-    html_text = Path(result["html"]).read_text()
+    html_text = Path(result["html"]).read_text(encoding="utf-8")
     assert "검토" in html_text
     assert "<script>" not in html_text and "&lt;script&gt;" in html_text
     assert "default-src 'none'" in html_text
@@ -606,12 +609,12 @@ def test_calculated_discrepancy_dossier_has_readable_inputs_and_outputs(support_
     run = finish(run_id, calculations=[raw])
     assert run["modules"]["statistics"]["observations"][0]["kind"] == "calculated_discrepancy"
     result = export(run_id)
-    document = Path(result["html"]).read_text()
+    document = Path(result["html"]).read_text(encoding="utf-8")
     assert "<td>numerator</td><td>20</td>" in document
     # Computed outputs now retain their saved representation rather than display-rounding.
     assert "<dt>value</dt><dd>20.0</dd>" in document
     assert "<summary>JSON</summary>" in document
-    assert "arithmetic_verified" not in Path(result["markdown"]).read_text()
+    assert "arithmetic_verified" not in Path(result["markdown"]).read_text(encoding="utf-8")
 
 
 def test_explicit_language_setting_cannot_be_silently_changed(support_env):
@@ -628,7 +631,7 @@ def test_legacy_extraction_limits_remain_partial_in_historical_reports(support_e
     run["modules"]["statistics"]["status"] = "partial"
     atomic_write_json(_root(run_id) / "run.json", run)
     assert report(run_id)["phase"] == "partial"
-    assert "Some table headers" in Path(export(run_id)["markdown"]).read_text()
+    assert "Some table headers" in Path(export(run_id)["markdown"]).read_text(encoding="utf-8")
 
 
 def test_fisher_keeps_defined_p_value_when_odds_ratio_is_unbounded():
@@ -647,7 +650,7 @@ def test_fisher_keeps_defined_p_value_when_odds_ratio_is_unbounded():
 
 def test_markdown_trailing_empty_cells_are_not_stripped(tmp_path):
     path = tmp_path / "empty.md"
-    path.write_text("|A|B|C|\n|---|---|---|\n|x|||\n")
+    path.write_text("|A|B|C|\n|---|---|---|\n|x|||\n", encoding="utf-8")
     cells = snapshot(path)["tables"][0]["cells"]
     assert [c["text"] for c in cells if c["row"] == 2] == ["x", "", ""]
 
@@ -664,7 +667,7 @@ def test_scope_boundaries_do_not_masquerade_as_processing_failure(support_env):
     run = finish(run_id)
     assert run["modules"]["statistics"]["status"] == "complete"
     assert not run["modules"]["statistics"]["extraction_limits"]
-    document = Path(export(run_id)["html"]).read_text()
+    document = Path(export(run_id)["html"]).read_text(encoding="utf-8")
     assert answer["scope_limits"][0] in document
     assert run["qualification"] == "not_qualified"
 
@@ -695,7 +698,7 @@ def test_explicit_coverage_gaps_still_prevent_completeness(support_env):
     assert (
         report(run_id)["modules"]["statistics"]["coverage_gaps"][0]["kind"] == "ambiguous_structure"
     )
-    document = Path(export(run_id)["html"]).read_text()
+    document = Path(export(run_id)["html"]).read_text(encoding="utf-8")
     assert document.count(answer["coverage_gaps"][0]["detail"]) == 1
     assert f"href='#source-{answer['coverage_gaps'][0]['block_ids'][0]}'" in document
 
@@ -751,7 +754,9 @@ def test_readable_conflict_requires_explicit_repair_then_appraisal(support_env):
 @pytest.mark.parametrize("historical", [False, True])
 def test_flattened_markdown_cannot_bypass_ambiguous_native_geometry(tmp_path, historical):
     path = tmp_path / "ragged.md"
-    path.write_text("| Events | N | Percentage |\n|---|---|---|\n|20|100|30|extra|\n")
+    path.write_text(
+        "| Events | N | Percentage |\n|---|---|---|\n|20|100|30|extra|\n", encoding="utf-8"
+    )
     source = snapshot(path)
     # Older saved snapshots retained the whole flattened table as well as its cells.
     # Preserve both historical ambiguity-link forms without restoring that duplication
@@ -859,7 +864,7 @@ def test_reached_fact_cap_stays_partial_and_gap_text_is_inert(support_env):
     assert submit(run_id, path)["accepted"]
     state = finish(run_id)["modules"]["statistics"]
     assert state["status"] == "partial" and len(state["facts"]) == 24
-    document = Path(export(run_id)["html"]).read_text()
+    document = Path(export(run_id)["html"]).read_text(encoding="utf-8")
     assert "<script>bad()" not in document and "&lt;script&gt;bad()" in document
 
 
@@ -923,7 +928,7 @@ def test_indefensible_input_mapping_can_be_withdrawn_without_hiding_calculation(
     assert not state["observations"]
     assert len(state["calculations"]) == len(state["withdrawn"]) == 1
     assert state["calculations"][0]["comparison"]["status"] == "mismatch"
-    assert "Input roles" in Path(export(run_id)["html"]).read_text()
+    assert "Input roles" in Path(export(run_id)["html"]).read_text(encoding="utf-8")
 
 
 def test_navigation_is_deterministic_and_language_aliases_are_consistent(support_env):
@@ -962,7 +967,7 @@ def test_answer_symlink_is_refused_before_reading_or_archiving_unrelated_data(
     run_id = begin(support_env)
     issued = next_task(run_id)
     secret = support_env[0].parent / "unrelated-private.json"
-    secret.write_text('{"secret":"not-for-this-run"}')
+    secret.write_text('{"secret":"not-for-this-run"}', encoding="utf-8")
     answer = Path(issued["answer_path"])
     answer.symlink_to(secret)
     original = workflow.read_json
@@ -975,7 +980,7 @@ def test_answer_symlink_is_refused_before_reading_or_archiving_unrelated_data(
     result = submit(run_id, answer)
     assert not result["accepted"] and "symlink" in result["error"]
     assert not (_root(run_id) / "answers/task-0001-rejected-1.json").exists()
-    assert secret.read_text() == '{"secret":"not-for-this-run"}'
+    assert secret.read_text(encoding="utf-8") == '{"secret":"not-for-this-run"}'
 
 
 def test_changing_configured_context_cannot_silently_resume_a_run(support_env, monkeypatch):

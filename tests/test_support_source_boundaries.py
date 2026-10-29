@@ -67,14 +67,14 @@ def test_actual_full_length_sources_never_split_a_native_row(case_id):
 
 def test_large_markdown_table_schedules_all_native_cells_without_a_giant_duplicate(support_env):
     paper, key = support_env
-    original = paper.read_text()
+    original = paper.read_text(encoding="utf-8")
     table = "| Study | Patients | Result | Description |\n|---|---|---|---|\n"
     table += "\n".join(
         f"| Study {i} | 100 | 20 (20%) | " + f"Exact printed detail {i}. " * 12 + "|"
         for i in range(70)
     )
     assert len(table) > workflow.CHUNK_CHARS
-    paper.write_text(original + "\n\n" + table + "\n")
+    paper.write_text(original + "\n\n" + table + "\n", encoding="utf-8")
     digest = sha256_file(paper)
     source = sources.snapshot(paper)
     assert not any(block["kind"] == "table" for block in source["blocks"])

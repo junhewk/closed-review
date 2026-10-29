@@ -6,6 +6,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
+from conftest import assert_mode
 
 from closed_review.errors import ReviewError
 from closed_review.io import atomic_write_json, read_json, sha256_file
@@ -55,7 +56,7 @@ def small_corpus(tmp_path):
     paper.write_text(
         "# Invented source\n\n<script>alert('not executable')</script>\n\n"
         "| Count | P |\n|---|---|\n| 20 / 100 | p<0.05 |\n",
-    )
+    encoding="utf-8")
     manifest = tmp_path / "manifest.json"
     atomic_write_json(manifest, {
         "protocol": PROTOCOL, "corpus_id": "source-only-unit-fixture",
@@ -88,7 +89,7 @@ def test_all_twelve_real_candidates_are_readable_original_and_explicitly_unrevie
         assert row["decision"] is None and row["reasons"] == ""
         assert sha256_file(output / "manuscripts" / f"{row['case_id']}.md") == row["source_sha256"]
         assert not ({"control", "expected_issue_ids", "valid"} & row.keys())
-    text = (output / "source-review-ko.html").read_text()
+    text = (output / "source-review-ko.html").read_text(encoding="utf-8")
     anchors = re.findall(r'\bid="([^"]+)"', text)
     assert len(anchors) == len(set(anchors))
     assert text.count("<table>") == 36 and "원고는 영어 원문" in text
@@ -104,14 +105,16 @@ def test_all_twelve_real_candidates_are_readable_original_and_explicitly_unrevie
     assert reader.tables == expected_grids
     assert "default-src 'none'" in text
     assert not any(tag in text for tag in ("<script", "<form", "<iframe", "<img", "<input"))
-    assert output.stat().st_mode & 0o777 == 0o700
-    assert all(p.stat().st_mode & 0o777 == 0o600 for p in output.rglob("*") if p.is_file())
+    assert_mode(output, 0o700)
+    for path in output.rglob("*"):
+        if path.is_file():
+            assert_mode(path, 0o600)
 
 
 def test_renderer_escapes_source_and_never_reads_unlisted_private_keys(tmp_path, monkeypatch):
     manifest, corpus = small_corpus(tmp_path)
     secret = tmp_path / "private-author-proposals.json"
-    secret.write_text("PRIVATE_UNAPPROVED_KEY_NOT_TO_READ")
+    secret.write_text("PRIVATE_UNAPPROVED_KEY_NOT_TO_READ", encoding="utf-8")
     original_read = Path.read_bytes
 
     def guarded_read(path):
@@ -121,7 +124,7 @@ def test_renderer_escapes_source_and_never_reads_unlisted_private_keys(tmp_path,
     monkeypatch.setattr(Path, "read_bytes", guarded_read)
     output = tmp_path / "packet"
     packet.prepare(manifest, corpus, output)
-    text = (output / "source-review-ko.html").read_text()
+    text = (output / "source-review-ko.html").read_text(encoding="utf-8")
     assert "<script>" not in text and "&lt;script&gt;" in text
     assert "20 / 100" in text and "p&lt;0.05" in text
     assert "PRIVATE_UNAPPROVED_KEY_NOT_TO_READ" not in text
@@ -133,14 +136,16 @@ def test_reused_renderer_treats_only_the_header_separator_as_structure(
 ):
     manifest, corpus = small_corpus(tmp_path)
     paper = corpus / "a01.md"
-    paper.write_text(f"# Source\n\n| Count | P |\n{separator}\n| 20 / 100 | p<0.05 |\n")
+    paper.write_text(
+        f"# Source\n\n| Count | P |\n{separator}\n| 20 / 100 | p<0.05 |\n", encoding="utf-8"
+    )
     value = read_json(manifest)
     value["cases"][0]["sha256"] = sha256_file(paper)
     atomic_write_json(manifest, value)
     output = tmp_path / "packet"
     packet.prepare(manifest, corpus, output)
     reader = TableReader()
-    reader.feed((output / "source-review-ko.html").read_text())
+    reader.feed((output / "source-review-ko.html").read_text(encoding="utf-8"))
     assert reader.tables == [[["Count", "P"], ["20 / 100", "p<0.05"]]]
 
 
@@ -149,10 +154,10 @@ def test_existing_reviewer_work_is_not_overwritten(tmp_path):
     output = tmp_path / "packet"
     packet.prepare(manifest, corpus, output)
     template = output / "source-review-template.json"
-    template.write_text("human review in progress")
+    template.write_text("human review in progress", encoding="utf-8")
     with pytest.raises(ReviewError, match="never overwrite"):
         packet.prepare(manifest, corpus, output)
-    assert template.read_text() == "human review in progress"
+    assert template.read_text(encoding="utf-8") == "human review in progress"
 
 
 @pytest.mark.parametrize("change", ["approved", "changed-source", "keys-in-manifest", "hermes"])
@@ -163,7 +168,7 @@ def test_packet_refuses_inappropriate_inputs_before_creating_output(tmp_path, mo
         value["independently_reviewed"] = True
         atomic_write_json(manifest, value)
     elif change == "changed-source":
-        (corpus / "a01.md").write_text("a different manuscript")
+        (corpus / "a01.md").write_text("a different manuscript", encoding="utf-8")
     elif change == "keys-in-manifest":
         value["expected_issue_ids"] = ["private"]
         atomic_write_json(manifest, value)

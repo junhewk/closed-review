@@ -2,6 +2,7 @@ import runpy
 from pathlib import Path
 
 import pytest
+from conftest import assert_mode
 
 from closed_review.errors import ReviewError
 from closed_review.io import atomic_write_json, read_json, sha256_file
@@ -186,7 +187,7 @@ def test_readable_packet_checks_and_includes_exact_manuscript_without_overwrite(
     script["prepare_packet"](output, corpus, manifest, "ms1-r1", keys)
     assert "dummy" in (run_path / "answer-key.html").read_text(encoding="utf-8")
     assert "dummy" not in view
-    assert (run_path / "answer-key.html").stat().st_mode & 0o777 == 0o600
+    assert_mode(run_path / "answer-key.html", 0o600)
     (run_path / "review.html").write_text("user-edited", encoding="utf-8")
     with pytest.raises(ReviewError, match="existing file differs"):
         script["prepare_packet"](output, corpus, manifest, "ms1-r1")

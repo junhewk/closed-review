@@ -74,7 +74,7 @@ def atomic_write_json(path: Path, value: Any) -> None:
     fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     tmp_path = Path(temporary)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
             json.dump(value, handle, ensure_ascii=False, indent=2, sort_keys=False)
             handle.write("\n")
             handle.flush()
@@ -91,7 +91,7 @@ def atomic_write_text(path: Path, value: str) -> None:
     fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     tmp_path = Path(temporary)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
             handle.write(value)
             handle.flush()
             os.fsync(handle.fileno())

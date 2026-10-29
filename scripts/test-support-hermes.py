@@ -574,7 +574,8 @@ def main(argv=None) -> int:
         report = inspect_profile(args.profile or "closed-review", live=False)
         if not report["ready"]:
             parser.error("source profile preflight: " + "; ".join(report["problems"]))
-        config = yaml.safe_load((Path(report["profile_root"]) / "config.yaml").read_text())
+        config_path = Path(report["profile_root"]) / "config.yaml"
+        config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
         settings = {
             "gateway_url": report["base_url"],
             "model": report["model"],

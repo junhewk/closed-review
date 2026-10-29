@@ -30,7 +30,7 @@ def test_ordinary_draft_is_hash_bound_parseable_and_still_explicitly_unreviewed(
     assert len(rows) == 6 and row["module"] == module
     assert {row["module"] for row in rows} == set(MODULES)
     source = snapshot(row["path"])
-    assert len(row["path"].read_text().split()) >= 3000
+    assert len(row["path"].read_text(encoding="utf-8").split()) >= 3000
     assert len(source["tables"]) == 3 and not source["warnings"]
     chunks = _chunks(source["blocks"])
     assert len(chunks) > 1
