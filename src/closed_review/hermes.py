@@ -181,6 +181,10 @@ def _restore_privacy_block(text: str) -> str:
     block = _packaged_block()
     span = _block_span(text)
     if span is not None:
+        # The doctor accepts equivalent line endings/trailing whitespace. Do not rewrite
+        # that already-matching block or report a spurious privacy repair on Windows.
+        if _normalize_block(text[span[0] : span[1]]) == _normalize_block(block):
+            return text
         return text[: span[0]] + block + text[span[1] :]
     text = text.replace(PRIVACY_BEGIN, "").replace(PRIVACY_END, "")
     lines = text.splitlines(keepends=True)

@@ -144,17 +144,22 @@ def test_restore_reinserts_a_deleted_privacy_block(isolated_env) -> None:
     assert path.read_text() == text
 
 
-def test_install_update_keeps_hermes_lessons(isolated_env) -> None:
+@pytest.mark.parametrize("newline", [b"\n", b"\r\n"])
+def test_install_update_keeps_hermes_lessons(isolated_env, newline) -> None:
     profile = make_profile(isolated_env)
     hermes.install_skill("reviewer", apply=True)
     skill = profile / "skills" / "journal-article-review"
     hermes_edit(skill)
+    skill_path = skill / "SKILL.md"
+    edited = skill_path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", newline)
+    skill_path.write_bytes(edited)
     (skill / "references" / "lessons.md").write_text("Learned.\n")
 
     plan = hermes.install_skill("reviewer", apply=True)
 
     assert plan["updated"] == plan["merged"] == plan["kept_local"] == []
     assert not plan["privacy_block_restored"]
+    assert skill_path.read_bytes() == edited
     assert "Lesson: quote the table number." in (skill / "SKILL.md").read_text()
     assert (skill / "references" / "lessons.md").read_text() == "Learned.\n"
 
